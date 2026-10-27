@@ -131,3 +131,4 @@ class WeatherForecast {
   String toString() =>
       'WeatherForecast(temp: $currentTemperature°C, condition: $condition, humidity: $humidity%, rainChance: $rainChance%, cached: $isCached)';
 }
+

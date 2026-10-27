@@ -11,3 +11,4 @@ abstract class DiagnosisRepository {
   /// Saves a newly diagnosed record to storage/cache.
   Future<Diagnosis> save(Diagnosis diagnosis);
 }
+

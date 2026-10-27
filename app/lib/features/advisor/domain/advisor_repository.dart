@@ -9,3 +9,4 @@ abstract class AdvisorRepository {
     String? location,
   });
 }
+

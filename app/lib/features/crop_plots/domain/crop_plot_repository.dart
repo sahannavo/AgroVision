@@ -17,3 +17,4 @@ abstract class CropPlotRepository {
   /// Deletes a crop plot by its ID.
   Future<void> deletePlot(String plotId);
 }
+

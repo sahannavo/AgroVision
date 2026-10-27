@@ -151,3 +151,4 @@ class CropIrrigationPlan {
   @override
   String toString() => 'CropIrrigationPlan(cropId: $cropId, days: ${days.length})';
 }
+

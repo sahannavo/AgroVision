@@ -96,3 +96,4 @@ class FakeAuthRepository implements AuthRepository {
     _authStateController.close();
   }
 }
+

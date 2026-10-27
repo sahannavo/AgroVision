@@ -75,3 +75,4 @@ class AppUser {
   String toString() =>
       'AppUser(uid: $uid, email: $email, fullName: $fullName, region: $region, soilType: $soilType, landSize: $landSize)';
 }
+

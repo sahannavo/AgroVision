@@ -12,3 +12,4 @@ abstract class HistoryRepository {
   /// Adds a new farmer action or decision log entry.
   Future<DecisionLogEntry> addDecision(DecisionLogEntry entry);
 }
+

@@ -94,3 +94,4 @@ class FakeHistoryRepository implements HistoryRepository {
     return entry;
   }
 }
+

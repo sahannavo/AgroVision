@@ -12,3 +12,4 @@ abstract class DiagnosisClassifier {
     double? longitude,
   });
 }
+

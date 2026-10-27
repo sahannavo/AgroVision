@@ -126,3 +126,4 @@ class OutbreakAlert {
   String toString() =>
       'OutbreakAlert(id: $id, disease: $disease, crop: $crop, area: $areaLabel, severity: $severity, read: $isRead)';
 }
+

@@ -95,3 +95,4 @@ class FakeAlertsRepository implements AlertsRepository {
     _controller.close();
   }
 }
+

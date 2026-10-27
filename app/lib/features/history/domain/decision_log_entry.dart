@@ -80,3 +80,4 @@ class DecisionLogEntry {
   String toString() =>
       'DecisionLogEntry(id: $id, title: $title, result: $resultLabel, sync: $syncStatus)';
 }
+

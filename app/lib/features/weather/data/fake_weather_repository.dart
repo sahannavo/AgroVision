@@ -94,3 +94,4 @@ class FakeWeatherRepository implements WeatherRepository {
     yield _createSampleForecast();
   }
 }
+

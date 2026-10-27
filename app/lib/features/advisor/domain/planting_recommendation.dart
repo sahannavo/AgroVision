@@ -69,3 +69,4 @@ class PlantingRecommendation {
   String toString() =>
       'PlantingRecommendation(crop: $crop, score: $scorePercent%, harvestDays: $harvestDays, caution: $caution)';
 }
+

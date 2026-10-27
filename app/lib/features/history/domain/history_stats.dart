@@ -57,3 +57,4 @@ class HistoryStats {
   String toString() =>
       'HistoryStats(scans: $totalScans, healthy: $healthyPercent%, topIssue: $topIssue)';
 }
+

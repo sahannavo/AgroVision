@@ -43,3 +43,4 @@ class FakeDiagnosisClassifier implements DiagnosisClassifier {
     );
   }
 }
+

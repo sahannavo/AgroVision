@@ -105,3 +105,4 @@ class CropPlot {
   String toString() =>
       'CropPlot(id: $id, name: $name, crop: $cropType, stage: $growthStage, area: $areaSize, location: $location)';
 }
+

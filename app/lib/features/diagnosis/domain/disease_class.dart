@@ -163,3 +163,4 @@ class DiseaseInfo {
   @override
   String toString() => 'DiseaseInfo($displayName, $scientificName)';
 }
+

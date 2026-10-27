@@ -137,3 +137,4 @@ class Diagnosis {
   String toString() =>
       'Diagnosis(id: $id, crop: $cropType, class: ${predictedClass.displayName}, conf: ${(confidence * 100).toStringAsFixed(1)}%, sync: $syncStatus)';
 }
+

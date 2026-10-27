@@ -98,3 +98,4 @@ class FakeDiagnosisRepository implements DiagnosisRepository {
     _controller.close();
   }
 }
+

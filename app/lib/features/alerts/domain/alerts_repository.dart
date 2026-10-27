@@ -19,3 +19,4 @@ abstract class AlertsRepository {
   /// Marks an alert as read by the user.
   Future<void> markRead(String alertId);
 }
+

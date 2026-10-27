@@ -86,6 +86,7 @@ class ConfidenceRing extends StatelessWidget {
         '$percentage percent ${caption != null ? caption! : "confidence"}';
 
     return Semantics(
+      container: true,
       label: label,
       value: '$percentage%',
       child: SizedBox(
@@ -104,36 +105,41 @@ class ConfidenceRing extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(strokeWidth + 2),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '$percentage%',
-                    style: AppTextStyles.titleMedium.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                      fontSize: size * 0.28,
-                      height: 1.1,
-                    ),
-                  ),
-                  if (caption != null && caption!.isNotEmpty) ...[
-                    const SizedBox(height: 1.0),
+              padding: EdgeInsets.all(strokeWidth),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                     Text(
-                      caption!.toUpperCase(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.labelSmall.copyWith(
-                        fontSize: (size * 0.15).clamp(8.0, 11.0),
+                      '$percentage%',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.titleMedium.copyWith(
                         fontWeight: FontWeight.w700,
-                        letterSpacing: 0.8,
-                        color: AppColors.textSecondary,
+                        color: AppColors.textPrimary,
+                        fontSize: size * 0.28,
                         height: 1.0,
                       ),
                     ),
+                    if (caption != null && caption!.isNotEmpty) ...[
+                      const SizedBox(height: 1.0),
+                      Text(
+                        caption!.toUpperCase(),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        style: AppTextStyles.labelSmall.copyWith(
+                          fontSize: (size * 0.15).clamp(8.0, 11.0),
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.8,
+                          color: AppColors.textSecondary,
+                          height: 1.0,
+                        ),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ],

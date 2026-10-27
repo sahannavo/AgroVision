@@ -1,0 +1,344 @@
+[
+  {
+    "label": "Tomato___Early_blight",
+    "crop": "Tomato",
+    "displayName": "Early Blight",
+    "scientificName": "Alternaria solani",
+    "severityHint": "moderate",
+    "description": "A common fungal infection causing dark brown to black spots with concentric rings (target-board pattern) on older leaves. It spreads rapidly during warm, humid weather and causes premature leaf loss.",
+    "actionSteps": [
+      "Prune and destroy infected lower leaves immediately to stop upward spore dispersal.",
+      "Apply protective copper-based fungicide or mancozeb early morning following product label instructions.",
+      "Switch strictly to drip irrigation or water root bases directly to keep foliage dry."
+    ],
+    "prevention": [
+      "Maintain at least 50–60 cm plant spacing for adequate airflow.",
+      "Practice 3-year crop rotation avoiding other Solanaceae family members.",
+      "Apply clean organic straw mulch to stop fungal spores splashing from soil."
+    ],
+    "isHealthy": false
+  },
+  {
+    "label": "Tomato___Late_blight",
+    "crop": "Tomato",
+    "displayName": "Late Blight",
+    "scientificName": "Phytophthora infestans",
+    "severityHint": "high",
+    "description": "A destructive water-mold disease producing pale green to water-soaked lesions that turn dark brown with fuzzy white fungal growth underneath. It can destroy an entire field within days during cool, rainy conditions.",
+    "actionSteps": [
+      "Uproot and bury severely infected plants immediately outside the cultivation perimeter.",
+      "Spray recommended systemic fungicide following the product label and local agricultural extension advice.",
+      "Disinfect all pruning tools and stakes using a 10% bleach solution between rows."
+    ],
+    "prevention": [
+      "Plant certified disease-free seedlings and resistant cultivars recommended by the Department of Agriculture.",
+      "Ensure proper furrow drainage so monsoon rainwater discharges freely without ponding.",
+      "Scout crop daily during periods of high relative humidity (>90%) and cool night temperatures."
+    ],
+    "isHealthy": false
+  },
+  {
+    "label": "Tomato___Bacterial_spot",
+    "crop": "Tomato",
+    "displayName": "Bacterial Spot",
+    "scientificName": "Xanthomonas campestris pv. vesicatoria",
+    "severityHint": "moderate",
+    "description": "A bacterial disorder producing small, water-soaked, dark brown angular lesions on leaves with yellow halos. Warm temperatures and wind-driven rain accelerate bacterial transmission.",
+    "actionSteps": [
+      "Do not enter or cultivate the crop while leaves are wet to prevent spreading the bacteria.",
+      "Apply copper bactericide mixed with mancozeb adhering to local extension guidelines.",
+      "Remove and safely burn or bury heavily spotted plant debris away from water channels."
+    ],
+    "prevention": [
+      "Use certified disease-free seeds or hot-water treated seedlings.",
+      "Avoid overhead sprinkler irrigation that damages leaf tissues and splashes bacteria.",
+      "Sterilize seedling nursery trays and handling tools before each planting cycle."
+    ],
+    "isHealthy": false
+  },
+  {
+    "label": "Tomato___Leaf_Mold",
+    "crop": "Tomato",
+    "displayName": "Leaf Mold",
+    "scientificName": "Passalora fulva",
+    "severityHint": "moderate",
+    "description": "Fungal disease causing pale green to yellowish spots on upper leaf surfaces and velvety olive-green mold underneath. Thrives in humid poly-tunnels and dense enclosed canopies.",
+    "actionSteps": [
+      "Increase row and plant ventilation by pruning non-productive suckers and lower foliage.",
+      "Apply approved protective fungicide covering both leaf undersides and upper surfaces.",
+      "Lower greenhouse or poly-tunnel humidity by opening side skirts during morning hours."
+    ],
+    "prevention": [
+      "Select resistant hybrid tomato varieties for wet season cultivation.",
+      "Space rows sufficiently wide to ensure rapid drying of morning condensation.",
+      "Sanitize support strings, stakes, and greenhouse structures after each season."
+    ],
+    "isHealthy": false
+  },
+  {
+    "label": "Tomato___Septoria_leaf_spot",
+    "crop": "Tomato",
+    "displayName": "Septoria Leaf Spot",
+    "scientificName": "Septoria lycopersici",
+    "severityHint": "moderate",
+    "description": "Fungal leaf disease featuring numerous small, circular spots with dark brown margins and grey-white centres dotted with black specks. Leads to severe defoliation if left unchecked.",
+    "actionSteps": [
+      "Strip off the lowest affected leaves as soon as initial spots appear.",
+      "Spray copper fungicide or chlorothalonil following the product label recommendations.",
+      "Do not cultivate or prune foliage during damp or rainy weather."
+    ],
+    "prevention": [
+      "Eliminate solanaceous weed hosts (such as nightshades) around the field boundary.",
+      "Rotate with non-solanaceous crops such as legumes, maize, or paddy for two seasons.",
+      "Mulch soil around plants with paddy straw to prevent spore splashing."
+    ],
+    "isHealthy": false
+  },
+  {
+    "label": "Tomato___Spider_mites_Two-spotted_spider_mite",
+    "crop": "Tomato",
+    "displayName": "Two-Spotted Spider Mite",
+    "scientificName": "Tetranychus urticae",
+    "severityHint": "moderate",
+    "description": "Microscopic sap-sucking pests causing fine yellow stippling, bronzing, and delicate webbing across leaf undersides. Infestations explode rapidly during hot, dry weather spells.",
+    "actionSteps": [
+      "Apply organic neem oil solution (5 ml/L) or insecticidal soap early morning.",
+      "Spray miticide or sulfur-based spray if infestation exceeds economic threshold.",
+      "Overhead misting in hot afternoons can suppress mite reproduction."
+    ],
+    "prevention": [
+      "Keep field borders free of dry weeds and wild grass hosts.",
+      "Avoid excessive synthetic nitrogen fertilization which stimulates mite reproduction.",
+      "Conserve natural predatory mites and beneficial ladybird beetles."
+    ],
+    "isHealthy": false
+  },
+  {
+    "label": "Tomato___Target_Spot",
+    "crop": "Tomato",
+    "displayName": "Target Spot",
+    "scientificName": "Corynespora cassiicola",
+    "severityHint": "moderate",
+    "description": "Fungal infection creating brown circular lesions that expand with concentric rings, often resembling early blight. It thrives in high temperatures and prolonged leaf wetness.",
+    "actionSteps": [
+      "Prune and destroy severely infected leaves and fallen fruit.",
+      "Apply broad-spectrum protectant fungicide adhering strictly to product label rates.",
+      "Improve air movement through the canopy with proper trellising and sucker pruning."
+    ],
+    "prevention": [
+      "Ensure wide plant spacing and avoid excessive canopy density.",
+      "Do not rotate tomatoes with papaya, cucumber, or cotton which also host the fungus.",
+      "Use clean disease-free planting material from certified nurseries."
+    ],
+    "isHealthy": false
+  },
+  {
+    "label": "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+    "crop": "Tomato",
+    "displayName": "Yellow Leaf Curl Virus",
+    "scientificName": "Begomovirus (Whitefly-transmitted)",
+    "severityHint": "high",
+    "description": "A viral disease transmitted by silverleaf whiteflies that results in upward curling, yellow leaf margins, and severe plant stunting. Infected young plants yield virtually no fruit.",
+    "actionSteps": [
+      "Rogue out and incinerate infected plants immediately to protect neighbouring rows.",
+      "Install yellow sticky traps (15–20 per acre) at canopy level to trap adult whiteflies.",
+      "Spray bio-pesticide neem formulation or approved insecticide to control vector populations."
+    ],
+    "prevention": [
+      "Erect 40-mesh fine insect-proof netting over seedling nursery beds.",
+      "Deploy silver or reflective plastic mulch to disorient incoming whiteflies.",
+      "Maintain a 4-week host-free fallow period between tomato and chilli crops."
+    ],
+    "isHealthy": false
+  },
+  {
+    "label": "Tomato___Tomato_mosaic_virus",
+    "crop": "Tomato",
+    "displayName": "Mosaic Virus",
+    "scientificName": "Tomato mosaic virus (ToMV)",
+    "severityHint": "high",
+    "description": "A highly infectious virus that creates light and dark green mottled patterns, leaf distortion, and curled foliage. It spreads easily through mechanical contact, clothing, and pruning shears.",
+    "actionSteps": [
+      "Remove and burn infected plants; never add them to compost piles.",
+      "Wash hands and dip tools into 10% trisodium phosphate (TSP) or skim milk before touching healthy plants.",
+      "Prohibit smoking or tobacco handling inside tomato fields to prevent transmission."
+    ],
+    "prevention": [
+      "Plant certified virus-tested seeds or resistant cultivars.",
+      "Avoid handling seedlings unnecessarily during transplanting operations.",
+      "Sterilize seedling trays, support poles, and tools between crop cycles."
+    ],
+    "isHealthy": false
+  },
+  {
+    "label": "Tomato___healthy",
+    "crop": "Tomato",
+    "displayName": "Healthy Tomato",
+    "scientificName": "Solanum lycopersicum",
+    "severityHint": "low",
+    "description": "Foliage exhibits vibrant deep green coloration, firm turgor pressure, uniform leaf morphology, and no visible lesions or insect infestation.",
+    "actionSteps": [
+      "Continue regular irrigation maintaining uniform soil moisture.",
+      "Apply top-dressing fertilizer according to growth stage and soil test advice.",
+      "Scout the field weekly on both upper and lower leaf surfaces."
+    ],
+    "prevention": [
+      "Maintain clean field perimeters and control wild weeds.",
+      "Ensure proper trellis support and ground clearance for lower branches.",
+      "Log periodic scans in AgroVision to monitor vegetative vigor."
+    ],
+    "isHealthy": true
+  },
+  {
+    "label": "Potato___Early_blight",
+    "crop": "Potato",
+    "displayName": "Early Blight",
+    "scientificName": "Alternaria solani",
+    "severityHint": "moderate",
+    "description": "A fungal infection causing dark brown angular spots with characteristic concentric rings on potato foliage. Symptoms typically initiate on mature lower canopy leaves.",
+    "actionSteps": [
+      "Prune affected lower leaves where feasible without injuring the tuber mound.",
+      "Apply protective copper or mancozeb fungicide according to local extension dosage.",
+      "Irrigate early in the morning so sun and wind dry foliage quickly."
+    ],
+    "prevention": [
+      "Rotate with non-solanaceous crops such as cabbage, carrot, or beans for two years.",
+      "Plant certified seed tubers treated with approved fungicide.",
+      "Ensure adequate potassium and balanced nitrogen to maintain plant vigor."
+    ],
+    "isHealthy": false
+  },
+  {
+    "label": "Potato___Late_blight",
+    "crop": "Potato",
+    "displayName": "Late Blight",
+    "scientificName": "Phytophthora infestans",
+    "severityHint": "high",
+    "description": "The most destructive potato disease, causing rapid blackening of foliage and white sporulation underneath during wet highland weather. Unchecked late blight rots both vine canopy and underground tubers.",
+    "actionSteps": [
+      "Spray recommended systemic fungicide immediately upon the first forecast warning.",
+      "Cut and destroy haulms (potato foliage) 10 days before harvest to prevent tuber contamination.",
+      "Uproot and bury severely infected clusters away from the cultivation area."
+    ],
+    "prevention": [
+      "Cultivate resistant varieties certified by Nuwara Eliya / Welimada research stations.",
+      "Build high, compact soil ridges around potato mounds to shield tubers from spore washdown.",
+      "Never store harvested tubers showing surface discolouration or soft wet rot."
+    ],
+    "isHealthy": false
+  },
+  {
+    "label": "Potato___healthy",
+    "crop": "Potato",
+    "displayName": "Healthy Potato",
+    "scientificName": "Solanum tuberosum",
+    "severityHint": "low",
+    "description": "Potato vines show uniform lush foliage with strong stems, upright posture, and absence of blight lesions, chlorosis, or insect feeding.",
+    "actionSteps": [
+      "Maintain stable soil moisture especially during tuber initiation and swelling.",
+      "Ensure good hilling up of soil ridges to prevent greening of tubers.",
+      "Inspect plants weekly for cutworm and leafhopper activity."
+    ],
+    "prevention": [
+      "Use certified disease-free seed tubers.",
+      "Maintain proper field drainage channels to prevent waterlogging during monsoon.",
+      "Record routine scans in the app to monitor crop growth stage."
+    ],
+    "isHealthy": true
+  },
+  {
+    "label": "Pepper___Bacterial_spot",
+    "crop": "Chilli / Bell Pepper",
+    "displayName": "Bacterial Spot",
+    "scientificName": "Xanthomonas campestris pv. vesicatoria",
+    "severityHint": "moderate",
+    "description": "Bacterial infection causing small, circular, dark green water-soaked spots that turn dark brown with necrotic centres. Severe attacks trigger extensive leaf drop and blistered fruit spots.",
+    "actionSteps": [
+      "Avoid all field work and pesticide applications while foliage is wet.",
+      "Apply approved copper-based bactericide in combination with mancozeb as advised by extension officers.",
+      "Remove infected plants showing severe stem or crown cankers."
+    ],
+    "prevention": [
+      "Purchase certified seed or soak seed in hot water (50°C for 25 min) before nursery sowing.",
+      "Adopt drip irrigation or furrow watering in preference to overhead sprinkling.",
+      "Disinfect nursery trays, tools, and harvest crates with disinfectant solution."
+    ],
+    "isHealthy": false
+  },
+  {
+    "label": "Pepper___healthy",
+    "crop": "Chilli / Bell Pepper",
+    "displayName": "Healthy Chilli",
+    "scientificName": "Capsicum annuum",
+    "severityHint": "low",
+    "description": "Leaves are glossy, dark green, and structurally sound with no curling, mottling, or spot lesions, indicating optimal chlorophyll density and crop vigor.",
+    "actionSteps": [
+      "Maintain balanced watering at plant base to support continuous flowering and pod set.",
+      "Top dress with balanced NPK nutrients according to Department of Agriculture schedule.",
+      "Perform weekly scouting for thrips, mites, and aphids on tender new shoot tips."
+    ],
+    "prevention": [
+      "Keep field borders clean of weeds that harbor thrips and viral vectors.",
+      "Apply organic mulch to retain root zone moisture and prevent soil erosion.",
+      "Track plant health using regular AgroVision diagnosis scans."
+    ],
+    "isHealthy": true
+  },
+  {
+    "label": "Chilli___Leaf_curl",
+    "crop": "Chilli",
+    "displayName": "Chilli Leaf Curl Complex",
+    "scientificName": "Begomovirus / Thrip complex",
+    "severityHint": "high",
+    "description": "Characterized by severe upward leaf curling, puckering, reduction of leaf blade area, and stunted shoots. Caused by thrips and whiteflies transmitting viral and mechanical stresses.",
+    "actionSteps": [
+      "Rogue out and burn stunted, severely distorted plants early in the season.",
+      "Install yellow and blue sticky traps (20 per acre) above the crop canopy.",
+      "Apply neem extract or recommended organic insecticide targeting thrips and whiteflies."
+    ],
+    "prevention": [
+      "Use 40-mesh nylon netting over seedling nursery beds.",
+      "Deploy reflective plastic mulch along planting beds to repel flying insect vectors.",
+      "Maintain crop-free barriers between consecutive solanaceous plantings."
+    ],
+    "isHealthy": false
+  },
+  {
+    "label": "Eggplant___healthy",
+    "crop": "Eggplant",
+    "displayName": "Healthy Eggplant",
+    "scientificName": "Solanum melongena",
+    "severityHint": "low",
+    "description": "Broad, vigorous velvety green leaves with thick stems and robust flowering. No signs of shoot borer damage, bacterial wilt, or leaf spots.",
+    "actionSteps": [
+      "Ensure consistent deep watering during flowering and fruit development.",
+      "Top-dress with compost or organic manure every 3 weeks.",
+      "Inspect shoot tips for shoot and fruit borer boreholes."
+    ],
+    "prevention": [
+      "Crop rotation with legumes or cereals.",
+      "Maintain adequate plant spacing (60 x 60 cm).",
+      "Regularly scout and record crop progress in the app."
+    ],
+    "isHealthy": true
+  },
+  {
+    "label": "General___Nitrogen_deficiency",
+    "crop": "Nightshade Crops",
+    "displayName": "Nitrogen Deficiency",
+    "scientificName": "Nutrient Deficiency (N)",
+    "severityHint": "moderate",
+    "description": "General yellowing (chlorosis) beginning uniformly on older bottom leaves while veins remain slightly lighter. Causes thin, spindly stems and stunted vegetative development.",
+    "actionSteps": [
+      "Apply balanced nitrogen fertilizer (Urea or Ammonium Sulfate) based on soil test rates.",
+      "Spray 1% foliar urea solution during early morning for rapid leaf absorption.",
+      "Incorporate well-rotted cattle manure or compost to restore soil organic reserves."
+    ],
+    "prevention": [
+      "Conduct preseason soil testing to establish baseline fertility.",
+      "Split nitrogen top dressings across basal, vegetative, and flowering stages.",
+      "Avoid heavy waterlogging that leaches nitrogen out of the root zone."
+    ],
+    "isHealthy": false
+  }
+]

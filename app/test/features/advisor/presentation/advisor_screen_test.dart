@@ -4,9 +4,38 @@ import 'package:app/features/advisor/data/providers.dart';
 import 'package:app/features/advisor/domain/advisor_repository.dart';
 import 'package:app/features/advisor/domain/planting_recommendation.dart';
 import 'package:app/features/advisor/presentation/advisor_screen.dart';
+import 'package:app/features/weather/data/providers.dart';
+import 'package:app/features/weather/domain/weather_forecast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+/// A cached weather forecast stamped 3 hours ago — drives the banner text.
+WeatherForecast _cachedForecast3hAgo() {
+  final fetchedAt = DateTime.now().subtract(const Duration(hours: 3));
+  return WeatherForecast(
+    currentTemperature: 29.0,
+    condition: 'Scattered Clouds',
+    humidity: 89,
+    rainChance: 40,
+    daily: const [],
+    fetchedAt: fetchedAt,
+    isCached: true,
+  );
+}
+
+/// A fresh (non-cached) forecast — banner should not appear.
+WeatherForecast _freshForecast() {
+  return WeatherForecast(
+    currentTemperature: 29.0,
+    condition: 'Scattered Clouds',
+    humidity: 89,
+    rainChance: 40,
+    daily: const [],
+    fetchedAt: DateTime.now(),
+    isCached: false,
+  );
+}
 
 Widget _wrapWithScope({
   required Widget child,
@@ -37,9 +66,16 @@ void main() {
     testWidgets('renders initial screen with input card and empty state', (tester) async {
       await tester.pumpWidget(
         _wrapWithScope(
+          overrides: [
+            // Provide a known cached forecast so the banner shows predictably.
+            weatherForecastProvider.overrideWith((_) async => _cachedForecast3hAgo()),
+          ],
           child: const AdvisorScreen(),
         ),
       );
+
+      // Settle so the FutureProvider resolves.
+      await tester.pumpAndSettle();
 
       // Verify App Bar
       expect(find.text('Planting Advisor'), findsOneWidget);
@@ -52,6 +88,7 @@ void main() {
       expect(find.text('Soil type'), findsOneWidget);
       expect(find.text('Loam'), findsOneWidget);
       expect(find.text('Cultivation season'), findsOneWidget);
+      // Banner: forecast is cached 3 hrs ago → "3 hrs ago"
       expect(find.text('Using weather saved 3 hrs ago'), findsOneWidget);
       expect(find.text('Get recommendations'), findsOneWidget);
 
@@ -71,10 +108,14 @@ void main() {
         _wrapWithScope(
           overrides: [
             advisorRepositoryProvider.overrideWithValue(fakeRepo),
+            // Use a fresh (non-cached) forecast — banner hidden.
+            weatherForecastProvider.overrideWith((_) async => _freshForecast()),
           ],
           child: const AdvisorScreen(),
         ),
       );
+
+      await tester.pumpAndSettle();
 
       // Tap "Get recommendations"
       await tester.tap(find.text('Get recommendations'));
@@ -108,10 +149,13 @@ void main() {
         _wrapWithScope(
           overrides: [
             advisorRepositoryProvider.overrideWithValue(_FailingAdvisorRepository()),
+            weatherForecastProvider.overrideWith((_) async => _freshForecast()),
           ],
           child: const AdvisorScreen(),
         ),
       );
+
+      await tester.pumpAndSettle();
 
       // Tap Get recommendations
       await tester.tap(find.text('Get recommendations'));
@@ -126,9 +170,14 @@ void main() {
     testWidgets('detect location updates location and shows snackbar', (tester) async {
       await tester.pumpWidget(
         _wrapWithScope(
+          overrides: [
+            weatherForecastProvider.overrideWith((_) async => _freshForecast()),
+          ],
           child: const AdvisorScreen(),
         ),
       );
+
+      await tester.pumpAndSettle();
 
       await tester.tap(find.text('Detect'));
       await tester.pump();

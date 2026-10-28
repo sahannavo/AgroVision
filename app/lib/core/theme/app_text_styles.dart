@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'app_colors.dart';
 
 /// Typography tokens for AgroVision
@@ -26,9 +27,6 @@ class AppTextStyles {
     letterSpacing: 0.2,
   );
 }
-
-
-import 'app_colors.dart';
 
 /// Typography tokens for the AgroVision design system.
 ///

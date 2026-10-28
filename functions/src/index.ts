@@ -7,3 +7,4 @@ if (admin.apps.length === 0) {
 
 export { getWeatherForecast, buildRegionKey, normalizeWeatherResponse } from './getWeatherForecast';
 export { refreshWeatherCache } from './refreshWeatherCache';
+export { onDiagnosisCreated, PREVENTIVE_STEPS_TABLE } from './onDiagnosisCreated';

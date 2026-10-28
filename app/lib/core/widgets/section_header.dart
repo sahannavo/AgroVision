@@ -102,7 +102,7 @@ class SectionHeader extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          if (trailingWidget != null) trailingWidget,
+          ?trailingWidget,
         ],
       ),
     );

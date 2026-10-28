@@ -6,6 +6,7 @@ import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../data/providers.dart';
+import '../../weather/data/providers.dart';
 import '../domain/planting_recommendation.dart';
 import 'widgets/advisor_empty_state.dart';
 import 'widgets/advisor_input_card.dart';
@@ -119,8 +120,34 @@ class _AdvisorScreenState extends ConsumerState<AdvisorScreen> {
     );
   }
 
+  /// Formats [fetchedAt] as a human-readable relative time string.
+  ///
+  /// Returns strings like "just now", "5 min ago", "2 hrs ago", "1 day ago".
+  String _formatCacheDuration(DateTime fetchedAt) {
+    final diff = DateTime.now().difference(fetchedAt);
+    if (diff.inMinutes < 1) return 'just now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes} min ago';
+    if (diff.inHours < 24) {
+      final h = diff.inHours;
+      return '$h ${h == 1 ? 'hr' : 'hrs'} ago';
+    }
+    final d = diff.inDays;
+    return '$d ${d == 1 ? 'day' : 'days'} ago';
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Watch the real weather forecast so the cached-weather banner is live.
+    // The FutureProvider returns AsyncValue<WeatherForecast?> — null means
+    // no data available (offline with no cache). When kUseFakes is true,
+    // FakeWeatherRepository returns a static forecast so the banner still shows.
+    final weatherAsync = ref.watch(weatherForecastProvider);
+    final forecast = weatherAsync.valueOrNull;
+    final isWeatherCached = forecast?.isCached ?? false;
+    final weatherCachedText = (forecast != null && isWeatherCached)
+        ? _formatCacheDuration(forecast.fetchedAt)
+        : '';
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -196,12 +223,13 @@ class _AdvisorScreenState extends ConsumerState<AdvisorScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Top Input Parameter Card
+              // Top Input Parameter Card — real weather cache values wired in
               AdvisorInputCard(
                 location: _location,
                 selectedSoil: _selectedSoil,
                 selectedSeason: _selectedSeason,
-                isWeatherCached: true,
+                isWeatherCached: isWeatherCached,
+                weatherCachedDurationText: weatherCachedText,
                 isLoading: _isLoading,
                 onDetectLocation: _handleDetectLocation,
                 onSoilChanged: (soil) {

@@ -183,11 +183,14 @@ class _AdvisorScreenState extends ConsumerState<AdvisorScreen> {
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
-            Text(
-              'Planting Advisor',
-              style: AppTextStyles.headingSmall.copyWith(
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
+            Flexible(
+              child: Text(
+                'Planting Advisor',
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.headingSmall.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ),
           ],

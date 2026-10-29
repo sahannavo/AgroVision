@@ -130,4 +130,20 @@ abstract final class AppTextStyles {
     letterSpacing: 0.2,
     height: 1.25,
   );
+
+  static const TextStyle buttonSecondary = TextStyle(
+    fontFamily: headingFontFamily,
+    fontSize: 16.0,
+    fontWeight: FontWeight.w600,
+    color: AppColors.primary,
+    letterSpacing: 0.2,
+  );
+
+  static const TextStyle buttonDisabled = TextStyle(
+    fontFamily: headingFontFamily,
+    fontSize: 16.0,
+    fontWeight: FontWeight.w600,
+    color: AppColors.disabledText,
+    letterSpacing: 0.2,
+  );
 }

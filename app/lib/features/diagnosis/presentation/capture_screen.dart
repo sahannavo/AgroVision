@@ -45,7 +45,12 @@ enum _CaptureState {
 /// - Run on-device AI classification ([diagnosisClassifierProvider]).
 /// - Navigate to the result screen on success.
 class CaptureScreen extends ConsumerStatefulWidget {
-  const CaptureScreen({super.key});
+  final bool initialPermissionDeniedForTesting;
+
+  const CaptureScreen({
+    super.key,
+    this.initialPermissionDeniedForTesting = false,
+  });
 
   @override
   ConsumerState<CaptureScreen> createState() => _CaptureScreenState();
@@ -81,7 +86,11 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _initCamera();
+    if (widget.initialPermissionDeniedForTesting) {
+      _screenState = _CaptureState.permissionDenied;
+    } else {
+      _initCamera();
+    }
   }
 
   @override
@@ -155,6 +164,12 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
       setState(() {
         _screenState =
             isDenied ? _CaptureState.permissionDenied : _CaptureState.liveCam;
+        _isCameraInitialising = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _screenState = _CaptureState.permissionDenied;
         _isCameraInitialising = false;
       });
     }
@@ -487,3 +502,4 @@ class _LoadingPlaceholder extends StatelessWidget {
     );
   }
 }
+

@@ -14,35 +14,35 @@ import '../../../../core/theme/app_spacing.dart';
 class CameraTopBar extends StatelessWidget {
   final VoidCallback? onBackPressed;
   final VoidCallback? onFlashPressed;
-  final FlashMode flashMode;
+  final CameraFlashMode flashMode;
 
   const CameraTopBar({
     super.key,
     this.onBackPressed,
     this.onFlashPressed,
-    this.flashMode = FlashMode.off,
+    this.flashMode = CameraFlashMode.off,
   });
 
   IconData _getFlashIcon() {
     switch (flashMode) {
-      case FlashMode.torch:
-      case FlashMode.always:
+      case CameraFlashMode.torch:
+      case CameraFlashMode.always:
         return Icons.flash_on_rounded;
-      case FlashMode.auto:
+      case CameraFlashMode.auto:
         return Icons.flash_auto_rounded;
-      case FlashMode.off:
+      case CameraFlashMode.off:
         return Icons.flash_off_rounded;
     }
   }
 
   String _getFlashSemantics() {
     switch (flashMode) {
-      case FlashMode.torch:
-      case FlashMode.always:
+      case CameraFlashMode.torch:
+      case CameraFlashMode.always:
         return 'Flash on, tap to change';
-      case FlashMode.auto:
+      case CameraFlashMode.auto:
         return 'Flash auto, tap to change';
-      case FlashMode.off:
+      case CameraFlashMode.off:
         return 'Flash off, tap to change';
     }
   }
@@ -138,7 +138,7 @@ class CameraTopBar extends StatelessWidget {
                     ),
                     child: Icon(
                       _getFlashIcon(),
-                      color: flashMode == FlashMode.off
+                      color: flashMode == CameraFlashMode.off
                           ? Colors.white.withValues(alpha: 0.8)
                           : AppColors.lime,
                       size: 22,
@@ -351,9 +351,10 @@ class _LeafViewfinderPainter extends CustomPainter {
 }
 
 /// Flash mode options supported by the camera HUD.
-enum FlashMode {
+enum CameraFlashMode {
   off,
   auto,
   always,
   torch,
 }
+

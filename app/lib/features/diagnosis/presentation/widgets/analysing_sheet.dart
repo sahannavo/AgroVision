@@ -295,3 +295,4 @@ class _AnalysingViewState extends State<AnalysingView>
     );
   }
 }
+

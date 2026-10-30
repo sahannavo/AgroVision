@@ -354,7 +354,8 @@ class _PlannerScreenState extends State<PlannerScreen> {
           child: DropdownButtonHideUnderline(
             child: DropdownButton<int>(
               value: _selectedPlotIndex,
-              isDense: true,
+              isDense: false,
+              itemHeight: 48,
               icon: const Icon(Icons.keyboard_arrow_down, size: 20),
               items: List.generate(_plots.length, (index) {
                 final p = _plots[index];
@@ -378,6 +379,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
                       const SizedBox(width: 6),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
@@ -385,6 +387,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
                             style: AppTextStyles.bodySmall.copyWith(
                               fontWeight: FontWeight.w700,
                               fontSize: 12,
+                              height: 1.1,
                             ),
                           ),
                           Text(
@@ -392,6 +395,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
                             style: AppTextStyles.bodySmall.copyWith(
                               fontSize: 10,
                               color: AppColors.textSecondary,
+                              height: 1.1,
                             ),
                           ),
                         ],
@@ -571,3 +575,4 @@ final List<IrrigationDayPlan> _sampleDayPlans = [
     scheduleTime: 'Morning (6:30 AM)',
   ),
 ];
+

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import '../../diagnosis/domain/diagnosis.dart';
 import '../../diagnosis/domain/diagnosis_repository.dart';
+import '../../diagnosis/domain/disease_class.dart';
 import '../domain/decision_log_entry.dart';
 import '../domain/history_repository.dart';
 import '../domain/history_stats.dart';
@@ -14,7 +15,7 @@ import '../domain/history_stats.dart';
 /// and manages farmer decision logs under Firestore `decisionLogs` collection.
 class FirebaseHistoryRepository implements HistoryRepository {
   final DiagnosisRepository _diagnosisRepository;
-  final FirebaseFirestore _firestore;
+  final FirebaseFirestore? _firestore;
   final String? Function()? _currentUserIdProvider;
 
   FirebaseHistoryRepository({
@@ -22,11 +23,14 @@ class FirebaseHistoryRepository implements HistoryRepository {
     FirebaseFirestore? firestore,
     String? Function()? currentUserIdProvider,
   })  : _diagnosisRepository = diagnosisRepository,
-        _firestore = firestore ?? FirebaseFirestore.instance,
+        _firestore = firestore,
         _currentUserIdProvider = currentUserIdProvider;
 
+  FirebaseFirestore get _firestoreInstance =>
+      _firestore ?? FirebaseFirestore.instance;
+
   CollectionReference<Map<String, dynamic>> get _decisionLogsRef =>
-      _firestore.collection('decisionLogs');
+      _firestoreInstance.collection('decisionLogs');
 
   /// Computes [HistoryStats] from diagnoses retrieved via [DiagnosisRepository].
   ///
@@ -59,7 +63,7 @@ class FirebaseHistoryRepository implements HistoryRepository {
     }
 
     final totalScans = diagnoses.length;
-    final healthyCount = diagnoses.where((d) => d.predictedClass.isHealthy).length;
+    final healthyCount = diagnoses.where((d) => d.predictedClass == DiseaseClass.healthy).length;
     final healthyPercent = ((healthyCount / totalScans) * 100).round();
 
     // Disease breakdown and top issue calculation
@@ -70,7 +74,7 @@ class FirebaseHistoryRepository implements HistoryRepository {
       final name = diagnosis.predictedClass.displayName;
       diseaseBreakdown[name] = (diseaseBreakdown[name] ?? 0) + 1;
 
-      if (!diagnosis.predictedClass.isHealthy) {
+      if (diagnosis.predictedClass != DiseaseClass.healthy) {
         issueCounts[name] = (issueCounts[name] ?? 0) + 1;
       }
     }
@@ -228,3 +232,4 @@ class FirebaseHistoryRepository implements HistoryRepository {
     };
   }
 }
+

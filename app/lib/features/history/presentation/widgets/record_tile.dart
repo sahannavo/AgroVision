@@ -7,6 +7,7 @@ import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../diagnosis/domain/diagnosis.dart';
+import '../../../diagnosis/domain/disease_class.dart';
 
 /// Single diagnosis record tile displayed in the Recent Records list.
 ///
@@ -28,7 +29,7 @@ class RecordTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isHealthy = diagnosis.predictedClass.isHealthy;
+    final isHealthy = diagnosis.predictedClass == DiseaseClass.healthy;
     final statusColor = isHealthy ? AppColors.healthy : AppColors.danger;
     final confidencePct = (diagnosis.confidence * 100).toInt();
     final dateStr = DateFormat('dd MMM yyyy').format(diagnosis.diagnosedAt);

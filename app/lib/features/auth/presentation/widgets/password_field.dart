@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_radius.dart';
-import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
 /// Password text field with an icon-button show/hide toggle.
@@ -55,3 +53,4 @@ class _PasswordFieldState extends State<PasswordField> {
     );
   }
 }
+

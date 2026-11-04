@@ -45,8 +45,9 @@ abstract final class AuthValidators {
     if (password.length >= 8) score++;
     if (RegExp(r'[A-Z]').hasMatch(password)) score++;
     if (RegExp(r'[0-9]').hasMatch(password)) score++;
-    if (RegExp(r'[!@#\$&*~%^()_\-+=\[\]{};:,.<>?/\\|]')
-        .hasMatch(password)) score++;
+    if (RegExp(r'[!@#\$&*~%^()_\-+=\[\]{};:,.<>?/\\|]').hasMatch(password)) {
+      score++;
+    }
     return score;
   }
 
@@ -75,3 +76,4 @@ abstract final class AuthValidators {
     return null;
   }
 }
+

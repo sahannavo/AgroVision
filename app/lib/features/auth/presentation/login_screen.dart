@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -13,8 +14,8 @@ import 'widgets/password_field.dart';
 
 /// Login screen — email + password authentication.
 ///
-/// Shows an offline banner when connectivity is unavailable.
-/// Inline field validation and a snackbar for sign-in errors.
+/// Shows an [OfflineLoginBanner] when the device is offline.
+/// Inline validation and an error container on failed sign-in.
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -30,9 +31,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool _loading = false;
   String? _errorMessage;
 
-  // Simulated offline state — will come from ConnectivityService provider
-  // once the core connectivity provider is wired by SDL.
-  bool _isOffline = false;
+  // Will be driven by ConnectivityService provider once wired by SDL (see NOTES).
+  static const bool _isOffline = false;
 
   @override
   void dispose() {
@@ -46,7 +46,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (_isOffline) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('No internet connection. Login requires connectivity.'),
+          content: Text(
+            'No internet connection. Login requires connectivity.',
+          ),
         ),
       );
       return;
@@ -63,14 +65,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         email: _emailCtrl.text.trim(),
         password: _passwordCtrl.text,
       );
+      if (mounted) context.go('/home');
+    } catch (_) {
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/home');
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _errorMessage = 'Incorrect email or password. Please try again.';
-        });
+        setState(
+          () => _errorMessage =
+              'Incorrect email or password. Please try again.',
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -88,14 +89,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: AppSpacing.md),
-              // ── App bar row ──────────────────────────────────────────────
+              // ── Top bar ─────────────────────────────────────────────────
               Row(
                 children: [
                   Semantics(
                     label: 'Go back',
                     child: IconButton(
                       icon: const Icon(Icons.arrow_back_rounded),
-                      onPressed: () => Navigator.of(context).maybePop(),
+                      onPressed: () => context.canPop()
+                          ? context.pop()
+                          : null,
                     ),
                   ),
                   const Expanded(
@@ -103,30 +106,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   Semantics(
                     label: 'Profile',
-                    child: IconButton(
-                      icon: Container(
-                        width: 36,
-                        height: 36,
-                        decoration: const BoxDecoration(
-                          color: AppColors.primaryGreen,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.person_rounded,
-                          color: AppColors.textOnPrimary,
-                          size: 20,
-                        ),
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      margin: const EdgeInsets.only(right: AppSpacing.sm),
+                      decoration: const BoxDecoration(
+                        color: AppColors.primaryGreen,
+                        shape: BoxShape.circle,
                       ),
-                      onPressed: null, // placeholder
+                      child: const Icon(
+                        Icons.person_rounded,
+                        color: AppColors.textOnPrimary,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
-              // ── Brand header ─────────────────────────────────────────────
               const AuthHeader(),
               const SizedBox(height: AppSpacing.lg),
-              // ── Headline ─────────────────────────────────────────────────
               const Text('Welcome back', style: AppTextStyles.headingLarge),
               const SizedBox(height: AppSpacing.xs),
               Text(
@@ -135,13 +134,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   color: AppColors.textSecondary,
                 ),
               ),
-              // ── Offline banner ───────────────────────────────────────────
               if (_isOffline) ...[
                 const SizedBox(height: AppSpacing.md),
                 const OfflineLoginBanner(),
               ],
               const SizedBox(height: AppSpacing.lg),
-              // ── Form ─────────────────────────────────────────────────────
               Form(
                 key: _formKey,
                 child: Column(
@@ -214,7 +211,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(
-                                'Password reset — coming in phase 3.',
+                                'Password reset — available in phase 3.',
                               ),
                             ),
                           );
@@ -243,10 +240,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 ),
                               )
                             : const Icon(Icons.arrow_forward_rounded),
-                        label: Text(
-                          'Log in',
-                          style: AppTextStyles.button,
-                        ),
+                        label: Text('Log in', style: AppTextStyles.button),
                         style: FilledButton.styleFrom(
                           backgroundColor: AppColors.primaryGreen,
                           foregroundColor: AppColors.textOnPrimary,
@@ -268,16 +262,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.md,
                     ),
-                    child: Text(
-                      'OR',
-                      style: AppTextStyles.labelSmall,
-                    ),
+                    child: Text('OR', style: AppTextStyles.labelSmall),
                   ),
                   const Expanded(child: Divider()),
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
-              // ── Create account ───────────────────────────────────────────
+              // ── Create account link ───────────────────────────────────────
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -288,9 +279,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => Navigator.of(
-                      context,
-                    ).pushNamed('/register'),
+                    onTap: () => context.push('/register'),
                     child: Text(
                       'Create account',
                       style: AppTextStyles.bodyMedium.copyWith(

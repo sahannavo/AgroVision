@@ -22,10 +22,10 @@ Widget _buildTestApp(
 }) {
   final repo = authRepo ?? FakeAuthRepository(startSignedIn: false);
   final router = GoRouter(routes: [
-    GoRoute(path: '/', builder: (_, __) => child),
-    GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
-    GoRoute(path: '/register', builder: (_, __) => const RegisterAccountScreen()),
-    GoRoute(path: '/home', builder: (_, __) => const Scaffold(body: Text('Home'))),
+    GoRoute(path: '/', builder: (context, state) => child),
+    GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+    GoRoute(path: '/register', builder: (context, state) => const RegisterAccountScreen()),
+    GoRoute(path: '/home', builder: (context, state) => const Scaffold(body: Text('Home'))),
     GoRoute(
       path: '/register/farm',
       builder: (context, state) => RegisterFarmScreen(
@@ -146,7 +146,7 @@ void main() {
   // -------------------------------------------------------------------------
 
   group('RegisterFarmScreen', () {
-    const _sampleArgs = AccountRegistrationArgs(
+    const sampleArgs = AccountRegistrationArgs(
       fullName: 'Nimal Perera',
       email: 'nimal@test.lk',
       password: 'Password1!',
@@ -154,7 +154,7 @@ void main() {
 
     testWidgets('shows "Tell us about your farm" heading', (tester) async {
       await tester.pumpWidget(
-        _buildTestApp(RegisterFarmScreen(args: _sampleArgs)),
+        _buildTestApp(RegisterFarmScreen(args: sampleArgs)),
       );
       await tester.pumpAndSettle();
       expect(find.text('Tell us about your farm'), findsOneWidget);
@@ -163,7 +163,7 @@ void main() {
     testWidgets('shows Farm Location, Soil Type, Total Cultivated Area sections',
         (tester) async {
       await tester.pumpWidget(
-        _buildTestApp(RegisterFarmScreen(args: _sampleArgs)),
+        _buildTestApp(RegisterFarmScreen(args: sampleArgs)),
       );
       await tester.pumpAndSettle();
       expect(find.text('Farm Location'), findsOneWidget);
@@ -173,7 +173,7 @@ void main() {
 
     testWidgets('shows crop selection grid with all 4 crops', (tester) async {
       await tester.pumpWidget(
-        _buildTestApp(RegisterFarmScreen(args: _sampleArgs)),
+        _buildTestApp(RegisterFarmScreen(args: sampleArgs)),
       );
       await tester.pumpAndSettle();
       expect(find.text('Tomato'), findsOneWidget);
@@ -184,7 +184,7 @@ void main() {
 
     testWidgets('shows "Finish Setup" button', (tester) async {
       await tester.pumpWidget(
-        _buildTestApp(RegisterFarmScreen(args: _sampleArgs)),
+        _buildTestApp(RegisterFarmScreen(args: sampleArgs)),
       );
       await tester.pumpAndSettle();
       expect(find.text('Finish Setup'), findsOneWidget);

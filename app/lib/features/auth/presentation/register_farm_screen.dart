@@ -1,43 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../data/providers.dart';
-import '../domain/app_user.dart';
 import 'register_account_screen.dart';
 import 'validators.dart';
 
-// Sri Lankan districts list
+// ── Static data ────────────────────────────────────────────────────────────
+
 const _kDistricts = [
-  'Colombo',
-  'Gampaha',
-  'Kalutara',
-  'Kandy',
-  'Matale',
-  'Nuwara Eliya',
-  'Galle',
-  'Hambantota',
-  'Matara',
-  'Jaffna',
-  'Kilinochchi',
-  'Mannar',
-  'Mullaitivu',
-  'Vavuniya',
-  'Batticaloa',
-  'Ampara',
-  'Trincomalee',
-  'Kurunegala',
-  'Puttalam',
-  'Anuradhapura',
-  'Polonnaruwa',
-  'Badulla',
-  'Monaragala',
-  'Ratnapura',
-  'Kegalle',
+  'Colombo', 'Gampaha', 'Kalutara', 'Kandy', 'Matale', 'Nuwara Eliya',
+  'Galle', 'Hambantota', 'Matara', 'Jaffna', 'Kilinochchi', 'Mannar',
+  'Mullaitivu', 'Vavuniya', 'Batticaloa', 'Ampara', 'Trincomalee',
+  'Kurunegala', 'Puttalam', 'Anuradhapura', 'Polonnaruwa', 'Badulla',
+  'Monaragala', 'Ratnapura', 'Kegalle',
 ];
 
 const _kSoilTypes = ['Clay', 'Loam', 'Sandy', 'Silt'];
@@ -53,18 +34,23 @@ const _kCropSinhala = {
 
 /// Registration Step 2 — farm details.
 ///
-/// Collects GPS/district, soil type, cultivated area, and crops grown.
-/// Calls [AuthRepository.register] then [AuthRepository.saveProfile] on submit.
+/// Receives [AccountRegistrationArgs] from GoRouter's `extra`.
+/// Collects GPS/district, soil type, land area, and crops grown.
+/// Calls [AuthRepository.register] then [AuthRepository.saveProfile].
 class RegisterFarmScreen extends ConsumerStatefulWidget {
-  const RegisterFarmScreen({super.key});
+  const RegisterFarmScreen({super.key, this.args});
+
+  /// Passed via GoRouter `extra`; null only during isolated widget tests.
+  final AccountRegistrationArgs? args;
 
   @override
-  ConsumerState<RegisterFarmScreen> createState() => _RegisterFarmScreenState();
+  ConsumerState<RegisterFarmScreen> createState() =>
+      _RegisterFarmScreenState();
 }
 
 class _RegisterFarmScreenState extends ConsumerState<RegisterFarmScreen> {
+  final _areaFormKey = GlobalKey<FormState>();
   final _areaCtrl = TextEditingController(text: '2.5');
-  final _formKey = GlobalKey<FormState>();
 
   String? _selectedDistrict = 'Kurunegala';
   String _selectedSoil = 'Loam';
@@ -76,38 +62,22 @@ class _RegisterFarmScreenState extends ConsumerState<RegisterFarmScreen> {
   double? _lat;
   double? _lng;
 
-  AccountRegistrationArgs? _args;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final raw = ModalRoute.of(context)?.settings.arguments;
-    if (raw is AccountRegistrationArgs) {
-      _args = raw;
-    }
-  }
-
   @override
   void dispose() {
     _areaCtrl.dispose();
     super.dispose();
   }
 
+  /// Simulate GPS fetch; real impl via LocationService (see NOTES).
   Future<void> _useCurrentLocation() async {
     setState(() {
       _locationLoading = true;
       _locationError = null;
     });
-
-    // Simulate GPS permission check / fetch with fake data.
-    // Real implementation will call LocationService (core/services/location_service.dart)
-    // once SDL wires the provider — noted in NOTES.
-    await Future<void>.delayed(const Duration(milliseconds: 800));
-
+    await Future<void>.delayed(const Duration(milliseconds: 900));
     if (mounted) {
       setState(() {
         _locationLoading = false;
-        // Simulate success with Kurunegala coords
         _lat = 7.4863;
         _lng = 80.3623;
         _selectedDistrict = 'Kurunegala';
@@ -115,13 +85,13 @@ class _RegisterFarmScreenState extends ConsumerState<RegisterFarmScreen> {
     }
   }
 
-  double get _landSizeInAcres {
+  double get _landSizeAcres {
     final v = double.tryParse(_areaCtrl.text) ?? 0;
     return _inAcres ? v : v * 2.47105;
   }
 
   Future<void> _finishSetup() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_areaFormKey.currentState!.validate()) return;
     if (_selectedCrops.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Select at least one crop.')),
@@ -133,7 +103,7 @@ class _RegisterFarmScreenState extends ConsumerState<RegisterFarmScreen> {
 
     try {
       final authRepo = ref.read(authRepositoryProvider);
-      final args = _args;
+      final args = widget.args;
       final region = _selectedDistrict ?? 'Sri Lanka';
 
       if (args != null) {
@@ -143,23 +113,16 @@ class _RegisterFarmScreenState extends ConsumerState<RegisterFarmScreen> {
           fullName: args.fullName,
           region: region,
           soilType: _selectedSoil,
-          landSize: _landSizeInAcres,
+          landSize: _landSizeAcres,
           latitude: _lat,
           longitude: _lng,
         );
-        // Save with selected crops embedded in region label
-        final updated = user.copyWith(
-          region: '$region · ${_selectedCrops.join(", ")}',
+        await authRepo.saveProfile(
+          user.copyWith(region: '$region · ${_selectedCrops.join(', ')}'),
         );
-        await authRepo.saveProfile(updated);
       }
 
-      if (mounted) {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          '/home',
-          (route) => false,
-        );
-      }
+      if (mounted) context.go('/home');
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -178,7 +141,7 @@ class _RegisterFarmScreenState extends ConsumerState<RegisterFarmScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // ── App bar row ────────────────────────────────────────────────
+            // ── Top bar ──────────────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.xs,
@@ -190,7 +153,8 @@ class _RegisterFarmScreenState extends ConsumerState<RegisterFarmScreen> {
                     label: 'Go back',
                     child: IconButton(
                       icon: const Icon(Icons.arrow_back_rounded),
-                      onPressed: () => Navigator.of(context).maybePop(),
+                      onPressed: () =>
+                          context.canPop() ? context.pop() : null,
                     ),
                   ),
                   Expanded(
@@ -210,52 +174,25 @@ class _RegisterFarmScreenState extends ConsumerState<RegisterFarmScreen> {
                       ],
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.sm,
-                      vertical: AppSpacing.xxs,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryGreen.withValues(alpha: 0.12),
-                      borderRadius: AppRadius.borderFull,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.cloud_done_outlined,
-                          size: 14,
-                          color: AppColors.primaryGreen,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Offline Ready',
-                          style: AppTextStyles.labelSmall.copyWith(
-                            color: AppColors.primaryGreen,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  _OfflineReadyBadge(),
                 ],
               ),
             ),
-            // Step bar
+            // Step bar — 100 %
             LinearProgressIndicator(
               value: 1.0,
               minHeight: 4,
               backgroundColor: AppColors.divider,
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                AppColors.primaryGreen,
-              ),
+              valueColor:
+                  const AlwaysStoppedAnimation<Color>(AppColors.primaryGreen),
             ),
-            // ── Scrollable content ─────────────────────────────────────────
+            // ── Scrollable content ───────────────────────────────────────
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                 child: Form(
-                  key: _formKey,
+                  key: _areaFormKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -274,20 +211,18 @@ class _RegisterFarmScreenState extends ConsumerState<RegisterFarmScreen> {
                       ),
                       const SizedBox(height: AppSpacing.lg),
 
-                      // ── Farm Location card ─────────────────────────────
+                      // ── Farm Location ──────────────────────────────────
                       _SectionCard(
                         title: 'Farm Location',
                         icon: Icons.my_location_rounded,
-                        badge: _selectedDistrict != null
-                            ? 'Zone DL1'
-                            : null,
+                        badge: _selectedDistrict != null ? 'Zone DL1' : null,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            // GPS button
                             OutlinedButton.icon(
-                              onPressed:
-                                  _locationLoading ? null : _useCurrentLocation,
+                              onPressed: _locationLoading
+                                  ? null
+                                  : _useCurrentLocation,
                               icon: _locationLoading
                                   ? const SizedBox(
                                       width: 16,
@@ -312,99 +247,94 @@ class _RegisterFarmScreenState extends ConsumerState<RegisterFarmScreen> {
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: AppColors.primaryGreen,
                                 side: const BorderSide(
-                                  color: AppColors.primaryGreen,
-                                ),
+                                    color: AppColors.primaryGreen),
                                 shape: const RoundedRectangleBorder(
-                                  borderRadius: AppRadius.borderMd,
-                                ),
+                                    borderRadius: AppRadius.borderMd),
                                 padding: const EdgeInsets.symmetric(
-                                  vertical: AppSpacing.mdSm,
-                                ),
+                                    vertical: AppSpacing.mdSm),
                               ),
                             ),
                             if (_locationError != null) ...[
                               const SizedBox(height: AppSpacing.xs),
                               Text(
                                 _locationError!,
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.danger,
-                                ),
+                                style: AppTextStyles.bodySmall
+                                    .copyWith(color: AppColors.danger),
                               ),
                             ],
                             const SizedBox(height: AppSpacing.md),
-                            // District dropdown
                             Text(
                               'District & Agro-Ecological Region',
                               style: AppTextStyles.labelMedium,
                             ),
                             const SizedBox(height: AppSpacing.xs),
                             DropdownButtonFormField<String>(
-                              value: _selectedDistrict,
+                              initialValue: _selectedDistrict,
                               isExpanded: true,
                               decoration: InputDecoration(
-                                prefixIcon: const Icon(
-                                  Icons.location_on_outlined,
-                                ),
+                                prefixIcon:
+                                    const Icon(Icons.location_on_outlined),
                                 contentPadding: const EdgeInsets.symmetric(
                                   horizontal: AppSpacing.md,
                                   vertical: AppSpacing.mdSm,
                                 ),
                                 border: OutlineInputBorder(
                                   borderRadius: AppRadius.borderMd,
-                                  borderSide:
-                                      const BorderSide(color: AppColors.divider),
+                                  borderSide: const BorderSide(
+                                      color: AppColors.divider),
                                 ),
                               ),
                               items: _kDistricts
                                   .map(
                                     (d) => DropdownMenuItem(
                                       value: d,
-                                      child: Text(d, style: AppTextStyles.bodyMedium),
+                                      child: Text(d,
+                                          style: AppTextStyles.bodyMedium),
                                     ),
                                   )
                                   .toList(),
                               onChanged: (v) =>
                                   setState(() => _selectedDistrict = v),
-                              validator: (v) => v == null
-                                  ? 'Select your district'
-                                  : null,
+                              validator: (v) =>
+                                  v == null ? 'Select your district' : null,
                             ),
                           ],
                         ),
                       ),
                       const SizedBox(height: AppSpacing.md),
 
-                      // ── Soil Type card ─────────────────────────────────
+                      // ── Soil Type ──────────────────────────────────────
                       _SectionCard(
                         title: 'Soil Type',
                         icon: Icons.landscape_outlined,
                         badge: 'Tap to pick',
                         child: _SoilChips(
                           selected: _selectedSoil,
-                          onChanged: (v) => setState(() => _selectedSoil = v),
+                          onChanged: (v) =>
+                              setState(() => _selectedSoil = v),
                         ),
                       ),
                       const SizedBox(height: AppSpacing.md),
 
-                      // ── Total Cultivated Area card ──────────────────────
+                      // ── Total Cultivated Area ──────────────────────────
                       _SectionCard(
                         title: 'Total Cultivated Area',
                         icon: Icons.straighten_outlined,
                         child: _AreaInput(
                           controller: _areaCtrl,
                           inAcres: _inAcres,
-                          onUnitToggle: (v) => setState(() => _inAcres = v),
+                          onUnitToggle: (v) =>
+                              setState(() => _inAcres = v),
                         ),
                       ),
                       const SizedBox(height: AppSpacing.md),
 
-                      // ── Crops You Grow card ────────────────────────────
+                      // ── Crops You Grow ─────────────────────────────────
                       _SectionCard(
                         title: 'Crops You Grow',
                         icon: Icons.eco_outlined,
                         badge: '${_selectedCrops.length} Selected',
-                        subtitle:
-                            'AgroVision AI\nNightshade models',
+                        subtitle: 'AgroVision AI\nNightshade models',
                         child: _CropGrid(
                           selected: _selectedCrops,
                           onToggle: (crop) {
@@ -443,13 +373,11 @@ class _RegisterFarmScreenState extends ConsumerState<RegisterFarmScreen> {
                             backgroundColor: AppColors.primaryGreen,
                             foregroundColor: AppColors.textOnPrimary,
                             shape: const RoundedRectangleBorder(
-                              borderRadius: AppRadius.borderMd,
-                            ),
+                                borderRadius: AppRadius.borderMd),
                           ),
                         ),
                       ),
                       const SizedBox(height: AppSpacing.md),
-                      // Offline note
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -459,9 +387,12 @@ class _RegisterFarmScreenState extends ConsumerState<RegisterFarmScreen> {
                             color: AppColors.textTertiary,
                           ),
                           const SizedBox(width: 4),
-                          Text(
-                            'Farm metadata cached on-device for instant offline diagnostics',
-                            style: AppTextStyles.labelSmall,
+                          Flexible(
+                            child: Text(
+                              'Farm metadata cached on-device for instant offline diagnostics',
+                              style: AppTextStyles.labelSmall,
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ],
                       ),
@@ -478,7 +409,44 @@ class _RegisterFarmScreenState extends ConsumerState<RegisterFarmScreen> {
   }
 }
 
-// ── Reusable section card ──────────────────────────────────────────────────
+// ── Offline ready badge ────────────────────────────────────────────────────
+
+class _OfflineReadyBadge extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xxs,
+      ),
+      margin: const EdgeInsets.only(right: AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: AppColors.primaryGreen.withValues(alpha: 0.12),
+        borderRadius: AppRadius.borderFull,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.cloud_done_outlined,
+            size: 14,
+            color: AppColors.primaryGreen,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            'Offline Ready',
+            style: AppTextStyles.labelSmall.copyWith(
+              color: AppColors.primaryGreen,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Section card ───────────────────────────────────────────────────────────
 
 class _SectionCard extends StatelessWidget {
   const _SectionCard({
@@ -508,6 +476,7 @@ class _SectionCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Icon(icon, size: 20, color: AppColors.primaryGreen),
               const SizedBox(width: AppSpacing.sm),
@@ -517,10 +486,7 @@ class _SectionCard extends StatelessWidget {
                   children: [
                     Text(title, style: AppTextStyles.titleSmall),
                     if (subtitle != null)
-                      Text(
-                        subtitle!,
-                        style: AppTextStyles.labelSmall,
-                      ),
+                      Text(subtitle!, style: AppTextStyles.labelSmall),
                   ],
                 ),
               ),
@@ -552,7 +518,7 @@ class _SectionCard extends StatelessWidget {
   }
 }
 
-// ── Soil type chip selector ────────────────────────────────────────────────
+// ── Soil chips ─────────────────────────────────────────────────────────────
 
 class _SoilChips extends StatelessWidget {
   const _SoilChips({required this.selected, required this.onChanged});
@@ -591,13 +557,14 @@ class _SoilChips extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (isSelected)
+                if (isSelected) ...[
                   const Icon(
                     Icons.check_rounded,
                     size: 16,
                     color: AppColors.textOnPrimary,
                   ),
-                if (isSelected) const SizedBox(width: 4),
+                  const SizedBox(width: 4),
+                ],
                 Text(
                   soil,
                   style: AppTextStyles.labelLarge.copyWith(
@@ -631,13 +598,14 @@ class _AreaInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Number field
         SizedBox(
           width: 90,
           child: TextFormField(
             controller: controller,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            keyboardType:
+                const TextInputType.numberWithOptions(decimal: true),
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
             ],
@@ -652,7 +620,8 @@ class _AreaInput extends StatelessWidget {
               ),
               border: OutlineInputBorder(
                 borderRadius: AppRadius.borderMd,
-                borderSide: const BorderSide(color: AppColors.divider),
+                borderSide:
+                    const BorderSide(color: AppColors.divider),
               ),
             ),
           ),
@@ -669,12 +638,12 @@ class _AreaInput extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _UnitButton(
+              _UnitBtn(
                 label: 'Acres',
                 selected: inAcres,
                 onTap: () => onUnitToggle(true),
               ),
-              _UnitButton(
+              _UnitBtn(
                 label: 'Hectares',
                 selected: !inAcres,
                 onTap: () => onUnitToggle(false),
@@ -687,8 +656,8 @@ class _AreaInput extends StatelessWidget {
   }
 }
 
-class _UnitButton extends StatelessWidget {
-  const _UnitButton({
+class _UnitBtn extends StatelessWidget {
+  const _UnitBtn({
     required this.label,
     required this.selected,
     required this.onTap,
@@ -715,7 +684,9 @@ class _UnitButton extends StatelessWidget {
         child: Text(
           label,
           style: AppTextStyles.labelLarge.copyWith(
-            color: selected ? AppColors.textOnPrimary : AppColors.textSecondary,
+            color: selected
+                ? AppColors.textOnPrimary
+                : AppColors.textSecondary,
           ),
         ),
       ),
@@ -790,7 +761,8 @@ class _CropGrid extends StatelessWidget {
                         sinhala,
                         style: AppTextStyles.labelSmall.copyWith(
                           color: isSelected
-                              ? AppColors.textOnPrimary.withValues(alpha: 0.75)
+                              ? AppColors.textOnPrimary
+                                  .withValues(alpha: 0.75)
                               : AppColors.textTertiary,
                         ),
                       ),

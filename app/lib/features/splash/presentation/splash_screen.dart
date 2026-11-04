@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -9,9 +10,9 @@ import '../../auth/data/providers.dart';
 
 /// Splash screen shown at app launch.
 ///
-/// Displays the AgroVision logo, wordmark, and tagline with a thin progress
-/// bar. After a short minimum display duration it reads [authStateProvider]
-/// and navigates to /home (signed in) or /login (signed out).
+/// Displays the AgroVision logo, wordmark, and tagline with a thin animated
+/// progress bar. After 2.2 s it checks [authStateProvider] and routes to
+/// /home (signed in) or /login (signed out).
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
@@ -31,7 +32,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       duration: const Duration(seconds: 2),
     )..forward();
 
-    // Navigate after minimum display time + auth check
     Future.delayed(const Duration(milliseconds: 2200), _navigate);
   }
 
@@ -39,22 +39,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     if (!mounted) return;
     final authState = ref.read(authStateProvider);
     final hasUser = authState.valueOrNull != null;
-    // Navigate using Navigator since go_router is not yet wired globally.
-    // When app_router.dart is wired, this will be: context.go('/home') etc.
     if (hasUser) {
-      _pushNamed('/home');
+      context.go('/home');
     } else {
-      _pushNamed('/login');
+      context.go('/login');
     }
-  }
-
-  void _pushNamed(String route) {
-    if (!mounted) return;
-    // Graceful fallback: try named routes, else replace with a placeholder
-    Navigator.of(context).pushReplacementNamed(
-      route,
-      // If route is unknown, we just stay on splash (caught by router later)
-    );
   }
 
   @override
@@ -74,7 +63,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Spacer(flex: 3),
-              // ── Logo mark ──────────────────────────────────────────────────
+              // ── Logo mark ───────────────────────────────────────────────
               Container(
                 width: 88,
                 height: 88,
@@ -97,7 +86,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              // ── Wordmark ───────────────────────────────────────────────────
+              // ── Wordmark ────────────────────────────────────────────────
               Text(
                 'AgroVision',
                 style: AppTextStyles.displayMedium.copyWith(
@@ -105,7 +94,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 ),
               ),
               const SizedBox(height: AppSpacing.xs),
-              // ── Tagline ────────────────────────────────────────────────────
+              // ── Tagline ─────────────────────────────────────────────────
               Text(
                 'Smart Crop Care for Sri Lankan Farmers',
                 style: AppTextStyles.bodyMedium.copyWith(
@@ -114,7 +103,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 textAlign: TextAlign.center,
               ),
               const Spacer(flex: 3),
-              // ── Thin progress bar ──────────────────────────────────────────
+              // ── Thin progress bar ────────────────────────────────────────
               AnimatedBuilder(
                 animation: _progressCtrl,
                 builder: (context, _) {
@@ -134,9 +123,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               const SizedBox(height: AppSpacing.lg),
               Text(
                 'SRI LANKA · SE205.3',
-                style: AppTextStyles.labelSmall.copyWith(
-                  letterSpacing: 1.5,
-                ),
+                style: AppTextStyles.labelSmall.copyWith(letterSpacing: 1.5),
               ),
               const SizedBox(height: AppSpacing.xl),
             ],

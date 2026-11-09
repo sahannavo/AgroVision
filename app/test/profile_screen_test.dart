@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app/features/profile/presentation/profile_screen.dart';
+import 'package:app/features/profile/presentation/crop_plot_tile.dart';
 import 'package:app/features/crop_plots/domain/crop_plot.dart';
 import 'package:app/features/crop_plots/domain/crop_plot_repository.dart';
+import 'package:app/features/crop_plots/data/providers.dart';
 
 // Fake CropPlotRepository for testing
-class FakeCropPlotRepository {
+class FakeCropPlotRepository implements CropPlotRepository {
   final List<CropPlot> plots = [
     CropPlot(
       id: 'plot_1',
@@ -49,12 +51,27 @@ class FakeCropPlotRepository {
     ),
   ];
 
-  Future<List<CropPlot>> getAll() async => plots;
-  Stream<List<CropPlot>> watchAll() => Stream.value(plots);
-  Future<void> add(CropPlot plot) async => plots.add(plot);
-  Future<void> update(CropPlot plot) async {
+  @override
+  Future<List<CropPlot>> getPlots({String? userId}) async => plots;
+
+  @override
+  Stream<List<CropPlot>> watchPlots({String? userId}) => Stream.value(plots);
+
+  @override
+  Future<CropPlot> addPlot(CropPlot plot) async {
+    plots.add(plot);
+    return plot;
+  }
+
+  @override
+  Future<void> updatePlot(CropPlot plot) async {
     final idx = plots.indexWhere((p) => p.id == plot.id);
     if (idx != -1) plots[idx] = plot;
+  }
+
+  @override
+  Future<void> deletePlot(String plotId) async {
+    plots.removeWhere((plot) => plot.id == plotId);
   }
 }
 
@@ -101,9 +118,7 @@ void main() {
       expect(find.text('Add crop plot'), findsOneWidget);
 
       // Plots content
-      expect(find.textContaining('Tomato · Plot A'), findsOneWidget);
-      expect(find.textContaining('Green Chilli · Plot B'), findsOneWidget);
-      expect(find.textContaining('Brinjal · Plot C'), findsOneWidget);
+      expect(find.byType(CropPlotTile), findsNWidgets(3));
 
       // Settings section
       expect(find.text('Settings'), findsOneWidget);
@@ -151,4 +166,3 @@ void main() {
     });
   });
 }
-

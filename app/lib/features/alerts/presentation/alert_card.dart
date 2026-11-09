@@ -51,7 +51,7 @@ class _AlertCardState extends State<AlertCard> {
             borderRadius: AppRadius.lgAll,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -99,10 +99,10 @@ class _AlertCardState extends State<AlertCard> {
     final label = _expanded
         ? 'Preventive Steps (Action Required)'
         : _alert.vectorInfo != null
-            ? 'Vector control steps (${_alert.preventiveSteps.length} actions)'
-            : _alert.severity == AlertSeverity.high
-                ? 'Preventive Steps (Action Required)'
-                : 'Preventive steps (${_alert.preventiveSteps.length} actions available)';
+        ? 'Vector control steps (${_alert.preventiveSteps.length} actions)'
+        : _alert.severity == AlertSeverity.high
+        ? 'Preventive Steps (Action Required)'
+        : 'Preventive steps (${_alert.preventiveSteps.length} actions available)';
 
     return InkWell(
       onTap: () => setState(() => _expanded = !_expanded),
@@ -111,8 +111,11 @@ class _AlertCardState extends State<AlertCard> {
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
         child: Row(
           children: [
-            const Icon(Icons.verified_outlined,
-                size: 16, color: AppColors.primary),
+            const Icon(
+              Icons.verified_outlined,
+              size: 16,
+              color: AppColors.primary,
+            ),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Text(
@@ -125,9 +128,7 @@ class _AlertCardState extends State<AlertCard> {
               ),
             ),
             Icon(
-              _expanded
-                  ? Icons.keyboard_arrow_up
-                  : Icons.keyboard_arrow_down,
+              _expanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
               size: 20,
               color: AppColors.textSecondary,
             ),
@@ -176,41 +177,44 @@ class _AlertHeader extends StatelessWidget {
             width: 8,
             height: 8,
             decoration: BoxDecoration(
-              color: alert.isRead
-                  ? alert.severity.color
-                  : AppColors.unreadDot,
+              color: alert.isRead ? alert.severity.color : AppColors.unreadDot,
               shape: BoxShape.circle,
             ),
           ),
         ),
         Expanded(
           child: RichText(
-            text: TextSpan(children: [
-              TextSpan(
-                text: alert.diseaseName,
-                style: AppTextStyles.titleLarge
-                    .copyWith(fontWeight: FontWeight.w700),
-              ),
-              TextSpan(
-                text: ' · ${alert.cropName}',
-                style: AppTextStyles.bodyMedium
-                    .copyWith(color: AppColors.textSecondary),
-              ),
-            ]),
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: alert.diseaseName,
+                  style: AppTextStyles.titleLarge.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                TextSpan(
+                  text: ' · ${alert.cropName}',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         const SizedBox(width: AppSpacing.sm),
         Container(
           padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+            horizontal: AppSpacing.sm,
+            vertical: AppSpacing.xs,
+          ),
           decoration: BoxDecoration(
             color: alert.severity.chipBg,
             borderRadius: AppRadius.smAll,
           ),
           child: Text(
             alert.severity.label,
-            style:
-                AppTextStyles.chip.copyWith(color: alert.severity.color),
+            style: AppTextStyles.chip.copyWith(color: alert.severity.color),
           ),
         ),
       ],
@@ -247,12 +251,18 @@ class _AlertMeta extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.location_on_outlined,
-                size: 14, color: alert.severity.color),
+            Icon(
+              Icons.location_on_outlined,
+              size: 14,
+              color: alert.severity.color,
+            ),
             const SizedBox(width: 2),
-            Text(parts.join(' · '),
-                style: AppTextStyles.labelSmall
-                    .copyWith(color: AppColors.textSecondary)),
+            Text(
+              parts.join(' · '),
+              style: AppTextStyles.labelSmall.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
           ],
         ),
         const Text('·', style: AppTextStyles.labelSmall),
@@ -262,8 +272,7 @@ class _AlertMeta extends StatelessWidget {
                 '${alert.reportCount} ${alert.reportCount == 1 ? 'report' : 'farm reports'} in ${alert.reportWindowDays}d',
           ),
         if (alert.reportCount == 0)
-          Text('${alert.reportCount} reports',
-              style: AppTextStyles.labelSmall),
+          Text('${alert.reportCount} reports', style: AppTextStyles.labelSmall),
         const Text('·', style: AppTextStyles.labelSmall),
         Text(_timeAgo, style: AppTextStyles.labelSmall),
       ],
@@ -279,13 +288,17 @@ class _ReportChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm, vertical: 2),
+        horizontal: AppSpacing.sm,
+        vertical: 2,
+      ),
       decoration: BoxDecoration(
         color: AppColors.successLight,
         borderRadius: AppRadius.smAll,
       ),
-      child: Text(text,
-          style: AppTextStyles.chip.copyWith(color: AppColors.primary)),
+      child: Text(
+        text,
+        style: AppTextStyles.chip.copyWith(color: AppColors.primary),
+      ),
     );
   }
 }

@@ -14,11 +14,12 @@ class HomeCropProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = switch (plot.growthStage) {
-      GrowthStage.seedling => 0.2,
-      GrowthStage.vegetative => 0.4,
-      GrowthStage.flowering => 0.65,
-      GrowthStage.fruiting => 0.85,
+    final progress = switch (plot.growthStage.toLowerCase()) {
+      'seedling stage' || 'seedling' => 0.2,
+      'vegetative stage' || 'vegetative' => 0.4,
+      'flowering stage' || 'flowering' => 0.65,
+      'fruiting stage' || 'fruiting' => 0.85,
+      _ => 0.0,
     };
     final needsAttention = plot.cropType == 'Chilli';
     return SizedBox(
@@ -69,7 +70,7 @@ class HomeCropProgressCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             Text(
-              'Stage: ${plot.growthStage.displayName.replaceAll(' Stage', '')} (Day ${plot.ageInDays})',
+              'Stage: ${plot.growthStage.replaceAll(' Stage', '')} (Day ${plot.ageInDays})',
               style: AppTextStyles.bodySmall,
               overflow: TextOverflow.ellipsis,
             ),

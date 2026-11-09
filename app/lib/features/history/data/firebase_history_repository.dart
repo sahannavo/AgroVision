@@ -15,19 +15,17 @@ import '../domain/history_stats.dart';
 /// and manages farmer decision logs under Firestore `decisionLogs` collection.
 class FirebaseHistoryRepository implements HistoryRepository {
   final DiagnosisRepository _diagnosisRepository;
-  final FirebaseFirestore? _firestore;
+  final FirebaseFirestore? firestore;
   final String? Function()? _currentUserIdProvider;
 
   FirebaseHistoryRepository({
-    required DiagnosisRepository diagnosisRepository,
-    FirebaseFirestore? firestore,
-    String? Function()? currentUserIdProvider,
-  })  : _diagnosisRepository = diagnosisRepository,
-        _firestore = firestore,
-        _currentUserIdProvider = currentUserIdProvider;
+    required this._diagnosisRepository,
+    this.firestore,
+    this._currentUserIdProvider,
+  });
 
   FirebaseFirestore get _firestoreInstance =>
-      _firestore ?? FirebaseFirestore.instance;
+      firestore ?? FirebaseFirestore.instance;
 
   CollectionReference<Map<String, dynamic>> get _decisionLogsRef =>
       _firestoreInstance.collection('decisionLogs');
@@ -232,4 +230,3 @@ class FirebaseHistoryRepository implements HistoryRepository {
     };
   }
 }
-

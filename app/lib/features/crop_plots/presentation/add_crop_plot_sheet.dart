@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../domain/crop_plot.dart';
-import '../domain/crop_plot_repository.dart';
+import '../data/providers.dart';
 
 /// Shows the modal bottom sheet for creating or editing a [CropPlot].
 Future<void> showAddCropPlotSheet(BuildContext context, {CropPlot? plot}) {
@@ -36,8 +37,22 @@ class _AddCropPlotSheetState extends ConsumerState<AddCropPlotSheet> {
   bool _saving = false;
 
   static const _crops = ['Tomato', 'Potato', 'Chili', 'Eggplant'];
-  static const _stages = ['Seedling', 'Vegetative', 'Flowering', 'Fruiting', 'Harvesting', 'Nursery'];
-  static const _soils = ['Loam (Reddish Brown)', 'Sandy Loam', 'Clay Loam', 'Reddish Brown Earth', 'Noncalcic Brown', 'Alluvial'];
+  static const _stages = [
+    'Seedling',
+    'Vegetative',
+    'Flowering',
+    'Fruiting',
+    'Harvesting',
+    'Nursery',
+  ];
+  static const _soils = [
+    'Loam (Reddish Brown)',
+    'Sandy Loam',
+    'Clay Loam',
+    'Reddish Brown Earth',
+    'Noncalcic Brown',
+    'Alluvial',
+  ];
 
   @override
   void initState() {
@@ -47,7 +62,9 @@ class _AddCropPlotSheetState extends ConsumerState<AddCropPlotSheet> {
     _date = p?.plantedDate ?? DateTime.now();
     _stage = p?.growthStage ?? 'Seedling';
     _soil = p?.soilType ?? 'Loam (Reddish Brown)';
-    _areaCtrl = TextEditingController(text: p != null ? p.area.toString() : '0.5');
+    _areaCtrl = TextEditingController(
+      text: p != null ? p.area.toString() : '0.5',
+    );
   }
 
   @override
@@ -64,7 +81,12 @@ class _AddCropPlotSheetState extends ConsumerState<AddCropPlotSheet> {
       firstDate: DateTime(2020),
       lastDate: now,
     );
-    if (picked != null) setState(() { _date = picked; _dateErr = null; });
+    if (picked != null) {
+      setState(() {
+        _date = picked;
+        _dateErr = null;
+      });
+    }
   }
 
   Future<void> _save() async {
@@ -93,12 +115,12 @@ class _AddCropPlotSheetState extends ConsumerState<AddCropPlotSheet> {
 
     try {
       final dynamic repo = ref.read(cropPlotRepositoryProvider);
-      widget.plot == null ? await repo.add(plotData) : await repo.update(plotData);
-    } catch (_) {
-      try {
-        final dynamic notifier = (ref as dynamic).read(cropPlotRepositoryProvider.notifier);
-        widget.plot == null ? await notifier.add(plotData) : await notifier.update(plotData);
-      } catch (_) {}
+      widget.plot == null
+          ? await repo.addPlot(plotData)
+          : await repo.updatePlot(plotData);
+    } catch (error, stackTrace) {
+      debugPrint('Failed to save crop plot: $error\n$stackTrace');
+      rethrow;
     } finally {
       if (mounted) {
         setState(() => _saving = false);
@@ -111,7 +133,9 @@ class _AddCropPlotSheetState extends ConsumerState<AddCropPlotSheet> {
   Widget build(BuildContext context) {
     final isEdit = widget.plot != null;
     return Container(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       decoration: const BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
@@ -119,7 +143,10 @@ class _AddCropPlotSheetState extends ConsumerState<AddCropPlotSheet> {
       child: SafeArea(
         top: false,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md + 4, vertical: AppSpacing.md),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md + 4,
+            vertical: AppSpacing.md,
+          ),
           child: Form(
             key: _formKey,
             child: Column(
@@ -128,62 +155,128 @@ class _AddCropPlotSheetState extends ConsumerState<AddCropPlotSheet> {
               children: [
                 Center(
                   child: Container(
-                    width: 44, height: 4,
-                    decoration: BoxDecoration(color: AppColors.outline.withOpacity(0.7), borderRadius: BorderRadius.circular(AppRadius.full)),
+                    width: 44,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: AppColors.outline.withValues(alpha: 0.7),
+                      borderRadius: BorderRadius.circular(AppRadius.full),
+                    ),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(isEdit ? 'Edit crop plot' : 'Add crop plot', style: AppTextStyles.titleLarge.copyWith(fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                        Text(
+                          isEdit ? 'Edit crop plot' : 'Add crop plot',
+                          style: AppTextStyles.titleLarge.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
                         const SizedBox(height: 2),
-                        Text('Maha Season 2024 · Kurunegala', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
-                      ],
+                        Text(
+                          'Maha Season 2024 · Kurunegala',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                        ],
+                      ),
                     ),
                     Semantics(
-                      button: true, label: 'Close',
+                      button: true,
+                      label: 'Close',
                       child: InkWell(
                         onTap: () => Navigator.of(context).pop(),
                         borderRadius: BorderRadius.circular(AppRadius.full),
                         child: Container(
-                          width: 36, height: 36,
-                          decoration: BoxDecoration(color: AppColors.outline.withOpacity(0.2), shape: BoxShape.circle),
-                          child: const Icon(Icons.close, size: 18, color: AppColors.textSecondary),
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: AppColors.outline.withValues(alpha: 0.2),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.close,
+                            size: 18,
+                            color: AppColors.textSecondary,
+                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.md),
-                Text('Crop type', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700)),
+                Text(
+                  'Crop type',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 const SizedBox(height: AppSpacing.sm),
                 Wrap(
-                  spacing: AppSpacing.sm, runSpacing: AppSpacing.xs,
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.xs,
                   children: _crops.map((c) {
                     final sel = _crop.toLowerCase() == c.toLowerCase();
                     return InkWell(
                       onTap: () => setState(() => _crop = c),
                       borderRadius: BorderRadius.circular(AppRadius.full),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md - 2, vertical: AppSpacing.sm),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md - 2,
+                          vertical: AppSpacing.sm,
+                        ),
                         decoration: BoxDecoration(
-                          color: sel ? AppColors.primaryContainer.withOpacity(0.4) : AppColors.surface,
+                          color: sel
+                              ? AppColors.primaryContainer.withValues(alpha: 0.4)
+                              : AppColors.surface,
                           borderRadius: BorderRadius.circular(AppRadius.full),
-                          border: Border.all(color: sel ? AppColors.primary : AppColors.outline.withOpacity(0.8), width: sel ? 1.5 : 1.0),
+                          border: Border.all(
+                            color: sel
+                                ? AppColors.primary
+                                : AppColors.outline.withValues(alpha: 0.8),
+                            width: sel ? 1.5 : 1.0,
+                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             if (sel) ...[
-                              Container(width: 7, height: 7, decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle)),
+                              Container(
+                                width: 7,
+                                height: 7,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
                               const SizedBox(width: 6),
                             ],
-                            Text(c, style: AppTextStyles.bodyMedium.copyWith(color: sel ? AppColors.primary : AppColors.textPrimary, fontWeight: sel ? FontWeight.w700 : FontWeight.w500)),
-                            if (sel) ...[const SizedBox(width: 6), const Icon(Icons.check, size: 16, color: AppColors.primary)],
+                            Text(
+                              c,
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                color: sel
+                                    ? AppColors.primary
+                                    : AppColors.textPrimary,
+                                fontWeight: sel
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
+                              ),
+                            ),
+                            if (sel) ...[
+                              const SizedBox(width: 6),
+                              const Icon(
+                                Icons.check,
+                                size: 16,
+                                color: AppColors.primary,
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -191,31 +284,72 @@ class _AddCropPlotSheetState extends ConsumerState<AddCropPlotSheet> {
                   }).toList(),
                 ),
                 const SizedBox(height: AppSpacing.md),
-                Text('Planted date', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700)),
+                Text(
+                  'Planted date',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 const SizedBox(height: AppSpacing.xs),
                 InkWell(
                   onTap: _pickDate,
                   borderRadius: BorderRadius.circular(AppRadius.md),
                   child: Container(
-                    height: 52, padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                    height: 52,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                    ),
                     decoration: BoxDecoration(
-                      color: AppColors.surface, borderRadius: BorderRadius.circular(AppRadius.md),
-                      border: Border.all(color: _dateErr != null ? AppColors.error : AppColors.outline.withOpacity(0.8)),
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                      border: Border.all(
+                        color: _dateErr != null
+                            ? AppColors.error
+                            : AppColors.outline.withValues(alpha: 0.8),
+                      ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(_fmt(_date), style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500)),
-                        const Icon(Icons.calendar_today_outlined, size: 20, color: AppColors.primary),
+                        Text(
+                          _fmt(_date),
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const Icon(
+                          Icons.calendar_today_outlined,
+                          size: 20,
+                          color: AppColors.primary,
+                        ),
                       ],
                     ),
                   ),
                 ),
-                if (_dateErr != null) Padding(padding: const EdgeInsets.only(top: 4), child: Text(_dateErr!, style: AppTextStyles.bodySmall.copyWith(color: AppColors.error))),
+                if (_dateErr != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      _dateErr!,
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.error,
+                      ),
+                    ),
+                  ),
                 const SizedBox(height: AppSpacing.md),
-                Text('Growth stage', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700)),
+                Text(
+                  'Growth stage',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 const SizedBox(height: AppSpacing.xs),
-                _buildDropdown(_stage, _stages, (v) => setState(() => _stage = v!), isStage: true),
+                _buildDropdown(
+                  _stage,
+                  _stages,
+                  (v) => setState(() => _stage = v!),
+                  isStage: true,
+                ),
                 const SizedBox(height: AppSpacing.md),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,9 +359,18 @@ class _AddCropPlotSheetState extends ConsumerState<AddCropPlotSheet> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Soil type', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700)),
+                          Text(
+                            'Soil type',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                           const SizedBox(height: AppSpacing.xs),
-                          _buildDropdown(_soil, _soils, (v) => setState(() => _soil = v!)),
+                          _buildDropdown(
+                            _soil,
+                            _soils,
+                            (v) => setState(() => _soil = v!),
+                          ),
                         ],
                       ),
                     ),
@@ -237,25 +380,74 @@ class _AddCropPlotSheetState extends ConsumerState<AddCropPlotSheet> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Area', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700)),
+                          Text(
+                            'Area',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                           const SizedBox(height: AppSpacing.xs),
                           TextFormField(
                             controller: _areaCtrl,
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                            style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700),
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
                             decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 4),
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
-                              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.md), borderSide: BorderSide(color: AppColors.outline.withOpacity(0.8))),
-                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.md), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.md,
+                                vertical: AppSpacing.sm + 4,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.md,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.md,
+                                ),
+                                borderSide: BorderSide(
+                                  color: AppColors.outline.withValues(alpha: 0.8),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.md,
+                                ),
+                                borderSide: const BorderSide(
+                                  color: AppColors.primary,
+                                  width: 1.5,
+                                ),
+                              ),
                               suffixIcon: Container(
                                 margin: const EdgeInsets.all(AppSpacing.xs + 2),
-                                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
-                                decoration: BoxDecoration(color: AppColors.outline.withOpacity(0.25), borderRadius: BorderRadius.circular(AppRadius.xs)),
-                                child: Text('acres', style: AppTextStyles.labelSmall.copyWith(color: AppColors.textSecondary)),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.sm,
+                                  vertical: AppSpacing.xs,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.outline.withValues(alpha: 0.25),
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.xs,
+                                  ),
+                                ),
+                                child: Text(
+                                  'acres',
+                                  style: AppTextStyles.labelSmall.copyWith(
+                                    color: AppColors.textSecondary,
+                                  ),
+                                ),
                               ),
                             ),
-                            validator: (val) => (val == null || val.trim().isEmpty) ? 'Enter area' : ((double.tryParse(val.trim()) ?? 0) <= 0 ? '> 0 required' : null),
+                            validator: (val) =>
+                                (val == null || val.trim().isEmpty)
+                                ? 'Enter area'
+                                : ((double.tryParse(val.trim()) ?? 0) <= 0
+                                      ? '> 0 required'
+                                      : null),
                           ),
                         ],
                       ),
@@ -264,25 +456,56 @@ class _AddCropPlotSheetState extends ConsumerState<AddCropPlotSheet> {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 SizedBox(
-                  width: double.infinity, height: 52,
+                  width: double.infinity,
+                  height: 52,
                   child: ElevatedButton.icon(
                     onPressed: _saving ? null : _save,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary, foregroundColor: Colors.white, elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                      ),
                     ),
                     icon: _saving
-                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                        : Icon(isEdit ? Icons.check_circle_outline : Icons.add_circle_outline, size: 20),
-                    label: Text(isEdit ? 'Save changes' : 'Save plot', style: AppTextStyles.labelLarge.copyWith(fontWeight: FontWeight.w700, color: Colors.white)),
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Icon(
+                            isEdit
+                                ? Icons.check_circle_outline
+                                : Icons.add_circle_outline,
+                            size: 20,
+                          ),
+                    label: Text(
+                      isEdit ? 'Save changes' : 'Save plot',
+                      style: AppTextStyles.labelLarge.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Center(
                   child: TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    style: TextButton.styleFrom(foregroundColor: AppColors.textSecondary, minimumSize: const Size(120, 48)),
-                    child: Text('Cancel', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.textSecondary,
+                      minimumSize: const Size(120, 48),
+                    ),
+                    child: Text(
+                      'Cancel',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -293,35 +516,69 @@ class _AddCropPlotSheetState extends ConsumerState<AddCropPlotSheet> {
     );
   }
 
-  Widget _buildDropdown(String value, List<String> items, ValueChanged<String?> onChanged, {bool isStage = false}) {
+  Widget _buildDropdown(
+    String value,
+    List<String> items,
+    ValueChanged<String?> onChanged, {
+    bool isStage = false,
+  }) {
     return Container(
       height: 52,
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm + 2),
       decoration: BoxDecoration(
-        color: AppColors.surface, borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.outline.withOpacity(0.8)),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        border: Border.all(color: AppColors.outline.withValues(alpha: 0.8)),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
-          value: value, isExpanded: true,
-          icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.textSecondary),
-          items: items.map((item) => DropdownMenuItem(
-            value: item,
-            child: isStage
-                ? Container(
-                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 4),
-                    decoration: BoxDecoration(color: AppColors.primaryContainer.withOpacity(0.4), borderRadius: BorderRadius.circular(AppRadius.full)),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.spa_outlined, size: 14, color: AppColors.primary),
-                        const SizedBox(width: 4),
-                        Text(item, style: AppTextStyles.labelSmall.copyWith(color: AppColors.primary, fontWeight: FontWeight.w600)),
-                      ],
-                    ),
-                  )
-                : Text(item, style: AppTextStyles.bodySmall, overflow: TextOverflow.ellipsis),
-          )).toList(),
+          value: value,
+          isExpanded: true,
+          icon: const Icon(
+            Icons.keyboard_arrow_down,
+            color: AppColors.textSecondary,
+          ),
+          items: items
+              .map(
+                (item) => DropdownMenuItem(
+                  value: item,
+                  child: isStage
+                      ? Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.sm,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryContainer.withValues(alpha: 0.4),
+                            borderRadius: BorderRadius.circular(AppRadius.full),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.spa_outlined,
+                                size: 14,
+                                color: AppColors.primary,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                item,
+                                style: AppTextStyles.labelSmall.copyWith(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Text(
+                          item,
+                          style: AppTextStyles.bodySmall,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                ),
+              )
+              .toList(),
           onChanged: onChanged,
         ),
       ),
@@ -329,7 +586,20 @@ class _AddCropPlotSheetState extends ConsumerState<AddCropPlotSheet> {
   }
 
   String _fmt(DateTime d) {
-    const m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const m = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     return '${d.day.toString().padLeft(2, '0')} ${m[d.month - 1]} ${d.year}';
   }
 }

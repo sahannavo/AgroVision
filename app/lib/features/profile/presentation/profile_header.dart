@@ -33,12 +33,12 @@ class ProfileHeader extends StatelessWidget {
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(
-          color: AppColors.outline.withOpacity(0.6),
+          color: AppColors.outline.withValues(alpha: 0.6),
           width: 1.0,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -56,7 +56,7 @@ class ProfileHeader extends StatelessWidget {
                 height: 64,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.primaryContainer.withOpacity(0.35),
+                  color: AppColors.primaryContainer.withValues(alpha: 0.35),
                   border: Border.all(
                     color: AppColors.primary,
                     width: 2.0,
@@ -70,7 +70,7 @@ class ProfileHeader extends StatelessWidget {
                             width: 60,
                             height: 60,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => const Icon(
+                            errorBuilder: (_, _, _) => const Icon(
                               Icons.person,
                               size: 38,
                               color: AppColors.primary,
@@ -174,7 +174,7 @@ class ProfileHeader extends StatelessWidget {
                         vertical: 3,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryContainer.withOpacity(0.4),
+                        color: AppColors.primaryContainer.withValues(alpha: 0.4),
                         borderRadius: BorderRadius.circular(AppRadius.full),
                       ),
                       child: Row(
@@ -189,11 +189,15 @@ class ProfileHeader extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 5),
-                          Text(
-                            role,
-                            style: AppTextStyles.labelSmall.copyWith(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w600,
+                          Flexible(
+                            child: Text(
+                              role,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.labelSmall.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ],
@@ -216,4 +220,3 @@ class ProfileHeader extends StatelessWidget {
     );
   }
 }
-

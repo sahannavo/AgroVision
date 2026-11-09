@@ -3,27 +3,49 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app/features/crop_plots/domain/crop_plot.dart';
 import 'package:app/features/crop_plots/domain/crop_plot_repository.dart';
+import 'package:app/features/crop_plots/data/providers.dart';
 import 'package:app/features/crop_plots/presentation/add_crop_plot_sheet.dart';
 
-class FakeCropPlotRepository {
+class FakeCropPlotRepository implements CropPlotRepository {
   final List<CropPlot> plots = [];
 
-  Future<void> add(CropPlot plot) async => plots.add(plot);
-  Future<void> update(CropPlot plot) async {
+  @override
+  Future<List<CropPlot>> getPlots({String? userId}) async => plots;
+
+  @override
+  Stream<List<CropPlot>> watchPlots({String? userId}) => Stream.value(plots);
+
+  @override
+  Future<CropPlot> addPlot(CropPlot plot) async {
+    plots.add(plot);
+    return plot;
+  }
+
+  @override
+  Future<void> updatePlot(CropPlot plot) async {
     final idx = plots.indexWhere((p) => p.id == plot.id);
     if (idx != -1) plots[idx] = plot;
+  }
+
+  @override
+  Future<void> deletePlot(String plotId) async {
+    plots.removeWhere((plot) => plot.id == plotId);
   }
 }
 
 void main() {
   group('AddCropPlotSheet Widget Tests', () {
-    testWidgets('renders all form fields when opened in add mode', (tester) async {
+    testWidgets('renders all form fields when opened in add mode', (
+      tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(390, 844));
 
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            cropPlotRepositoryProvider.overrideWithValue(FakeCropPlotRepository()),
+            cropPlotRepositoryProvider.overrideWithValue(
+              FakeCropPlotRepository(),
+            ),
           ],
           child: MaterialApp(
             home: Scaffold(
@@ -69,7 +91,9 @@ void main() {
       expect(find.text('Cancel'), findsOneWidget);
     });
 
-    testWidgets('renders in edit mode when existing plot is passed', (tester) async {
+    testWidgets('renders in edit mode when existing plot is passed', (
+      tester,
+    ) async {
       final existingPlot = CropPlot(
         id: 'plot_test_1',
         cropType: 'Chili',
@@ -87,13 +111,16 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            cropPlotRepositoryProvider.overrideWithValue(FakeCropPlotRepository()),
+            cropPlotRepositoryProvider.overrideWithValue(
+              FakeCropPlotRepository(),
+            ),
           ],
           child: MaterialApp(
             home: Scaffold(
               body: Builder(
                 builder: (context) => ElevatedButton(
-                  onPressed: () => showAddCropPlotSheet(context, plot: existingPlot),
+                  onPressed: () =>
+                      showAddCropPlotSheet(context, plot: existingPlot),
                   child: const Text('Open Edit Sheet'),
                 ),
               ),
@@ -111,4 +138,3 @@ void main() {
     });
   });
 }
-

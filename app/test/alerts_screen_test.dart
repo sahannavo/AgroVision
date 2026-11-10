@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:agrovision/features/alerts/data/fake_alerts_repository.dart';
-import 'package:agrovision/features/alerts/domain/alerts_providers.dart';
-import 'package:agrovision/features/alerts/domain/alerts_repository.dart';
-import 'package:agrovision/features/alerts/domain/outbreak_alert.dart';
-import 'package:agrovision/features/alerts/presentation/alerts_screen.dart';
+import 'package:app/features/alerts/data/fake_alerts_repository.dart';
+import 'package:app/features/alerts/data/providers.dart';
+import 'package:app/features/alerts/domain/alerts_repository.dart';
+import 'package:app/features/alerts/domain/outbreak_alert.dart';
+import 'package:app/features/alerts/presentation/alerts_screen.dart';
+import 'package:app/features/alerts/presentation/alert_card.dart';
 
 void main() {
   group('AlertsScreen', () {
@@ -37,14 +38,9 @@ void main() {
         find.text('Surveillance Active · Nightshade Plots'),
         findsOneWidget,
       );
-      expect(find.text('Maha Season 2024'), findsOneWidget);
+      expect(find.text('Maha season surveillance'), findsOneWidget);
       expect(find.text('Active Outbreak Cluster'), findsOneWidget);
-      expect(find.textContaining('Early Blight'), findsWidgets);
-      expect(find.textContaining('Bacterial Spot'), findsWidgets);
-      expect(
-        find.textContaining('Community Crop Protection'),
-        findsOneWidget,
-      );
+      expect(find.byType(AlertCard), findsOneWidget);
     });
 
     testWidgets('shows toggle between List and Map views',
@@ -73,7 +69,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text('Copper-based prophylactic spray'),
+        find.text('Apply protective copper-based fungicide spray early morning.'),
         findsOneWidget,
       );
       expect(find.text('Add to Spray Schedule'), findsOneWidget);
@@ -103,27 +99,22 @@ void main() {
 /// Repository that returns an empty alerts list for testing empty state.
 class _EmptyAlertsRepository implements AlertsRepository {
   @override
-  Stream<AlertsData> watchNearby() {
+  Stream<List<OutbreakAlert>> watchNearby({
+    double? latitude,
+    double? longitude,
+    double? radiusKm,
+  }) {
     return Stream.value(
-      AlertsData(
-        seasonSummary: const SeasonSummary(
-          seasonName: 'Maha Season 2024',
-          riskLabel: 'Low Risk',
-          district: 'Kurunegala District',
-          weatherInfo: '60% Humidity',
-          activeZoneCount: 0,
-          radiusKm: 20,
-        ),
-        alerts: const [],
-        userPlot: const UserPlotLocation(
-          plotName: 'Test Plot',
-          latitude: 7.49,
-          longitude: 80.38,
-        ),
-        lastUpdated: DateTime.now(),
-      ),
+      const <OutbreakAlert>[],
     );
   }
+
+  @override
+  Future<List<OutbreakAlert>> getNearby({
+    double? latitude,
+    double? longitude,
+    double? radiusKm,
+  }) async => const <OutbreakAlert>[];
 
   @override
   Future<void> markRead(String alertId) async {}

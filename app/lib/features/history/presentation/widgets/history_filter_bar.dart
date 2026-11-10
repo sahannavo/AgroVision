@@ -181,7 +181,7 @@ class _FilterDropdownChip<T> extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: isSelected
-                ? AppColors.primaryGreen.withOpacity(0.08)
+                ? AppColors.primaryGreen.withValues(alpha: 0.08)
                 : AppColors.surface,
             borderRadius: BorderRadius.circular(AppRadius.full),
             border: Border.all(

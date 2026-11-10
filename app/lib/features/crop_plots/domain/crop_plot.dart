@@ -30,21 +30,45 @@ class CropPlot {
   final String cropType;
   final DateTime plantedDate;
   final String soilType;
-  final GrowthStage growthStage;
+  final String growthStage;
   final double areaSize;
   final String location;
 
-  const CropPlot({
-    required this.id,
-    required this.userId,
-    required this.name,
-    required this.cropType,
-    required this.plantedDate,
-    required this.soilType,
-    required this.growthStage,
-    required this.areaSize,
-    required this.location,
-  });
+  CropPlot({
+    String? id,
+    String? userId,
+    String? name,
+    String? plotName,
+    this.variety,
+    String? cropType,
+    DateTime? plantedDate,
+    String? soilType,
+    Object? growthStage,
+    this.bed,
+    double? areaSize,
+    double? area,
+    String? location,
+    this.status,
+    this.areaUnit = 'acre',
+  }) : id = id ?? '',
+       userId = userId ?? '',
+       name = name ?? plotName ?? cropType ?? 'Crop plot',
+       cropType = cropType ?? 'Unknown',
+       plantedDate = plantedDate ?? DateTime.now(),
+       soilType = soilType ?? 'Unknown',
+       growthStage = growthStage is GrowthStage
+           ? growthStage.displayName
+           : growthStage as String? ?? 'Seedling',
+       areaSize = areaSize ?? area ?? 0,
+       location = location ?? bed ?? '';
+
+  final String? variety;
+  final String? bed;
+  final String? status;
+  final String areaUnit;
+
+  String get plotName => name;
+  double get area => areaSize;
 
   /// Calculates the plot's age in days.
   int get ageInDays => DateTime.now().difference(plantedDate).inDays;
@@ -56,7 +80,7 @@ class CropPlot {
     String? cropType,
     DateTime? plantedDate,
     String? soilType,
-    GrowthStage? growthStage,
+    Object? growthStage,
     double? areaSize,
     String? location,
   }) {
@@ -85,24 +109,31 @@ class CropPlot {
           plantedDate == other.plantedDate &&
           soilType == other.soilType &&
           growthStage == other.growthStage &&
+          variety == other.variety &&
+          bed == other.bed &&
+          status == other.status &&
+          areaUnit == other.areaUnit &&
           areaSize == other.areaSize &&
           location == other.location;
 
   @override
   int get hashCode => Object.hash(
-        id,
-        userId,
-        name,
-        cropType,
-        plantedDate,
-        soilType,
-        growthStage,
-        areaSize,
-        location,
-      );
+    id,
+    userId,
+    name,
+    cropType,
+    plantedDate,
+    soilType,
+    growthStage,
+    variety,
+    bed,
+    status,
+    areaUnit,
+    areaSize,
+    location,
+  );
 
   @override
   String toString() =>
       'CropPlot(id: $id, name: $name, crop: $cropType, stage: $growthStage, area: $areaSize, location: $location)';
 }
-

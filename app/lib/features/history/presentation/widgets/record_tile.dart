@@ -36,8 +36,8 @@ class RecordTile extends StatelessWidget {
 
     final isSynced = diagnosis.syncStatus == SyncStatus.synced;
     final syncBgColor = isSynced
-        ? AppColors.healthy.withOpacity(0.08)
-        : AppColors.warning.withOpacity(0.12);
+        ? AppColors.healthy.withValues(alpha: 0.08)
+        : AppColors.warning.withValues(alpha: 0.12);
     final syncTextColor = isSynced ? AppColors.healthy : AppColors.warning;
 
     return Semantics(
@@ -67,7 +67,7 @@ class RecordTile extends StatelessWidget {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.1),
+                    color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppRadius.sm),
                   ),
                   child: Icon(
@@ -123,7 +123,7 @@ class RecordTile extends StatelessWidget {
                         vertical: AppSpacing.xxs,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryGreen.withOpacity(0.1),
+                        color: AppColors.primaryGreen.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(AppRadius.full),
                       ),
                       child: Text(

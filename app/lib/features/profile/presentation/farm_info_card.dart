@@ -58,12 +58,12 @@ class FarmInfoCard extends StatelessWidget {
             color: AppColors.surface,
             borderRadius: BorderRadius.circular(AppRadius.lg),
             border: Border.all(
-              color: AppColors.outline.withOpacity(0.6),
+              color: AppColors.outline.withValues(alpha: 0.6),
               width: 1.0,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.03),
+                color: Colors.black.withValues(alpha: 0.03),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -75,43 +75,31 @@ class FarmInfoCard extends StatelessWidget {
               _buildInfoRow(
                 icon: Icons.location_on_outlined,
                 label: 'Location',
-                valueWidget: Row(
-                  mainAxisSize: MainAxisSize.min,
+                valueWidget: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Flexible(
-                      child: Text(
-                        location,
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                        ),
-                        overflow: TextOverflow.ellipsis,
+                    Text(
+                      location,
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(width: AppSpacing.xs),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.xs + 2,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.outline.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(AppRadius.xs),
-                      ),
-                      child: Text(
-                        province,
-                        style: AppTextStyles.labelSmall.copyWith(
-                          color: AppColors.textSecondary,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                        ),
+                    Text(
+                      province,
+                      style: AppTextStyles.labelSmall.copyWith(
+                        color: AppColors.textSecondary,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
                 ),
               ),
               Divider(
-                color: AppColors.outline.withOpacity(0.4),
+                color: AppColors.outline.withValues(alpha: 0.4),
                 height: 1,
               ),
               // Row 2: Soil type
@@ -128,7 +116,7 @@ class FarmInfoCard extends StatelessWidget {
                 ),
               ),
               Divider(
-                color: AppColors.outline.withOpacity(0.4),
+                color: AppColors.outline.withValues(alpha: 0.4),
                 height: 1,
               ),
               // Row 3: Land size
@@ -165,7 +153,7 @@ class FarmInfoCard extends StatelessWidget {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: AppColors.primaryContainer.withOpacity(0.4),
+              color: AppColors.primaryContainer.withValues(alpha: 0.4),
               borderRadius: BorderRadius.circular(AppRadius.sm),
             ),
             child: Icon(
@@ -184,10 +172,9 @@ class FarmInfoCard extends StatelessWidget {
           ),
           const Spacer(),
           // Value
-          Flexible(child: valueWidget),
+          Expanded(child: valueWidget),
         ],
       ),
     );
   }
 }
-

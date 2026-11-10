@@ -1,4 +1,17 @@
 import 'package:flutter/material.dart';
+
+/// Stub for showing the Add Crop Plot bottom sheet.
+/// Built by another team member.
+Future<void> showAddCropPlotSheet(BuildContext context, {dynamic plot}) async {
+  await showModalBottomSheet<void>(
+    context: context,
+    builder: (ctx) => Container(
+      padding: const EdgeInsets.all(24),
+      child: const Text('Add Crop Plot Sheet Stub'),
+    ),
+  );
+}
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';

@@ -85,7 +85,7 @@ class ZoneBottomSheet extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -116,10 +116,8 @@ class ZoneBottomSheet extends StatelessWidget {
             _buildMetaRow(),
             const SizedBox(height: AppSpacing.md),
             // Plot advice
-            if (alert.plotAdvice != null) ...[
-              _buildAdviceBox(),
-              const SizedBox(height: AppSpacing.lg),
-            ],
+            _buildAdviceBox(),
+            const SizedBox(height: AppSpacing.lg),
             // CTA button
             _buildCtaButton(),
             const SizedBox(height: AppSpacing.md),
@@ -247,7 +245,7 @@ class ZoneBottomSheet extends StatelessWidget {
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
-              alert.plotAdvice!,
+              alert.plotAdvice,
               style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.textPrimary,
               ),
@@ -287,4 +285,3 @@ class ZoneBottomSheet extends StatelessWidget {
     );
   }
 }
-

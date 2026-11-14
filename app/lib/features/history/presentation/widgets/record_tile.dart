@@ -7,6 +7,7 @@ import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../diagnosis/domain/diagnosis.dart';
+import '../../../diagnosis/domain/disease_class.dart';
 
 /// Single diagnosis record tile displayed in the Recent Records list.
 ///
@@ -28,15 +29,15 @@ class RecordTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isHealthy = diagnosis.predictedClass.isHealthy;
+    final isHealthy = diagnosis.predictedClass == DiseaseClass.healthy;
     final statusColor = isHealthy ? AppColors.healthy : AppColors.danger;
     final confidencePct = (diagnosis.confidence * 100).toInt();
     final dateStr = DateFormat('dd MMM yyyy').format(diagnosis.diagnosedAt);
 
     final isSynced = diagnosis.syncStatus == SyncStatus.synced;
     final syncBgColor = isSynced
-        ? AppColors.healthy.withOpacity(0.08)
-        : AppColors.warning.withOpacity(0.12);
+        ? AppColors.healthy.withValues(alpha: 0.08)
+        : AppColors.warning.withValues(alpha: 0.12);
     final syncTextColor = isSynced ? AppColors.healthy : AppColors.warning;
 
     return Semantics(
@@ -66,7 +67,7 @@ class RecordTile extends StatelessWidget {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.1),
+                    color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppRadius.sm),
                   ),
                   child: Icon(
@@ -122,7 +123,7 @@ class RecordTile extends StatelessWidget {
                         vertical: AppSpacing.xxs,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryGreen.withOpacity(0.1),
+                        color: AppColors.primaryGreen.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(AppRadius.full),
                       ),
                       child: Text(

@@ -36,7 +36,7 @@ class DecisionTimeline extends StatelessWidget {
               Icon(
                 Icons.event_note_outlined,
                 size: 48,
-                color: AppColors.textSecondary.withOpacity(0.5),
+                color: AppColors.textSecondary.withValues(alpha: 0.5),
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
@@ -136,7 +136,7 @@ class _TimelineItem extends StatelessWidget {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: AppColors.primaryGreen.withOpacity(0.12),
+                    color: AppColors.primaryGreen.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: AppColors.primaryGreen,
@@ -241,10 +241,10 @@ class _TimelineItem extends StatelessWidget {
                         vertical: AppSpacing.xxs + 1,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.healthy.withOpacity(0.1),
+                        color: AppColors.healthy.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(AppRadius.full),
                         border: Border.all(
-                          color: AppColors.healthy.withOpacity(0.3),
+                          color: AppColors.healthy.withValues(alpha: 0.3),
                           width: 1.0,
                         ),
                       ),

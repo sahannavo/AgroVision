@@ -1,0 +1,94 @@
+%% AgroVision - Domain and data layer (repository pattern, fakes behind interfaces).
+%% Shown in full for Alerts, Crop plots and Diagnosis; Auth, Weather, Advisor, Planner and History
+%% follow exactly the same shape (interface + FakeXRepository + FirebaseXRepository).
+%% TODO(JKVC): entity names other than CropPlot and OutbreakAlert, and all method signatures
+%% except watchNearby, markRead, add and signOut, are provisional - check lib/features/*/domain.
+classDiagram
+    direction LR
+
+    class AlertsScreen { <<presentation>> }
+    class ProfileScreen { <<presentation>> }
+    class CaptureScreen { <<presentation>> }
+
+    class alertsRepositoryProvider { <<Riverpod provider>> }
+    class cropPlotRepositoryProvider { <<Riverpod provider>> }
+    class diagnosisRepositoryProvider { <<Riverpod provider>> }
+    class diagnosisClassifierProvider { <<Riverpod provider>> }
+
+    class AlertsRepository { <<interface>>
+        +watchNearby()
+        +markRead(alertId)
+    }
+    class CropPlotRepository { <<interface>>
+        +add(plot)
+    }
+    class DiagnosisRepository { <<interface>> }
+    class DiagnosisClassifier { <<interface>>
+        +classify(image)
+    }
+
+    class FakeAlertsRepository
+    class FirebaseAlertsRepository
+    class FakeCropPlotRepository
+    class FirebaseCropPlotRepository
+    class FakeDiagnosisRepository
+    class FirebaseDiagnosisRepository
+    class FakeDiagnosisClassifier
+    class TfliteDiagnosisClassifier
+
+    class OutbreakAlert {
+        <<entity>>
+        alertId
+        diseaseType
+        centerPoint
+        radiusKm
+        reportCount
+        preventiveSteps
+        createdAt
+    }
+    class CropPlot {
+        <<entity>>
+        cropId
+        name
+        cropType
+        plantedDate
+        soilType
+        growthStage
+        areaSize
+    }
+    class Diagnosis {
+        <<entity>>
+        diagnosisId
+        cropId
+        imageUrl
+        predictedClass
+        confidenceScore
+        location
+        diagnosedAt
+    }
+
+    AlertsScreen --> alertsRepositoryProvider : ref.watch
+    ProfileScreen --> cropPlotRepositoryProvider : ref.watch
+    CaptureScreen --> diagnosisClassifierProvider : ref.read
+    CaptureScreen --> diagnosisRepositoryProvider : ref.read
+
+    alertsRepositoryProvider --> AlertsRepository : exposes
+    cropPlotRepositoryProvider --> CropPlotRepository : exposes
+    diagnosisRepositoryProvider --> DiagnosisRepository : exposes
+    diagnosisClassifierProvider --> DiagnosisClassifier : exposes
+
+    FakeAlertsRepository ..|> AlertsRepository
+    FirebaseAlertsRepository ..|> AlertsRepository
+    FakeCropPlotRepository ..|> CropPlotRepository
+    FirebaseCropPlotRepository ..|> CropPlotRepository
+    FakeDiagnosisRepository ..|> DiagnosisRepository
+    FirebaseDiagnosisRepository ..|> DiagnosisRepository
+    FakeDiagnosisClassifier ..|> DiagnosisClassifier
+    TfliteDiagnosisClassifier ..|> DiagnosisClassifier
+
+    AlertsRepository ..> OutbreakAlert
+    CropPlotRepository ..> CropPlot
+    DiagnosisRepository ..> Diagnosis
+    DiagnosisClassifier ..> Diagnosis
+
+    note for alertsRepositoryProvider "providers.dart picks Fake or Firebase implementation from --dart-define=USE_FAKES. Screens never import Firebase."

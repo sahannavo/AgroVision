@@ -1,0 +1,99 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions for auth verification and document ownership
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isDocOwner() {
+      return isSignedIn() && request.auth.uid == resource.data.userId;
+    }
+
+    function isCreatingForSelf() {
+      return isSignedIn() && request.auth.uid == request.resource.data.userId;
+    }
+
+    // Helper functions for validating field types and ranges
+    function validConfidence(val) {
+      return val is number && val >= 0.0 && val <= 1.0;
+    }
+
+    function validArea(val) {
+      return val is number && val > 0.0;
+    }
+
+    // 1. users: readable and writable only by the signed-in user matching document ID
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if isOwner(userId);
+    }
+
+    // 2. cropProfiles: readable and writable only by the signed-in owner (userId == request.auth.uid)
+    match /cropProfiles/{profileId} {
+      allow read: if isDocOwner();
+      allow create: if isCreatingForSelf() && validArea(request.resource.data.area);
+      allow update: if isDocOwner() && isCreatingForSelf() && validArea(request.resource.data.area);
+      allow delete: if isDocOwner();
+    }
+
+    // 3. diagnoses: readable and writable only by signed-in owner with confidence between 0 and 1
+    match /diagnoses/{diagnosisId} {
+      allow read: if isDocOwner();
+      allow create: if isCreatingForSelf() && validConfidence(request.resource.data.confidence);
+      allow update: if isDocOwner() && isCreatingForSelf() && validConfidence(request.resource.data.confidence);
+      allow delete: if isDocOwner();
+    }
+
+    // 4. plantingRecommendations: readable and writable only by signed-in owner
+    match /plantingRecommendations/{recId} {
+      allow read: if isDocOwner();
+      allow create: if isCreatingForSelf();
+      allow update: if isDocOwner() && isCreatingForSelf();
+      allow delete: if isDocOwner();
+    }
+
+    // 5. irrigationSchedules: readable and writable only by signed-in owner
+    match /irrigationSchedules/{scheduleId} {
+      allow read: if isDocOwner();
+      allow create: if isCreatingForSelf();
+      allow update: if isDocOwner() && isCreatingForSelf();
+      allow delete: if isDocOwner();
+    }
+
+    // 6. notifications: readable and writable only by signed-in owner
+    match /notifications/{notificationId} {
+      allow read: if isDocOwner();
+      allow create: if isCreatingForSelf();
+      allow update: if isDocOwner() && isCreatingForSelf();
+      allow delete: if isDocOwner();
+    }
+
+    // 7. decisionLogs: readable and writable only by signed-in owner
+    match /decisionLogs/{logId} {
+      allow read: if isDocOwner();
+      allow create: if isCreatingForSelf();
+      allow update: if isDocOwner() && isCreatingForSelf();
+      allow delete: if isDocOwner();
+    }
+
+    // 8. weatherCache: readable by all signed-in users, writable only by Cloud Functions (never by clients)
+    match /weatherCache/{cacheId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    // 9. outbreakAlerts: readable by all signed-in users, never writable by clients, and must contain no userId
+    match /outbreakAlerts/{alertId} {
+      allow read: if isSignedIn() && (!('userId' in resource.data));
+      allow write: if false;
+    }
+  }
+}

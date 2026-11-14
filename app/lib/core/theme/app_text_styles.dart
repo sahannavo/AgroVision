@@ -43,6 +43,8 @@ abstract final class AppTextStyles {
     color: AppColors.textPrimary,
     height: 1.35,
   );
+  static const TextStyle headlineMedium = headingMedium;
+  static const TextStyle headlineSmall = headingSmall;
 
   static const TextStyle headingSmall = TextStyle(
     fontFamily: headingFontFamily,
@@ -60,6 +62,7 @@ abstract final class AppTextStyles {
     color: AppColors.textPrimary,
     height: 1.4,
   );
+  static const TextStyle titleLarge = headingSmall;
 
   static const TextStyle titleSmall = TextStyle(
     fontFamily: headingFontFamily,
@@ -121,6 +124,7 @@ abstract final class AppTextStyles {
     letterSpacing: 0.3,
     height: 1.3,
   );
+  static const TextStyle chip = labelSmall;
 
   static const TextStyle button = TextStyle(
     fontFamily: headingFontFamily,

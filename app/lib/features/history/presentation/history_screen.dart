@@ -3,14 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/services/connectivity_service.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/offline_banner.dart';
 import '../../diagnosis/data/providers.dart';
 import '../../diagnosis/domain/diagnosis.dart';
+import '../../diagnosis/domain/diagnosis_repository.dart';
+import '../../diagnosis/domain/disease_class.dart';
 import '../data/providers.dart';
 import '../domain/decision_log_entry.dart';
+import '../domain/history_repository.dart';
 import '../domain/history_stats.dart';
 import 'widgets/decision_timeline.dart';
 import 'widgets/diagnoses_bar_chart.dart';
@@ -69,8 +71,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
       filtered.sort((a, b) => b.confidence.compareTo(a.confidence));
     } else if (_selectedSort == HistorySort.severity) {
       filtered.sort((a, b) {
-        final aSeverity = a.predictedClass.isHealthy ? 0 : 1;
-        final bSeverity = b.predictedClass.isHealthy ? 0 : 1;
+        final aSeverity = a.predictedClass == DiseaseClass.healthy ? 0 : 1;
+        final bSeverity = b.predictedClass == DiseaseClass.healthy ? 0 : 1;
         return bSeverity.compareTo(aSeverity);
       });
     } else {
@@ -182,7 +184,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
     );
   }
 
-  Widget _buildDiagnosesTab(diagnosisRepo, HistoryRepository historyRepo) {
+  Widget _buildDiagnosesTab(
+    DiagnosisRepository diagnosisRepo,
+    HistoryRepository historyRepo,
+  ) {
     return FutureBuilder<HistoryStats>(
       future: historyRepo.getStats(),
       builder: (context, statsSnapshot) {
@@ -215,7 +220,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                   totalScans: allDiagnoses.length,
                   healthyPercent: allDiagnoses.isEmpty
                       ? 100
-                      : ((allDiagnoses.where((d) => d.predictedClass.isHealthy).length /
+                      : ((allDiagnoses.where((d) => d.predictedClass == DiseaseClass.healthy).length /
                                   allDiagnoses.length) *
                               100)
                           .round(),
@@ -232,7 +237,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                     Icon(
                       Icons.qr_code_scanner_rounded,
                       size: 56,
-                      color: AppColors.textSecondary.withOpacity(0.5),
+                      color: AppColors.textSecondary.withValues(alpha: 0.5),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     Text(
@@ -346,4 +351,3 @@ class _TabBarHeaderDelegate extends SliverPersistentHeaderDelegate {
     return oldDelegate.tabBar != tabBar;
   }
 }
-

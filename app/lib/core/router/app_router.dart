@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -29,7 +29,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 /// Application router defining all route configurations and the stateful shell.
 final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
-  initialLocation: AppRoutes.home,
+  initialLocation: AppRoutes.splash,
   redirect: authGuardRedirect,
   routes: [
     // Standalone routes without bottom navigation bar

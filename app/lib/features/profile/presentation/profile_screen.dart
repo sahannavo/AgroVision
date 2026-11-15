@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../auth/domain/auth_repository.dart';
 import '../../crop_plots/domain/crop_plot.dart';
-import '../../crop_plots/domain/crop_plot_repository.dart';
 import '../../crop_plots/presentation/add_crop_plot_sheet.dart';
-import 'widgets/crop_plot_tile.dart';
-import 'widgets/farm_info_card.dart';
-import 'widgets/profile_header.dart';
-import 'widgets/settings_section.dart';
+import 'crop_plot_tile.dart';
+import 'farm_info_card.dart';
+import 'profile_header.dart';
+import 'settings_section.dart';
+import '../../crop_plots/data/providers.dart';
+import '../../auth/data/providers.dart';
 
 /// Profile screen displaying farmer details, farm information,
 /// crop plots list with add/edit actions, settings, and logout.
@@ -28,19 +29,43 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   static final List<CropPlot> _defaultPlots = [
     CropPlot(
-      id: 'plot_1', cropType: 'Tomato', plotName: 'Plot A', variety: 'Thilina var.',
-      plantedDate: DateTime(2024, 10, 12), growthStage: 'Flowering', bed: 'Bed #2',
-      soilType: 'Loam (Reddish Brown)', area: 1.0, areaUnit: 'acre', status: 'Active',
+      id: 'plot_1',
+      cropType: 'Tomato',
+      plotName: 'Plot A',
+      variety: 'Thilina var.',
+      plantedDate: DateTime(2024, 10, 12),
+      growthStage: 'Flowering',
+      bed: 'Bed #2',
+      soilType: 'Loam (Reddish Brown)',
+      area: 1.0,
+      areaUnit: 'acre',
+      status: 'Active',
     ),
     CropPlot(
-      id: 'plot_2', cropType: 'Green Chilli', plotName: 'Plot B', variety: 'MICH 1',
-      plantedDate: DateTime(2024, 10, 28), growthStage: 'Vegetative', bed: 'East Terraces',
-      soilType: 'Loam (Reddish Brown)', area: 0.8, areaUnit: 'acre', status: 'Active',
+      id: 'plot_2',
+      cropType: 'Green Chilli',
+      plotName: 'Plot B',
+      variety: 'MICH 1',
+      plantedDate: DateTime(2024, 10, 28),
+      growthStage: 'Vegetative',
+      bed: 'East Terraces',
+      soilType: 'Loam (Reddish Brown)',
+      area: 0.8,
+      areaUnit: 'acre',
+      status: 'Active',
     ),
     CropPlot(
-      id: 'plot_3', cropType: 'Brinjal', plotName: 'Plot C', variety: 'Padagoda',
-      plantedDate: DateTime(2024, 9, 15), growthStage: 'Fruiting', bed: 'South Garden',
-      soilType: 'Loam (Reddish Brown)', area: 0.7, areaUnit: 'acre', status: 'Active',
+      id: 'plot_3',
+      cropType: 'Brinjal',
+      plotName: 'Plot C',
+      variety: 'Padagoda',
+      plantedDate: DateTime(2024, 9, 15),
+      growthStage: 'Fruiting',
+      bed: 'South Garden',
+      soilType: 'Loam (Reddish Brown)',
+      area: 0.7,
+      areaUnit: 'acre',
+      status: 'Active',
     ),
   ];
 
@@ -52,7 +77,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (mounted) context.go('/login');
   }
 
-  void _openAddSheet([CropPlot? plot]) => showAddCropPlotSheet(context, plot: plot);
+  void _openAddSheet([CropPlot? plot]) =>
+      showAddCropPlotSheet(context, plot: plot);
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +88,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -79,21 +108,28 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
               const SizedBox(height: AppSpacing.md),
               const FarmInfoCard(
-                district: 'Kurunegala District', location: 'Kurunegala',
-                province: 'NW Province', soilType: 'Loam (Reddish Brown)', landSize: '2.5 acres',
+                district: 'Kurunegala District',
+                location: 'Kurunegala',
+                province: 'NW Province',
+                soilType: 'Loam (Reddish Brown)',
+                landSize: '2.5 acres',
               ),
               const SizedBox(height: AppSpacing.md),
               _buildCropPlotsSection(providerData),
               const SizedBox(height: AppSpacing.md),
               SettingsSection(
                 notificationsEnabled: _notificationsEnabled,
-                onNotificationsChanged: (val) => setState(() => _notificationsEnabled = val),
+                onNotificationsChanged: (val) =>
+                    setState(() => _notificationsEnabled = val),
                 onLanguageTap: () => ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Language settings')),
                 ),
-                onOfflineDataTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Offline data is synchronized')),
-                ),
+                onOfflineDataTap: () => ScaffoldMessenger.of(context)
+                    .showSnackBar(
+                      const SnackBar(
+                        content: Text('Offline data is synchronized'),
+                      ),
+                    ),
               ),
               const SizedBox(height: AppSpacing.lg),
               SizedBox(
@@ -104,18 +140,33 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.error,
                     side: const BorderSide(color: AppColors.error, width: 1.5),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                    ),
                     backgroundColor: AppColors.surface,
                   ),
-                  icon: const Icon(Icons.logout, size: 20, color: AppColors.error),
-                  label: Text('Log out', style: AppTextStyles.labelLarge.copyWith(fontWeight: FontWeight.w700, color: AppColors.error)),
+                  icon: const Icon(
+                    Icons.logout,
+                    size: 20,
+                    color: AppColors.error,
+                  ),
+                  label: Text(
+                    'Log out',
+                    style: AppTextStyles.labelLarge.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.error,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
               Center(
                 child: Text(
                   'AgroVision v2.4 (Maha Edition) · DOA Peradeniya Guidelines',
-                  style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary, fontSize: 11),
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                    fontSize: 11,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -134,7 +185,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           button: true,
           label: 'Back',
           child: InkWell(
-            onTap: () => Navigator.of(context).canPop() ? Navigator.of(context).pop() : context.go('/home'),
+            onTap: () => Navigator.of(context).canPop()
+                ? Navigator.of(context).pop()
+                : context.go('/home'),
             borderRadius: BorderRadius.circular(AppRadius.full),
             child: Container(
               width: 40,
@@ -142,29 +195,50 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               decoration: BoxDecoration(
                 color: AppColors.surface,
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.outline.withOpacity(0.6)),
+                border: Border.all(color: AppColors.outline.withValues(alpha: 0.6)),
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 4, offset: const Offset(0, 1)),
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
                 ],
               ),
-              child: const Icon(Icons.arrow_back, size: 20, color: AppColors.textPrimary),
+              child: const Icon(
+                Icons.arrow_back,
+                size: 20,
+                color: AppColors.textPrimary,
+              ),
             ),
           ),
         ),
         const SizedBox(width: AppSpacing.sm + 4),
-        Text('Profile', style: AppTextStyles.titleLarge.copyWith(fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+        Text(
+          'Profile',
+          style: AppTextStyles.titleLarge.copyWith(
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+        ),
         const Spacer(),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm + 2, vertical: 4),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm + 2,
+            vertical: 4,
+          ),
           decoration: BoxDecoration(
             color: AppColors.surface,
             borderRadius: BorderRadius.circular(AppRadius.full),
-            border: Border.all(color: AppColors.outline.withOpacity(0.8)),
+            border: Border.all(color: AppColors.outline.withValues(alpha: 0.8)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.cloud_off_outlined, size: 14, color: AppColors.textSecondary),
+              const Icon(
+                Icons.cloud_off_outlined,
+                size: 14,
+                color: AppColors.textSecondary,
+              ),
               const SizedBox(width: 4),
               Text(
                 'Offline mode',
@@ -191,7 +265,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             child: CircularProgressIndicator(color: AppColors.primary),
           ),
         ),
-        error: (_, __) => Container(
+        error: (_, _) => Container(
           width: double.infinity,
           padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
@@ -201,9 +275,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
           child: Column(
             children: [
-              Text('Failed to load crop plots', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.error)),
+              Text(
+                'Failed to load crop plots',
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.error,
+                ),
+              ),
               const SizedBox(height: AppSpacing.xs),
-              TextButton(onPressed: () => setState(() {}), child: const Text('Retry')),
+              TextButton(
+                onPressed: () => setState(() {}),
+                child: const Text('Retry'),
+              ),
             ],
           ),
         ),
@@ -219,21 +301,41 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       children: [
         Row(
           children: [
-            Text('My crop plots', style: AppTextStyles.titleMedium.copyWith(fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+            Expanded(
+              child: Text(
+                'My crop plots',
+                style: AppTextStyles.titleMedium.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
             const SizedBox(width: AppSpacing.sm),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 2),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.sm,
+                vertical: 2,
+              ),
               decoration: BoxDecoration(
-                color: AppColors.primaryContainer.withOpacity(0.4),
+                color: AppColors.primaryContainer.withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(AppRadius.full),
               ),
               child: Text(
                 '${plots.length} Active',
-                style: AppTextStyles.labelSmall.copyWith(color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 11),
+                style: AppTextStyles.labelSmall.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11,
+                ),
               ),
             ),
             const Spacer(),
-            Text('Season Maha 2024', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+            Text(
+              'Season Maha 2024',
+              style: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -244,18 +346,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius: BorderRadius.circular(AppRadius.lg),
-              border: Border.all(color: AppColors.outline.withOpacity(0.6)),
+              border: Border.all(color: AppColors.outline.withValues(alpha: 0.6)),
             ),
             child: Center(
               child: Text(
                 'No crop plots added yet. Tap below to add your first plot.',
-                style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textSecondary,
+                ),
                 textAlign: TextAlign.center,
               ),
             ),
           )
         else
-          ...plots.map((plot) => CropPlotTile(plot: plot, onEdit: (p) => _openAddSheet(p))),
+          ...plots.map(
+            (plot) => CropPlotTile(plot: plot, onEdit: (p) => _openAddSheet(p)),
+          ),
         const SizedBox(height: AppSpacing.xs),
         SizedBox(
           width: double.infinity,
@@ -265,11 +371,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.primary,
               side: const BorderSide(color: AppColors.primary, width: 1.5),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadius.md),
+              ),
               backgroundColor: AppColors.surface,
             ),
             icon: const Icon(Icons.add, size: 20, color: AppColors.primary),
-            label: Text('Add crop plot', style: AppTextStyles.labelLarge.copyWith(fontWeight: FontWeight.w700, color: AppColors.primary)),
+            label: Text(
+              'Add crop plot',
+              style: AppTextStyles.labelLarge.copyWith(
+                fontWeight: FontWeight.w700,
+                color: AppColors.primary,
+              ),
+            ),
           ),
         ),
       ],

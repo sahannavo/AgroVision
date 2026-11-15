@@ -4,7 +4,6 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../domain/outbreak_alert.dart';
 
 /// Expandable panel showing numbered preventive steps for an alert.
 class PreventiveStepsPanel extends StatelessWidget {
@@ -14,7 +13,7 @@ class PreventiveStepsPanel extends StatelessWidget {
     this.showAddToSchedule = true,
   });
 
-  final List<PreventiveStep> steps;
+  final List<String> steps;
   final bool showAddToSchedule;
 
   @override
@@ -22,7 +21,9 @@ class PreventiveStepsPanel extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ...steps.map((step) => _StepItem(step: step)),
+        ...steps.asMap().entries.map(
+          (entry) => _StepItem(step: entry.value, number: entry.key + 1),
+        ),
         if (showAddToSchedule) ...[
           const SizedBox(height: AppSpacing.md),
           _AddToScheduleButton(),
@@ -33,9 +34,10 @@ class PreventiveStepsPanel extends StatelessWidget {
 }
 
 class _StepItem extends StatelessWidget {
-  const _StepItem({required this.step});
+  const _StepItem({required this.step, required this.number});
 
-  final PreventiveStep step;
+  final String step;
+  final int number;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +56,7 @@ class _StepItem extends StatelessWidget {
             ),
             alignment: Alignment.center,
             child: Text(
-              '${step.stepNumber}',
+              '$number',
               style: AppTextStyles.chip.copyWith(
                 color: AppColors.primary,
                 fontWeight: FontWeight.w700,
@@ -66,13 +68,10 @@ class _StepItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  step.title,
-                  style: AppTextStyles.titleSmall,
-                ),
+                Text(step, style: AppTextStyles.titleSmall),
                 const SizedBox(height: 2),
                 Text(
-                  step.description,
+                  'Follow this step to reduce outbreak risk.',
                   style: AppTextStyles.bodySmall,
                 ),
               ],
@@ -90,24 +89,30 @@ class _AddToScheduleButton extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton.icon(
-        onPressed: () {
-          // TODO: Navigate to planner / spray schedule
-        },
+        onPressed: () => _showScheduleConfirmation(context),
         icon: const Icon(Icons.add, size: 18),
         label: const Text('Add to Spray Schedule'),
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.textPrimary,
           side: const BorderSide(color: AppColors.divider),
-          shape: RoundedRectangleBorder(
-            borderRadius: AppRadius.mdAll,
-          ),
-          padding: const EdgeInsets.symmetric(
-            vertical: AppSpacing.md,
-          ),
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.mdAll),
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
           textStyle: AppTextStyles.labelLarge,
         ),
       ),
     );
   }
-}
 
+  void _showScheduleConfirmation(BuildContext context) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Spray schedule is not available yet. Keep these steps for your next application.',
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+  }
+}

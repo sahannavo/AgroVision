@@ -46,12 +46,12 @@ class SettingsSection extends StatelessWidget {
             color: AppColors.surface,
             borderRadius: BorderRadius.circular(AppRadius.lg),
             border: Border.all(
-              color: AppColors.outline.withOpacity(0.6),
+              color: AppColors.outline.withValues(alpha: 0.6),
               width: 1.0,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.03),
+                color: Colors.black.withValues(alpha: 0.03),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -68,7 +68,7 @@ class SettingsSection extends StatelessWidget {
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: AppColors.primaryContainer.withOpacity(0.4),
+                        color: AppColors.primaryContainer.withValues(alpha: 0.4),
                         borderRadius: BorderRadius.circular(AppRadius.sm),
                       ),
                       child: const Icon(
@@ -103,7 +103,7 @@ class SettingsSection extends StatelessWidget {
                       label: 'Toggle district outbreak notifications',
                       child: Switch.adaptive(
                         value: notificationsEnabled,
-                        activeColor: AppColors.primary,
+                        activeThumbColor: AppColors.primary,
                         activeTrackColor: AppColors.primaryContainer,
                         onChanged: onNotificationsChanged,
                       ),
@@ -112,7 +112,7 @@ class SettingsSection extends StatelessWidget {
                 ),
               ),
               Divider(
-                color: AppColors.outline.withOpacity(0.4),
+                color: AppColors.outline.withValues(alpha: 0.4),
                 height: 1,
               ),
               // Row 2: Language
@@ -127,7 +127,7 @@ class SettingsSection extends StatelessWidget {
                         width: 32,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: AppColors.primaryContainer.withOpacity(0.4),
+                          color: AppColors.primaryContainer.withValues(alpha: 0.4),
                           borderRadius: BorderRadius.circular(AppRadius.sm),
                         ),
                         child: const Icon(
@@ -188,7 +188,7 @@ class SettingsSection extends StatelessWidget {
                 ),
               ),
               Divider(
-                color: AppColors.outline.withOpacity(0.4),
+                color: AppColors.outline.withValues(alpha: 0.4),
                 height: 1,
               ),
               // Row 3: Offline data
@@ -258,4 +258,3 @@ class SettingsSection extends StatelessWidget {
     );
   }
 }
-

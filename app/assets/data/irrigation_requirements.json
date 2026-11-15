@@ -1,0 +1,236 @@
+{
+  "crops": [
+    {
+      "crop_id": "tomato",
+      "crop_name": "Tomato",
+      "stages": [
+        {
+          "stage": "Seedling",
+          "stage_days": 15,
+          "water_litres_per_sqm_per_week": 14.0,
+          "watering_frequency_days": 2,
+          "preferred_time_of_day": "Morning (6:30 AM)",
+          "fertilizer": {
+            "type": "Basal (NPK 4:25:8)",
+            "amount_grams_per_plant": 10.0,
+            "interval_days": 14,
+            "application_method": "Soil incorporation at transplanting"
+          }
+        },
+        {
+          "stage": "Vegetative",
+          "stage_days": 25,
+          "water_litres_per_sqm_per_week": 22.0,
+          "watering_frequency_days": 2,
+          "preferred_time_of_day": "Morning (6:30 AM)",
+          "fertilizer": {
+            "type": "Top-dress 1 (Urea)",
+            "amount_grams_per_plant": 8.0,
+            "interval_days": 14,
+            "application_method": "Side dressing 10cm from base"
+          }
+        },
+        {
+          "stage": "Flowering",
+          "stage_days": 25,
+          "water_litres_per_sqm_per_week": 28.0,
+          "watering_frequency_days": 1,
+          "preferred_time_of_day": "Evening (5:30 PM)",
+          "fertilizer": {
+            "type": "NPK 12–12–17",
+            "amount_grams_per_plant": 20.0,
+            "interval_days": 14,
+            "application_method": "Apply along drip perimeter circle (15cm from main stem)"
+          }
+        },
+        {
+          "stage": "Fruiting",
+          "stage_days": 25,
+          "water_litres_per_sqm_per_week": 32.0,
+          "watering_frequency_days": 1,
+          "preferred_time_of_day": "Evening (6:00 PM)",
+          "fertilizer": {
+            "type": "Muriate of Potash (MOP) + Urea",
+            "amount_grams_per_plant": 12.0,
+            "interval_days": 14,
+            "application_method": "Top-dress prior to final fruit swelling"
+          }
+        }
+      ]
+    },
+    {
+      "crop_id": "potato",
+      "crop_name": "Potato",
+      "stages": [
+        {
+          "stage": "Seedling",
+          "stage_days": 20,
+          "water_litres_per_sqm_per_week": 18.0,
+          "watering_frequency_days": 3,
+          "preferred_time_of_day": "Morning (7:00 AM)",
+          "fertilizer": {
+            "type": "Basal (NPK 10:25:20)",
+            "amount_grams_per_plant": 25.0,
+            "interval_days": 20,
+            "application_method": "Furrow placement before seed tuber placement"
+          }
+        },
+        {
+          "stage": "Vegetative",
+          "stage_days": 30,
+          "water_litres_per_sqm_per_week": 25.0,
+          "watering_frequency_days": 2,
+          "preferred_time_of_day": "Morning (6:30 AM)",
+          "fertilizer": {
+            "type": "Urea Top-dress",
+            "amount_grams_per_plant": 10.0,
+            "interval_days": 21,
+            "application_method": "Band placement followed by earthing up"
+          }
+        },
+        {
+          "stage": "Flowering",
+          "stage_days": 30,
+          "water_litres_per_sqm_per_week": 32.0,
+          "watering_frequency_days": 2,
+          "preferred_time_of_day": "Evening (5:30 PM)",
+          "fertilizer": {
+            "type": "Potassium Sulfate (SOP)",
+            "amount_grams_per_plant": 15.0,
+            "interval_days": 21,
+            "application_method": "Soil surface application before tuber enlargement"
+          }
+        },
+        {
+          "stage": "Fruiting",
+          "stage_days": 25,
+          "water_litres_per_sqm_per_week": 20.0,
+          "watering_frequency_days": 3,
+          "preferred_time_of_day": "Morning (7:00 AM)",
+          "fertilizer": {
+            "type": "None (Dehaulming phase)",
+            "amount_grams_per_plant": 0.0,
+            "interval_days": 0,
+            "application_method": "Withhold water and fertilizer 10 days before harvest"
+          }
+        }
+      ]
+    },
+    {
+      "crop_id": "chilli",
+      "crop_name": "Chilli",
+      "stages": [
+        {
+          "stage": "Seedling",
+          "stage_days": 20,
+          "water_litres_per_sqm_per_week": 12.0,
+          "watering_frequency_days": 3,
+          "preferred_time_of_day": "Morning (6:30 AM)",
+          "fertilizer": {
+            "type": "Basal Mixture (DOA Chilli basal)",
+            "amount_grams_per_plant": 12.0,
+            "interval_days": 18,
+            "application_method": "In-hole application at planting"
+          }
+        },
+        {
+          "stage": "Vegetative",
+          "stage_days": 30,
+          "water_litres_per_sqm_per_week": 20.0,
+          "watering_frequency_days": 2,
+          "preferred_time_of_day": "Morning (6:30 AM)",
+          "fertilizer": {
+            "type": "Top-dress 1 (Urea)",
+            "amount_grams_per_plant": 7.0,
+            "interval_days": 14,
+            "application_method": "Ring application 8cm away from stem"
+          }
+        },
+        {
+          "stage": "Flowering",
+          "stage_days": 30,
+          "water_litres_per_sqm_per_week": 26.0,
+          "watering_frequency_days": 1,
+          "preferred_time_of_day": "Evening (5:30 PM)",
+          "fertilizer": {
+            "type": "NPK Top-dress (12:12:17)",
+            "amount_grams_per_plant": 15.0,
+            "interval_days": 14,
+            "application_method": "Band application before flowering peak"
+          }
+        },
+        {
+          "stage": "Fruiting",
+          "stage_days": 35,
+          "water_litres_per_sqm_per_week": 28.0,
+          "watering_frequency_days": 1,
+          "preferred_time_of_day": "Evening (6:00 PM)",
+          "fertilizer": {
+            "type": "Top-dress 3 (MOP + Urea)",
+            "amount_grams_per_plant": 10.0,
+            "interval_days": 14,
+            "application_method": "Apply after each harvesting flush"
+          }
+        }
+      ]
+    },
+    {
+      "crop_id": "eggplant",
+      "crop_name": "Eggplant (Brinjal)",
+      "stages": [
+        {
+          "stage": "Seedling",
+          "stage_days": 20,
+          "water_litres_per_sqm_per_week": 14.0,
+          "watering_frequency_days": 2,
+          "preferred_time_of_day": "Morning (6:30 AM)",
+          "fertilizer": {
+            "type": "Basal (NPK 5:15:15)",
+            "amount_grams_per_plant": 15.0,
+            "interval_days": 20,
+            "application_method": "Incorporate in planting pits"
+          }
+        },
+        {
+          "stage": "Vegetative",
+          "stage_days": 35,
+          "water_litres_per_sqm_per_week": 24.0,
+          "watering_frequency_days": 2,
+          "preferred_time_of_day": "Morning (6:30 AM)",
+          "fertilizer": {
+            "type": "Top-dress 1 (Urea)",
+            "amount_grams_per_plant": 8.0,
+            "interval_days": 14,
+            "application_method": "Circular band application"
+          }
+        },
+        {
+          "stage": "Flowering",
+          "stage_days": 35,
+          "water_litres_per_sqm_per_week": 30.0,
+          "watering_frequency_days": 1,
+          "preferred_time_of_day": "Evening (5:30 PM)",
+          "fertilizer": {
+            "type": "NPK 12–12–17",
+            "amount_grams_per_plant": 18.0,
+            "interval_days": 14,
+            "application_method": "Surface application around drip ring"
+          }
+        },
+        {
+          "stage": "Fruiting",
+          "stage_days": 40,
+          "water_litres_per_sqm_per_week": 34.0,
+          "watering_frequency_days": 1,
+          "preferred_time_of_day": "Evening (6:00 PM)",
+          "fertilizer": {
+            "type": "MOP + Urea Top-dress",
+            "amount_grams_per_plant": 12.0,
+            "interval_days": 14,
+            "application_method": "Repeat every 2 weeks during prolonged fruit picks"
+          }
+        }
+      ]
+    }
+  ]
+}

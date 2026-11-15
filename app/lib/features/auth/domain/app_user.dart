@@ -61,18 +61,11 @@ class AppUser {
 
   @override
   int get hashCode => Object.hash(
-        uid,
-        email,
-        fullName,
-        latitude,
-        longitude,
-        region,
-        soilType,
-        landSize,
+        uid, email, fullName, latitude, longitude, region, soilType, landSize,
       );
 
   @override
   String toString() =>
-      'AppUser(uid: $uid, email: $email, fullName: $fullName, region: $region, soilType: $soilType, landSize: $landSize)';
+      'AppUser(uid: $uid, email: $email, fullName: $fullName, '
+      'region: $region, soilType: $soilType, landSize: $landSize)';
 }
-

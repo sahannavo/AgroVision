@@ -35,7 +35,7 @@ dependencies:
   uuid: ^4.4.0
 
   # Machine Learning & Image Processing
-  tflite_flutter: ^0.10.4
+  # tflite_flutter: ^0.10.4 (temporarily commented for Phase 2 UI test)
   image: ^4.2.0
 
   # Firebase Services (Uninitialized)

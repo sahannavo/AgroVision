@@ -5,13 +5,9 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../domain/alerts_providers.dart';
-import '../domain/outbreak_alert.dart';
-import 'widgets/alert_card.dart';
-import 'widgets/alerts_bottom_nav_bar.dart';
-import 'widgets/list_map_toggle.dart';
-import 'widgets/outbreak_map_view.dart';
-import 'widgets/season_header_card.dart';
+import '../data/providers.dart';
+import 'alert_card.dart';
+import 'outbreak_map_view.dart';
 
 /// Main alerts screen with List / Map toggle.
 ///
@@ -21,6 +17,58 @@ class AlertsScreen extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<AlertsScreen> createState() => _AlertsScreenState();
+}
+
+class AlertsBottomNavBar extends StatelessWidget {
+  const AlertsBottomNavBar({super.key});
+
+  @override
+  Widget build(BuildContext context) => NavigationBar(
+    selectedIndex: 1,
+    destinations: [
+      NavigationDestination(icon: Icon(Icons.home_outlined), label: 'Home'),
+      NavigationDestination(
+        icon: Icon(Icons.warning_amber_outlined),
+        label: 'Alerts',
+      ),
+      NavigationDestination(icon: Icon(Icons.person_outline), label: 'Profile'),
+    ],
+  );
+}
+
+class ListMapToggle extends StatelessWidget {
+  const ListMapToggle({
+    super.key,
+    required this.isMapView,
+    required this.onChanged,
+  });
+
+  final bool isMapView;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) => SegmentedButton<bool>(
+    segments: const [
+      ButtonSegment(value: false, label: Text('List')),
+      ButtonSegment(value: true, label: Text('Map')),
+    ],
+    selected: {isMapView},
+    onSelectionChanged: (selection) => onChanged(selection.first),
+  );
+}
+
+class SeasonHeaderCard extends StatelessWidget {
+  const SeasonHeaderCard({super.key, required this.summary});
+
+  final String summary;
+
+  @override
+  Widget build(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: Text(summary, style: AppTextStyles.titleMedium),
+    ),
+  );
 }
 
 class _AlertsScreenState extends ConsumerState<AlertsScreen> {
@@ -65,7 +113,7 @@ class _AlertsScreenState extends ConsumerState<AlertsScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const AlertsBottomNavBar(),
+      bottomNavigationBar: AlertsBottomNavBar(),
     );
   }
 
@@ -85,9 +133,7 @@ class _AlertsScreenState extends ConsumerState<AlertsScreen> {
           const SizedBox(width: AppSpacing.sm),
           Text(
             'Offline mode',
-            style: AppTextStyles.labelMedium.copyWith(
-              color: Colors.white,
-            ),
+            style: AppTextStyles.labelMedium.copyWith(color: Colors.white),
           ),
         ],
       ),
@@ -232,11 +278,7 @@ class _AlertsScreenState extends ConsumerState<AlertsScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
-            Icons.verified_user,
-            color: AppColors.primary,
-            size: 20,
-          ),
+          const Icon(Icons.verified_user, color: AppColors.primary, size: 20),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: RichText(
@@ -277,7 +319,7 @@ class _AlertsScreenState extends ConsumerState<AlertsScreen> {
             Icon(
               Icons.shield_outlined,
               size: 64,
-              color: AppColors.primaryLight.withOpacity(0.5),
+              color: AppColors.primaryLight.withValues(alpha: 0.5),
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
@@ -321,11 +363,10 @@ class _AlertsScreenState extends ConsumerState<AlertsScreen> {
             Icon(
               Icons.error_outline,
               size: 64,
-              color: AppColors.error.withOpacity(0.5),
+              color: AppColors.error.withValues(alpha: 0.5),
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('Unable to load alerts',
-                style: AppTextStyles.headlineSmall),
+            Text('Unable to load alerts', style: AppTextStyles.headlineSmall),
             const SizedBox(height: AppSpacing.sm),
             Text(
               error.toString(),

@@ -79,7 +79,7 @@ class DiagnosesBarChart extends StatelessWidget {
                     vertical: AppSpacing.xs,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryGreen.withOpacity(0.08),
+                    color: AppColors.primaryGreen.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(AppRadius.full),
                   ),
                   child: Row(
@@ -198,7 +198,7 @@ class DiagnosesBarChart extends StatelessWidget {
                           drawVerticalLine: false,
                           horizontalInterval: (maxY / 3).clamp(1.0, 50.0).toDouble(),
                           getDrawingHorizontalLine: (value) => FlLine(
-                            color: AppColors.divider.withOpacity(0.5),
+                            color: AppColors.divider.withValues(alpha: 0.5),
                             strokeWidth: 1,
                             dashArray: [4, 4],
                           ),
@@ -216,7 +216,7 @@ class DiagnosesBarChart extends StatelessWidget {
                                 toY: entry.value.toDouble(),
                                 color: isLatest
                                     ? AppColors.primaryGreen
-                                    : AppColors.primaryGreen.withOpacity(0.35),
+                                    : AppColors.primaryGreen.withValues(alpha: 0.35),
                                 width: 14.0,
                                 borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(AppRadius.xs),

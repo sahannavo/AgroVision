@@ -1,9 +1,13 @@
 import 'dart:async';
+
 import '../domain/app_user.dart';
 import '../domain/auth_repository.dart';
 
 /// Fake implementation of [AuthRepository] returning realistic sample data
 /// matching the design PNGs (Nimal Perera, Kurunegala, 2.5 Acres).
+///
+/// Used when `--dart-define=USE_FAKES=true` (the default) so the UI team
+/// can build screens without a live Firebase project.
 class FakeAuthRepository implements AuthRepository {
   FakeAuthRepository({
     bool startSignedIn = true,
@@ -96,4 +100,3 @@ class FakeAuthRepository implements AuthRepository {
     _authStateController.close();
   }
 }
-

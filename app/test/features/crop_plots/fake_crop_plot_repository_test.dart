@@ -20,14 +20,14 @@ void main() {
 
       final tomato = plots.firstWhere((p) => p.cropType == 'Tomato');
       expect(tomato.name, equals('Tomato (Thilina)'));
-      expect(tomato.growthStage, equals(GrowthStage.flowering));
+      expect(tomato.growthStage, equals(GrowthStage.flowering.displayName));
       expect(tomato.location, contains('Bed #2'));
 
       final chilli = plots.firstWhere((p) => p.cropType == 'Chilli');
-      expect(chilli.growthStage, equals(GrowthStage.vegetative));
+      expect(chilli.growthStage, equals(GrowthStage.vegetative.displayName));
 
       final brinjal = plots.firstWhere((p) => p.cropType == 'Eggplant');
-      expect(brinjal.growthStage, equals(GrowthStage.fruiting));
+      expect(brinjal.growthStage, equals(GrowthStage.fruiting.displayName));
     });
 
     test('addPlot appends plot and emits on watch stream', () async {
@@ -57,7 +57,7 @@ void main() {
 
       await repo.updatePlot(updated);
       final currentPlots = await repo.getPlots();
-      expect(currentPlots.first.growthStage, equals(GrowthStage.fruiting));
+      expect(currentPlots.first.growthStage, equals(GrowthStage.fruiting.displayName));
     });
 
     test('deletePlot removes plot from list', () async {

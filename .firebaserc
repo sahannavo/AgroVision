@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "agrovision-dev",
+    "production": "agrovision-prod"
+  }
+}

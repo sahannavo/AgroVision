@@ -17,13 +17,13 @@
 /// they are fully independent.
 library;
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart' as http;
 
-import 'package:app/core/firebase/firebase_bootstrap.dart';
 import 'package:app/features/auth/data/firebase_auth_repository.dart';
 import 'package:app/features/auth/domain/app_user.dart';
 
@@ -39,11 +39,17 @@ const _projectId = 'agrovision-dev';
 
 /// Clears all emulator users between tests via the Auth emulator REST API.
 Future<void> _clearEmulatorUsers() async {
-  final url = Uri.parse(
-    'http://$_authEmulatorHost:$_authEmulatorPort'
-    '/emulator/v1/projects/$_projectId/accounts',
-  );
-  await http.delete(url);
+  try {
+    final client = HttpClient();
+    final request = await client.delete(
+      _authEmulatorHost,
+      _authEmulatorPort,
+      '/emulator/v1/projects/$_projectId/accounts',
+    );
+    final response = await request.close();
+    await response.drain();
+    client.close();
+  } catch (_) {}
 }
 
 // ── Setup ─────────────────────────────────────────────────────────────────

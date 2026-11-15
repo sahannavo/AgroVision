@@ -47,7 +47,7 @@ class FirebaseAuthRepository implements AuthRepository {
   Stream<AppUser?> authStateChanges() {
     return _auth.authStateChanges().asyncMap((fbUser) async {
       if (fbUser == null) return null;
-      return _fetchProfile(fbUser.uid) ?? _minimalUser(fbUser);
+      return (await _fetchProfile(fbUser.uid)) ?? _minimalUser(fbUser);
     });
   }
 
@@ -101,7 +101,7 @@ class FirebaseAuthRepository implements AuthRepository {
         'soilType': soilType,
         'landSize': landSize,
         'createdAt': FieldValue.serverTimestamp(),
-        if (location != null) 'location': location,
+        'location': location,
       };
 
       await _users.doc(uid).set(doc);
@@ -133,7 +133,7 @@ class FirebaseAuthRepository implements AuthRepository {
       'region': user.region,
       'soilType': user.soilType,
       'landSize': user.landSize,
-      if (location != null) 'location': location,
+      'location': location,
     };
 
     await _users.doc(user.uid).update(updates);

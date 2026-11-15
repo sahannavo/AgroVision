@@ -1,0 +1,48 @@
+%% AgroVision - Scan, diagnose, save, outbreak alert.
+sequenceDiagram
+    autonumber
+    actor F as Farmer
+    participant UI as CaptureScreen / ResultScreen
+    participant CL as DiagnosisClassifier (TFLite, on device)
+    participant DR as DiagnosisRepository
+    participant ST as Cloud Storage
+    participant FS as Firestore (local cache + cloud)
+    participant OD as onDiagnosisCreated
+    participant OF as onOutbreakAlertCreated
+    participant FCM as FCM
+    actor N as Nearby farmers' phones
+
+    F->>UI: Take or pick a leaf photo
+    UI->>CL: classify(image)
+    Note over CL: No network needed
+    CL-->>UI: predictedClass + confidenceScore
+    UI-->>F: Show result and advice
+
+    F->>UI: Tap Save
+    UI->>DR: save(diagnosis, image, location)
+    DR->>FS: write diagnoses/{id} with geohash
+    alt Online
+        DR->>ST: upload image
+        ST-->>DR: imageUrl
+        DR->>FS: set imageUrl
+    else Offline
+        Note over DR,FS: Saved locally by Firestore persistence and synced when back online.<br/>Image upload handling to be confirmed in the integration phase.
+    end
+    DR-->>UI: saved
+    UI-->>F: Added to History
+
+    FS->>OD: trigger: diagnoses/{id} created
+    OD->>FS: query same disease within OUTBREAK_RADIUS_KM and OUTBREAK_WINDOW_HOURS (geohash)
+    alt reports >= OUTBREAK_MIN_REPORTS
+        OD->>FS: create or update outbreakAlerts (disease, rounded centre, radius, count, steps)
+        Note over OD,FS: No userId and no exact position stored in the alert
+        FS->>OF: trigger: outbreakAlerts/{id} created
+        OF->>FS: find users inside radius, read fcmToken
+        OF->>FS: write notifications (userId, alertId, title, body, deliveryStatus)
+        OF->>FCM: send push to tokens
+        FCM-->>N: Notification: outbreak near you
+        OF->>FS: update deliveryStatus
+        N->>FS: AlertsScreen watchNearby, markRead
+    else below threshold
+        Note over OD: No alert created
+    end

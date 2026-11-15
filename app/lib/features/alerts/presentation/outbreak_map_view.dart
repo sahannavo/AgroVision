@@ -82,7 +82,7 @@ class _OutbreakMapViewState extends State<OutbreakMapView> {
       options: MapOptions(
         initialCenter: _center,
         initialZoom: 10.5,
-        onTap: (_, __) => _dismiss(),
+        onTap: (_, _) => _dismiss(),
       ),
       children: [
         if (!widget.isOffline)
@@ -102,8 +102,8 @@ class _OutbreakMapViewState extends State<OutbreakMapView> {
                     point: LatLng(a.latitude, a.longitude),
                     radius: a.radiusKm * 1000,
                     useRadiusInMeter: true,
-                    color: a.severity.color.withOpacity(0.15),
-                    borderColor: a.severity.color.withOpacity(0.5),
+                    color: a.severity.color.withValues(alpha: 0.15),
+                    borderColor: a.severity.color.withValues(alpha: 0.5),
                     borderStrokeWidth: 1.5,
                   ))
               .toList(),
@@ -114,8 +114,8 @@ class _OutbreakMapViewState extends State<OutbreakMapView> {
             point: _center,
             radius: 2000,
             useRadiusInMeter: true,
-            color: AppColors.mapUserMarker.withOpacity(0.12),
-            borderColor: AppColors.mapUserMarker.withOpacity(0.4),
+            color: AppColors.mapUserMarker.withValues(alpha: 0.12),
+            borderColor: AppColors.mapUserMarker.withValues(alpha: 0.4),
             borderStrokeWidth: 1.5,
           ),
         ]),
@@ -145,7 +145,7 @@ class _OutbreakMapViewState extends State<OutbreakMapView> {
               border: Border.all(color: Colors.white, width: 3),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.mapUserMarker.withOpacity(0.3),
+                  color: AppColors.mapUserMarker.withValues(alpha: 0.3),
                   blurRadius: 6,
                 ),
               ],
@@ -199,7 +199,7 @@ class _OutbreakMapViewState extends State<OutbreakMapView> {
             borderRadius: AppRadius.smAll,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 4,
               ),
             ],
@@ -251,7 +251,7 @@ class _OutbreakMapViewState extends State<OutbreakMapView> {
           borderRadius: AppRadius.fullAll,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -322,7 +322,7 @@ class _OutbreakMapViewState extends State<OutbreakMapView> {
       child: Container(
         padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
-        color: AppColors.offlineBanner.withOpacity(0.9),
+        color: AppColors.offlineBanner.withValues(alpha: 0.9),
         child: Row(
           children: [
             const Icon(Icons.cloud_off, color: Colors.white, size: 16),

@@ -29,7 +29,7 @@ class OfflinePill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final backgroundColor = enabled
-        ? AppColors.warning.withOpacity(0.14)
+        ? AppColors.warning.withValues(alpha: 0.14)
         : AppColors.disabled;
     final contentColor = enabled ? AppColors.warning : AppColors.disabledText;
 
@@ -46,7 +46,7 @@ class OfflinePill extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.full),
           border: Border.all(
             color: enabled
-                ? AppColors.warning.withOpacity(0.3)
+                ? AppColors.warning.withValues(alpha: 0.3)
                 : AppColors.disabled,
             width: 1.0,
           ),
@@ -125,7 +125,7 @@ class OfflineBanner extends StatelessWidget {
 
   Widget _buildContent(BuildContext context) {
     final backgroundColor = enabled
-        ? AppColors.warning.withOpacity(0.12)
+        ? AppColors.warning.withValues(alpha: 0.12)
         : AppColors.disabled;
     final iconColor = enabled ? AppColors.warning : AppColors.disabledText;
     final textColor = enabled ? AppColors.textPrimary : AppColors.disabledText;
@@ -144,7 +144,7 @@ class OfflineBanner extends StatelessWidget {
           border: Border(
             bottom: BorderSide(
               color: enabled
-                  ? AppColors.warning.withOpacity(0.25)
+                  ? AppColors.warning.withValues(alpha: 0.25)
                   : AppColors.disabled,
               width: 1.0,
             ),

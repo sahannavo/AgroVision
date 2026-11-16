@@ -8,6 +8,8 @@ import 'app_text_styles.dart';
 
 /// Configures the unified light theme for AgroVision with Material 3.
 abstract final class AppTheme {
+  static ThemeData get lightTheme => light;
+
   /// The default light theme for AgroVision.
   static ThemeData get light {
     final colorScheme = ColorScheme(

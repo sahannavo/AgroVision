@@ -1,0 +1,98 @@
+%% AgroVision - Firestore data model (top-level collections, relations by reference fields).
+%% Source: technical specification, back-end context block.
+%% decisionLogs is an ADDITION to the specification (History > Decisions tab) - say so in the report.
+erDiagram
+    users ||--o{ cropProfiles : "owns (userId)"
+    users ||--o{ diagnoses : "submits (userId)"
+    cropProfiles ||--o{ diagnoses : "scanned on (cropId)"
+    users ||--o{ plantingRecommendations : "receives (userId)"
+    users ||--o{ irrigationSchedules : "has (userId)"
+    cropProfiles ||--o{ irrigationSchedules : "planned for (cropId)"
+    users ||--o{ notifications : "is sent (userId)"
+    outbreakAlerts ||--o{ notifications : "triggers (alertId)"
+    users ||--o{ decisionLogs : "records (userId)"
+    diagnoses }o..o{ outbreakAlerts : "aggregated by onDiagnosisCreated, no identity kept"
+    users }o..o| weatherCache : "region looked up by regionKey"
+
+    users {
+        string uid PK "document id"
+        string email
+        string fullName
+        GeoPoint location
+        string region
+        string soilType
+        number landSize
+        string fcmToken
+        timestamp createdAt
+    }
+    cropProfiles {
+        string cropId PK
+        string userId FK
+        string name
+        string cropType
+        timestamp plantedDate
+        string soilType
+        string growthStage
+        number areaSize
+    }
+    diagnoses {
+        string diagnosisId PK
+        string userId FK
+        string cropId FK
+        string imageUrl
+        string predictedClass
+        number confidenceScore
+        GeoPoint location
+        string geohash
+        timestamp diagnosedAt
+    }
+    plantingRecommendations {
+        string recId PK
+        string userId FK
+        string soilType
+        string season
+        GeoPoint location
+        array recommendedCrops
+        timestamp generatedAt
+    }
+    irrigationSchedules {
+        string scheduleId PK
+        string cropId FK
+        string userId FK
+        array weeklyPlan
+        map weatherSnapshot
+        timestamp generatedAt
+    }
+    weatherCache {
+        string cacheId PK
+        string regionKey
+        string forecastJson
+        timestamp fetchedAt
+        timestamp expiresAt
+    }
+    outbreakAlerts {
+        string alertId PK
+        string diseaseType
+        GeoPoint centerPoint "rounded, approximate"
+        number radiusKm
+        number reportCount
+        string preventiveSteps
+        timestamp createdAt
+    }
+    notifications {
+        string notificationId PK
+        string userId FK
+        string alertId FK
+        string title
+        string body
+        timestamp sentAt
+        string deliveryStatus
+    }
+    decisionLogs {
+        string id PK
+        string userId FK
+        timestamp date
+        string title
+        string detail
+        string resultLabel "addition to spec"
+    }

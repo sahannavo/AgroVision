@@ -1,0 +1,70 @@
+@startuml 01_use_case
+' AgroVision - Use case diagram.
+' ASSUMPTION: Farmer and Gardener use the same features, shown via a shared parent actor (confirm with PDS).
+left to right direction
+skinparam shadowing false
+skinparam nodesep 25
+skinparam ranksep 60
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor #E8F5E9
+  BorderColor #2E7D32
+}
+skinparam actor {
+  BackgroundColor #FFFFFF
+  BorderColor #2E7D32
+}
+
+actor "Farmer" as farmer
+actor "Gardener" as gardener
+actor "AgroVision user\n(generalisation)" as user
+actor "OpenWeatherMap\n(external service)" as owm <<system>>
+actor "Cooperative\n(FUTURE WORK)" as coop #DDDDDD
+
+rectangle "AgroVision mobile app" {
+  usecase "Register account and farm" as UC1
+  usecase "Log in / log out" as UC2
+  usecase "Manage profile and farm details" as UC3
+  usecase "Add or edit crop plot" as UC4
+  usecase "Scan leaf photo" as UC5
+  usecase "Diagnose disease\n(on device, works offline)" as UC6
+  usecase "Save diagnosis" as UC7
+  usecase "View diagnosis and\ndecision history" as UC8
+  usecase "Get planting recommendations" as UC9
+  usecase "View irrigation schedule" as UC10
+  usecase "Get weather forecast\n(last cache when offline)" as UC11
+  usecase "Ask advisor" as UC12
+  usecase "View outbreak alerts\n(list and map)" as UC13
+  usecase "Receive outbreak notification" as UC14
+}
+
+
+
+farmer --|> user
+gardener --|> user
+
+user -- UC1
+user -- UC2
+user -- UC3
+user -- UC4
+user -- UC5
+user -- UC8
+user -- UC9
+user -- UC10
+user -- UC12
+user -- UC13
+user -- UC14
+
+UC5 .> UC6 : <<include>>
+UC7 .> UC6 : <<extend>>
+UC9 .> UC11 : <<include>>
+UC10 .> UC11 : <<include>>
+UC12 .> UC11 : <<include>>
+UC11 -- owm
+
+coop ..> UC13 : future: regional\noutbreak summaries
+note bottom of coop
+  Outside the system boundary.
+  Not implemented in this prototype.
+end note
+@enduml

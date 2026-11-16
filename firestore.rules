@@ -1,0 +1,64 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users can read and write only their own profile document.
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Crop profiles belong to the owning user.
+    match /cropProfiles/{cropId} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null
+        && request.auth.uid == request.resource.data.userId;
+    }
+
+    // Diagnoses belong to the owning user.
+    match /diagnoses/{diagnosisId} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null
+        && request.auth.uid == request.resource.data.userId;
+    }
+
+    // Planting recommendations belong to the owning user.
+    match /plantingRecommendations/{recId} {
+      allow read: if request.auth != null
+        && request.auth.uid == resource.data.userId;
+    }
+
+    // Irrigation schedules belong to the owning user.
+    match /irrigationSchedules/{scheduleId} {
+      allow read: if request.auth != null
+        && request.auth.uid == resource.data.userId;
+    }
+
+    // Weather cache — authenticated read; writes are via Cloud Functions only.
+    match /weatherCache/{cacheId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // Outbreak alerts — public read (no PII stored); writes via Functions only.
+    match /outbreakAlerts/{alertId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // Notifications belong to the owning user.
+    match /notifications/{notificationId} {
+      allow read: if request.auth != null
+        && request.auth.uid == resource.data.userId;
+    }
+
+    // Decision logs belong to the owning user.
+    match /decisionLogs/{logId} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null
+        && request.auth.uid == request.resource.data.userId;
+    }
+  }
+}

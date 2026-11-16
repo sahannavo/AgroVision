@@ -20,6 +20,9 @@ abstract final class AppRadius {
   /// 32.0
   static const double xxl = 32.0;
 
+  /// 12.0 for buttons
+  static const double button = 12.0;
+
   /// 999.0 for pills and circular borders
   static const double full = 999.0;
 
@@ -33,4 +36,12 @@ abstract final class AppRadius {
   static const BorderRadius borderFull = BorderRadius.all(
     Radius.circular(full),
   );
+  static const BorderRadius fullAll = borderFull;
+  static const BorderRadius xsAll = borderXs;
+  static const BorderRadius smAll = borderSm;
+  static const BorderRadius mdAll = borderMd;
+  static const BorderRadius lgAll = borderLg;
+  static const BorderRadius xlAll = borderXl;
+  static const BorderRadius xxlAll = borderXxl;
+  static final BorderRadius buttonBorderRadius = BorderRadius.circular(button);
 }

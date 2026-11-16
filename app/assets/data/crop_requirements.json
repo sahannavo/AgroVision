@@ -1,0 +1,110 @@
+{
+  "crops": [
+    {
+      "id": "tomato",
+      "common_name": "Tomato",
+      "botanical_name": "Solanum lycopersicum",
+      "sinhala_name": "තක්කාලි",
+      "tamil_name": "தக்காளி",
+      "suitable_soil_types": [
+        "Sandy Loam",
+        "Reddish Brown Earth (RBE)",
+        "Red-Yellow Podzolic",
+        "Non-calcic Brown",
+        "Loam"
+      ],
+      "soil_ph_min": 6.0,
+      "soil_ph_max": 7.0,
+      "best_seasons": [
+        "Maha",
+        "Yala"
+      ],
+      "temperature_min_c": 18,
+      "temperature_max_c": 30,
+      "optimal_temp_c": 24,
+      "water_need_mm_total": 450,
+      "days_to_harvest_min": 75,
+      "days_to_harvest_max": 90,
+      "notes": "Sensitive to waterlogging and severe bacterial wilt in poorly drained soils. High humidity increases late blight susceptibility in Upcountry wet intermediate zones."
+    },
+    {
+      "id": "potato",
+      "common_name": "Potato",
+      "botanical_name": "Solanum tuberosum",
+      "sinhala_name": "අර්තාපල්",
+      "tamil_name": "உருளைக்கிழங்கு",
+      "suitable_soil_types": [
+        "Red-Yellow Podzolic",
+        "Sandy Loam",
+        "Well-drained Loam",
+        "Regosol"
+      ],
+      "soil_ph_min": 5.0,
+      "soil_ph_max": 6.5,
+      "best_seasons": [
+        "Maha",
+        "Yala"
+      ],
+      "temperature_min_c": 15,
+      "temperature_max_c": 22,
+      "optimal_temp_c": 18,
+      "water_need_mm_total": 500,
+      "days_to_harvest_min": 90,
+      "days_to_harvest_max": 110,
+      "notes": "Prefers cool climate in Nuwara Eliya, Badulla and Jaffna (winter). Tuberization requires night temperatures under 20°C. Susceptible to late blight."
+    },
+    {
+      "id": "chilli",
+      "common_name": "Chilli",
+      "botanical_name": "Capsicum annuum",
+      "sinhala_name": "මිරිස්",
+      "tamil_name": "மிளகாய்",
+      "suitable_soil_types": [
+        "Reddish Brown Earth (RBE)",
+        "Non-calcic Brown",
+        "Sandy Loam",
+        "Alluvial",
+        "Loam"
+      ],
+      "soil_ph_min": 6.0,
+      "soil_ph_max": 6.8,
+      "best_seasons": [
+        "Maha",
+        "Yala"
+      ],
+      "temperature_min_c": 20,
+      "temperature_max_c": 35,
+      "optimal_temp_c": 27,
+      "water_need_mm_total": 400,
+      "days_to_harvest_min": 90,
+      "days_to_harvest_max": 120,
+      "notes": "Highly adaptable across Dry and Intermediate zones (Anuradhapura, Mahaweli system H, Jaffna). Cannot tolerate standing water; requires furrow or drip irrigation."
+    },
+    {
+      "id": "eggplant",
+      "common_name": "Eggplant (Brinjal)",
+      "botanical_name": "Solanum melongena",
+      "sinhala_name": "වම්බටු",
+      "tamil_name": "கத்தரிக்காய்",
+      "suitable_soil_types": [
+        "Sandy Loam",
+        "Reddish Brown Earth (RBE)",
+        "Loam",
+        "Clay Loam"
+      ],
+      "soil_ph_min": 5.5,
+      "soil_ph_max": 6.8,
+      "best_seasons": [
+        "Maha",
+        "Yala"
+      ],
+      "temperature_min_c": 22,
+      "temperature_max_c": 35,
+      "optimal_temp_c": 28,
+      "water_need_mm_total": 550,
+      "days_to_harvest_min": 100,
+      "days_to_harvest_max": 130,
+      "notes": "Hardy warm-season crop widely cultivated across both wet and dry zones. Extended fruiting duration requires consistent potassium supplementation."
+    }
+  ]
+}

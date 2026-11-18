@@ -134,6 +134,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await tester.ensureVisible(find.text('Continue to Step 2: Farm Details'));
       await tester.tap(find.text('Continue to Step 2: Farm Details'));
       await tester.pumpAndSettle();
 

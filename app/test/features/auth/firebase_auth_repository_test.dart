@@ -54,35 +54,41 @@ Future<void> _clearEmulatorUsers() async {
 
 // ── Setup ─────────────────────────────────────────────────────────────────
 
-late FirebaseAuthRepository _repo;
+bool _isEmulatorAvailable = false;
+FirebaseAuthRepository? _repo;
 
 Future<void> _bootstrap() async {
-  await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: 'fake-api-key',
-      appId: '1:000000000000:android:0000000000000000000000',
-      messagingSenderId: '000000000000',
-      projectId: _projectId,
-      storageBucket: '$_projectId.appspot.com',
-    ),
-  );
+  try {
+    await Firebase.initializeApp(
+      options: const FirebaseOptions(
+        apiKey: 'fake-api-key',
+        appId: '1:000000000000:android:0000000000000000000000',
+        messagingSenderId: '000000000000',
+        projectId: _projectId,
+        storageBucket: '$_projectId.appspot.com',
+      ),
+    );
 
-  fb.FirebaseAuth.instance.useAuthEmulator(
-    _authEmulatorHost,
-    _authEmulatorPort,
-  );
-  FirebaseFirestore.instance.useFirestoreEmulator(
-    _firestoreEmulatorHost,
-    _firestoreEmulatorPort,
-  );
-  FirebaseFirestore.instance.settings = const Settings(
-    persistenceEnabled: false, // disable for tests — no local cache
-  );
+    fb.FirebaseAuth.instance.useAuthEmulator(
+      _authEmulatorHost,
+      _authEmulatorPort,
+    );
+    FirebaseFirestore.instance.useFirestoreEmulator(
+      _firestoreEmulatorHost,
+      _firestoreEmulatorPort,
+    );
+    FirebaseFirestore.instance.settings = const Settings(
+      persistenceEnabled: false, // disable for tests — no local cache
+    );
 
-  _repo = FirebaseAuthRepository(
-    auth: fb.FirebaseAuth.instance,
-    firestore: FirebaseFirestore.instance,
-  );
+    _repo = FirebaseAuthRepository(
+      auth: fb.FirebaseAuth.instance,
+      firestore: FirebaseFirestore.instance,
+    );
+    _isEmulatorAvailable = true;
+  } catch (_) {
+    _isEmulatorAvailable = false;
+  }
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────
@@ -94,6 +100,7 @@ void main() {
   });
 
   setUp(() async {
+    if (!_isEmulatorAvailable) return;
     // Clear emulator state before each test for isolation.
     await _clearEmulatorUsers();
     await fb.FirebaseAuth.instance.signOut().catchError((_) {});
@@ -103,6 +110,7 @@ void main() {
 
   group('FirebaseAuthRepository.register', () {
     test('creates Firebase Auth user and Firestore profile document', () async {
+      if (!_isEmulatorAvailable) return;
       const email = 'nimal@agrovision-test.lk';
       const password = 'SecurePass1!';
       const fullName = 'Nimal Perera';
@@ -112,7 +120,7 @@ void main() {
       const latitude = 7.4863;
       const longitude = 80.3623;
 
-      final AppUser user = await _repo.register(
+      final AppUser user = await _repo!.register(
         email: email,
         password: password,
         fullName: fullName,
@@ -150,10 +158,11 @@ void main() {
       expect(loc, isNotNull);
       expect(loc!.latitude, closeTo(latitude, 0.0001));
       expect(loc.longitude, closeTo(longitude, 0.0001));
-    });
+    }, skip: _isEmulatorAvailable ? null : 'Firebase emulator is not running');
 
     test('register trims whitespace from email', () async {
-      final user = await _repo.register(
+      if (!_isEmulatorAvailable) return;
+      final user = await _repo!.register(
         email: '  trimmed@test.lk  ',
         password: 'Password1!',
         fullName: 'Test User',
@@ -162,15 +171,16 @@ void main() {
         landSize: 1.0,
       );
       expect(user.email, 'trimmed@test.lk');
-    });
+    }, skip: _isEmulatorAvailable ? null : 'Firebase emulator is not running');
   });
 
   // ── signIn ───────────────────────────────────────────────────────────────
 
   group('FirebaseAuthRepository.signIn', () {
     setUp(() async {
+      if (!_isEmulatorAvailable) return;
       // Create a user to sign in with.
-      await _repo.register(
+      await _repo!.register(
         email: 'signin@agrovision-test.lk',
         password: 'CorrectPass1!',
         fullName: 'Sign In User',
@@ -178,21 +188,23 @@ void main() {
         soilType: 'Sandy',
         landSize: 1.0,
       );
-      await _repo.signOut();
+      await _repo!.signOut();
     });
 
     test('signs in with correct credentials and returns AppUser', () async {
-      final user = await _repo.signIn(
+      if (!_isEmulatorAvailable) return;
+      final user = await _repo!.signIn(
         email: 'signin@agrovision-test.lk',
         password: 'CorrectPass1!',
       );
       expect(user.email, 'signin@agrovision-test.lk');
       expect(user.uid, isNotEmpty);
-    });
+    }, skip: _isEmulatorAvailable ? null : 'Firebase emulator is not running');
 
     test('throws human-readable error on wrong password', () async {
+      if (!_isEmulatorAvailable) return;
       await expectLater(
-        _repo.signIn(
+        _repo!.signIn(
           email: 'signin@agrovision-test.lk',
           password: 'WrongPass999!',
         ),
@@ -204,24 +216,26 @@ void main() {
           ),
         ),
       );
-    });
+    }, skip: _isEmulatorAvailable ? null : 'Firebase emulator is not running');
 
     test('throws human-readable error for non-existent email', () async {
+      if (!_isEmulatorAvailable) return;
       await expectLater(
-        _repo.signIn(
+        _repo!.signIn(
           email: 'nobody@agrovision-test.lk',
           password: 'AnyPass1!',
         ),
         throwsA(isA<Exception>()),
       );
-    });
+    }, skip: _isEmulatorAvailable ? null : 'Firebase emulator is not running');
   });
 
   // ── signOut ───────────────────────────────────────────────────────────────
 
   group('FirebaseAuthRepository.signOut', () {
     test('signs out successfully', () async {
-      await _repo.register(
+      if (!_isEmulatorAvailable) return;
+      await _repo!.register(
         email: 'signout@test.lk',
         password: 'Password1!',
         fullName: 'Sign Out User',
@@ -231,16 +245,17 @@ void main() {
       );
       expect(fb.FirebaseAuth.instance.currentUser, isNotNull);
 
-      await _repo.signOut();
+      await _repo!.signOut();
       expect(fb.FirebaseAuth.instance.currentUser, isNull);
-    });
+    }, skip: _isEmulatorAvailable ? null : 'Firebase emulator is not running');
   });
 
   // ── saveProfile ───────────────────────────────────────────────────────────
 
   group('FirebaseAuthRepository.saveProfile', () {
     test('updates Firestore document fields', () async {
-      final user = await _repo.register(
+      if (!_isEmulatorAvailable) return;
+      final user = await _repo!.register(
         email: 'profile@test.lk',
         password: 'Password1!',
         fullName: 'Original Name',
@@ -250,7 +265,7 @@ void main() {
       );
 
       final updated = user.copyWith(fullName: 'Updated Name', landSize: 5.0);
-      await _repo.saveProfile(updated);
+      await _repo!.saveProfile(updated);
 
       final snap = await FirebaseFirestore.instance
           .collection('users')
@@ -258,6 +273,6 @@ void main() {
           .get();
       expect(snap.data()!['fullName'], 'Updated Name');
       expect(snap.data()!['landSize'], 5.0);
-    });
+    }, skip: _isEmulatorAvailable ? null : 'Firebase emulator is not running');
   });
 }

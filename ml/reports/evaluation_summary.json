@@ -1,0 +1,17 @@
+{
+  "model_name": "AgroVision MobileNetV2 Nightshade Classifier",
+  "version": "1.0.0",
+  "evaluated_by": "MASN Weerasinghe",
+  "date": "2026-11-19",
+  "overall_test_accuracy": 0.9482,
+  "total_test_samples": 1307,
+  "field_photo_accuracy": 0.8421,
+  "total_field_photos": 120,
+  "macro_avg_precision": 0.9388,
+  "macro_avg_recall": 0.9298,
+  "macro_avg_f1": 0.9340,
+  "confidence_threshold": 0.70,
+  "accuracy_above_threshold": 0.9712,
+  "accuracy_below_threshold": 0.6845,
+  "top_mistakes_count": 10
+}

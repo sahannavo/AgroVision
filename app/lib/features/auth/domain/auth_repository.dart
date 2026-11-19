@@ -32,4 +32,3 @@ abstract class AuthRepository {
   /// Signs out the currently authenticated user.
   Future<void> signOut();
 }
-

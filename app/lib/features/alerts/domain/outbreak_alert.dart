@@ -54,6 +54,20 @@ class OutbreakAlert {
     this.isRead = false,
   });
 
+  String get diseaseName => disease;
+  String get cropName => crop;
+  String get description =>
+      '$reportCount report${reportCount == 1 ? '' : 's'} reported near $areaLabel.';
+  String? get vectorInfo => null;
+  String get plotAdvice =>
+      'Inspect nearby plants and follow the preventive steps.';
+  DateTime get reportedAt => createdAt;
+  double get distanceKm => radiusKm;
+  String? get locationName => areaLabel;
+  int get reportWindowDays => windowDays;
+  double get latitude => approxLatitude;
+  double get longitude => approxLongitude;
+
   OutbreakAlert copyWith({
     String? id,
     String? disease,
@@ -107,23 +121,34 @@ class OutbreakAlert {
 
   @override
   int get hashCode => Object.hash(
-        id,
-        disease,
-        crop,
-        areaLabel,
-        approxLatitude,
-        approxLongitude,
-        radiusKm,
-        reportCount,
-        windowDays,
-        severity,
-        createdAt,
-        Object.hashAll(preventiveSteps),
-        isRead,
-      );
+    id,
+    disease,
+    crop,
+    areaLabel,
+    approxLatitude,
+    approxLongitude,
+    radiusKm,
+    reportCount,
+    windowDays,
+    severity,
+    createdAt,
+    Object.hashAll(preventiveSteps),
+    isRead,
+  );
 
   @override
   String toString() =>
       'OutbreakAlert(id: $id, disease: $disease, crop: $crop, area: $areaLabel, severity: $severity, read: $isRead)';
 }
 
+class UserPlotLocation {
+  const UserPlotLocation({
+    required this.latitude,
+    required this.longitude,
+    this.plotName = 'My plot',
+  });
+
+  final double latitude;
+  final double longitude;
+  final String plotName;
+}

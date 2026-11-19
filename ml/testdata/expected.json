@@ -1,0 +1,98 @@
+{
+    "sample_tomato_early_blight.jpg": {
+        "image_size": [
+            224,
+            224,
+            3
+        ],
+        "top_3_predictions": [
+            {
+                "rank": 1,
+                "label": "Pepper___healthy",
+                "probability": 0.3803
+            },
+            {
+                "rank": 2,
+                "label": "Tomato___Spider_mites_Two-spotted_spider_mite",
+                "probability": 0.0928
+            },
+            {
+                "rank": 3,
+                "label": "Eggplant___healthy",
+                "probability": 0.0738
+            }
+        ]
+    },
+    "sample_tomato_healthy.jpg": {
+        "image_size": [
+            224,
+            224,
+            3
+        ],
+        "top_3_predictions": [
+            {
+                "rank": 1,
+                "label": "Pepper___healthy",
+                "probability": 0.3606
+            },
+            {
+                "rank": 2,
+                "label": "Tomato___Late_blight",
+                "probability": 0.0629
+            },
+            {
+                "rank": 3,
+                "label": "Eggplant___healthy",
+                "probability": 0.0554
+            }
+        ]
+    },
+    "sample_potato_late_blight.jpg": {
+        "image_size": [
+            224,
+            224,
+            3
+        ],
+        "top_3_predictions": [
+            {
+                "rank": 1,
+                "label": "Pepper___healthy",
+                "probability": 0.4445
+            },
+            {
+                "rank": 2,
+                "label": "Eggplant___healthy",
+                "probability": 0.0887
+            },
+            {
+                "rank": 3,
+                "label": "Tomato___Late_blight",
+                "probability": 0.0669
+            }
+        ]
+    },
+    "sample_pepper_bacterial_spot.jpg": {
+        "image_size": [
+            224,
+            224,
+            3
+        ],
+        "top_3_predictions": [
+            {
+                "rank": 1,
+                "label": "Pepper___healthy",
+                "probability": 0.359
+            },
+            {
+                "rank": 2,
+                "label": "Eggplant___healthy",
+                "probability": 0.0788
+            },
+            {
+                "rank": 3,
+                "label": "Tomato___Late_blight",
+                "probability": 0.0771
+            }
+        ]
+    }
+}

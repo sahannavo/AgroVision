@@ -155,6 +155,76 @@ void main() {
       expect(stats.weeklyScans['W1'], equals(1));
       expect(stats.weeklyScans['W2'], equals(0));
     });
+
+    test('filters statistics by cropType', () async {
+      final now = DateTime(2026, 11, 2, 12, 0);
+      final diagnoses = [
+        createTestDiagnosis(
+          id: '1',
+          cropType: 'Tomato',
+          diseaseClass: DiseaseClass.earlyBlight,
+          diagnosedAt: now.subtract(const Duration(days: 1)),
+        ),
+        createTestDiagnosis(
+          id: '2',
+          cropType: 'Chilli',
+          diseaseClass: DiseaseClass.healthy,
+          diagnosedAt: now.subtract(const Duration(days: 2)),
+        ),
+      ];
+
+      final tomatoStats = FirebaseHistoryRepository.computeStatsFromDiagnoses(
+        diagnoses,
+        referenceDate: now,
+        cropType: 'Tomato',
+      );
+
+      expect(tomatoStats.totalScans, equals(1));
+      expect(tomatoStats.healthyPercent, equals(0));
+      expect(tomatoStats.topIssue, equals(DiseaseClass.earlyBlight.displayName));
+
+      final chilliStats = FirebaseHistoryRepository.computeStatsFromDiagnoses(
+        diagnoses,
+        referenceDate: now,
+        cropType: 'Chilli',
+      );
+
+      expect(chilliStats.totalScans, equals(1));
+      expect(chilliStats.healthyPercent, equals(100));
+      expect(chilliStats.topIssue, equals('None'));
+    });
+
+    test('filters statistics by season (Yala and Maha)', () async {
+      final yalaDate = DateTime(2026, 6, 15); // June -> Yala (May - Aug)
+      final mahaDate = DateTime(2026, 11, 15); // Nov -> Maha (Sep - Mar)
+
+      final diagnoses = [
+        createTestDiagnosis(
+          id: 'y1',
+          diseaseClass: DiseaseClass.earlyBlight,
+          diagnosedAt: yalaDate,
+        ),
+        createTestDiagnosis(
+          id: 'm1',
+          diseaseClass: DiseaseClass.healthy,
+          diagnosedAt: mahaDate,
+        ),
+      ];
+
+      final yalaStats = FirebaseHistoryRepository.computeStatsFromDiagnoses(
+        diagnoses,
+        season: 'Yala',
+      );
+      expect(yalaStats.totalScans, equals(1));
+      expect(yalaStats.topIssue, equals(DiseaseClass.earlyBlight.displayName));
+
+      final mahaStats = FirebaseHistoryRepository.computeStatsFromDiagnoses(
+        diagnoses,
+        season: 'Maha',
+      );
+      expect(mahaStats.totalScans, equals(1));
+      expect(mahaStats.healthyPercent, equals(100));
+    });
   });
 
   group('DecisionLogEntry', () {

@@ -1,3 +1,99 @@
+# --------------------------------------------------
+# AgroVision Root .gitignore
+# --------------------------------------------------
+
+# Planning, prompts, and agent notes
 plan/
 app/plan/
 **/plan/
+plan.zip
+**/plan.zip
+*.zip
+app/prompts/
+**/prompts/
+.agent/
+.gemini/
+
+# Operating System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDEs and Editors
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Flutter & Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+app/build/
+**/build/
+
+# Mobile platform builds & caches
+ios/.generated/
+android/.gradle/
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+app.*.symbols
+app.*.map.json
+.widget_preview/
+
+# Firebase & Emulators
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+firestore-debug.log
+ui-debug.log
+
+# Node & Cloud Functions
+functions/node_modules/
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+functions/lib/
+
+# Python & ML (Datasets, models, checkpoints)
+# NOTE: labels.txt must remain tracked! Do NOT ignore *.txt
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+*.h5
+*.keras
+*.pt
+*.pth
+*.ckpt
+ml/checkpoints/
+ml/checkpoints/**
+ml/dataset/
+ml/dataset/**
+ml/datasets/
+ml/datasets/**
+ml/raw_data/
+ml/raw_data/**

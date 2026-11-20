@@ -47,7 +47,10 @@ app.*.map.json
 # Widget Preview related
 .widget_preview/
 
-# Project planning documents
+# Project planning documents & archives
 plan/
 app/plan/
 **/plan/
+plan.zip
+**/plan.zip
+*.zip

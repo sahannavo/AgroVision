@@ -6,6 +6,7 @@ import 'fake_diagnosis_classifier.dart';
 import 'fake_diagnosis_repository.dart';
 import 'firebase_diagnosis_repository.dart';
 import 'pending_upload_queue.dart';
+import 'tflite_classifier.dart';
 
 const bool kUseFakes = bool.fromEnvironment('USE_FAKES', defaultValue: true);
 
@@ -21,8 +22,14 @@ final diagnosisRepositoryProvider = Provider<DiagnosisRepository>((ref) {
 });
 
 /// Provider exposing the on-device [DiagnosisClassifier] instance.
+///
+/// Returns [FakeDiagnosisClassifier] when developing locally or executing tests.
+/// Switches to [TfliteClassifier] when built with `--dart-define=USE_FAKES=false`.
 final diagnosisClassifierProvider = Provider<DiagnosisClassifier>((ref) {
-  return FakeDiagnosisClassifier();
+  if (kUseFakes) {
+    return FakeDiagnosisClassifier();
+  }
+  return TfliteClassifier();
 });
 
 /// Provider for the [PendingUploadQueue] used to sync offline diagnoses.

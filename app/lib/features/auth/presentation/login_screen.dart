@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/services/connectivity_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -31,9 +32,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool _loading = false;
   String? _errorMessage;
 
-  // Will be driven by ConnectivityService provider once wired by SDL (see NOTES).
-  static const bool _isOffline = false;
-
   @override
   void dispose() {
     _emailCtrl.dispose();
@@ -43,7 +41,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_isOffline) {
+    final isOnline = ref.read(connectivityProvider);
+    if (!isOnline) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -68,9 +67,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (mounted) context.go('/home');
     } catch (_) {
       if (mounted) {
+        final onlineNow = ref.read(connectivityProvider);
         setState(
-          () => _errorMessage =
-              'Incorrect email or password. Please try again.',
+          () => _errorMessage = !onlineNow
+              ? 'No internet connection. Please check your network and try again.'
+              : 'Incorrect email or password. Please try again.',
         );
       }
     } finally {
@@ -80,6 +81,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isOnline = ref.watch(connectivityProvider);
+    final isOffline = !isOnline;
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -134,7 +137,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   color: AppColors.textSecondary,
                 ),
               ),
-              if (_isOffline) ...[
+              if (isOffline) ...[
                 const SizedBox(height: AppSpacing.md),
                 const OfflineLoginBanner(),
               ],

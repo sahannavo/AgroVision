@@ -103,6 +103,7 @@ def build_splits(
         for c in CANONICAL_CLASSES:
             (output_dir / s / c).mkdir(parents=True, exist_ok=True)
 
+    manifest_entries: List[Dict[str, str]] = []
     seen_hashes: Set[str] = set()
     class_counts: Dict[str, Dict[str, int]] = {
         c: {"train": 0, "val": 0, "test": 0, "field_test": 0, "total": 0}
@@ -150,6 +151,12 @@ def build_splits(
                 dest = output_dir / "test" / cls_name / f"{img.stem}.jpg"
                 if verify_and_resize_image(img, dest):
                     class_counts[cls_name]["test"] += 1
+                    manifest_entries.append({
+                        "filename": dest.name,
+                        "label": cls_name,
+                        "source": "PlantVillage/Public",
+                        "split": "test"
+                    })
 
     # 2. Ingest Field Phone Photos (Strictly to test split only)
     if field_photos_dir.exists():
@@ -169,6 +176,12 @@ def build_splits(
                     if verify_and_resize_image(file_path, dest):
                         class_counts[cls_name]["test"] += 1
                         class_counts[cls_name]["field_test"] += 1
+                        manifest_entries.append({
+                            "filename": dest.name,
+                            "label": cls_name,
+                            "source": "AgroVision_Team_Field_Photos",
+                            "split": "test"
+                        })
 
     # Calculate totals
     for c in CANONICAL_CLASSES:
@@ -176,7 +189,7 @@ def build_splits(
             class_counts[c]["train"] + class_counts[c]["val"] + class_counts[c]["test"]
         )
 
-    # 3. Export class_counts.csv
+    # 3. Export class_counts.csv and manifest.csv
     csv_path = reports_dir / "class_counts.csv"
     with open(csv_path, mode="w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
@@ -192,7 +205,16 @@ def build_splits(
                 counts["total"],
             ])
 
+    manifest_path = reports_dir.parent / "data" / "manifest.csv"
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(manifest_path, mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["filename", "label", "source", "split"])
+        writer.writeheader()
+        for entry in manifest_entries:
+            writer.writerow(entry)
+
     print(f"[✔] Class distribution report exported to: {csv_path}")
+    print(f"[✔] Test split manifest exported to: {manifest_path}")
     print(f"[✔] Custom data processing pipeline completed successfully.")
 
 

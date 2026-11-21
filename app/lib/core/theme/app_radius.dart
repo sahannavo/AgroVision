@@ -33,6 +33,15 @@ abstract final class AppRadius {
   static const BorderRadius borderLg = BorderRadius.all(Radius.circular(lg));
   static const BorderRadius borderXl = BorderRadius.all(Radius.circular(xl));
   static const BorderRadius borderXxl = BorderRadius.all(Radius.circular(xxl));
-  static const BorderRadius borderFull = BorderRadius.all(Radius.circular(full));
+  static const BorderRadius borderFull = BorderRadius.all(
+    Radius.circular(full),
+  );
+  static const BorderRadius fullAll = borderFull;
+  static const BorderRadius xsAll = borderXs;
+  static const BorderRadius smAll = borderSm;
+  static const BorderRadius mdAll = borderMd;
+  static const BorderRadius lgAll = borderLg;
+  static const BorderRadius xlAll = borderXl;
+  static const BorderRadius xxlAll = borderXxl;
   static final BorderRadius buttonBorderRadius = BorderRadius.circular(button);
 }

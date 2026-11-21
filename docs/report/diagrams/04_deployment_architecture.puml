@@ -1,0 +1,52 @@
+@startuml 04_deployment_architecture
+' AgroVision - Deployment and system architecture.
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam nodesep 40
+skinparam ranksep 70
+skinparam defaultTextAlignment center
+
+node "Android phone" as phone {
+  component "Flutter app\n(feature-first layers,\nRiverpod, go_router)" as app
+  component "TFLite model\non-device inference\n(works fully offline)" as tfl
+  database "Firestore offline cache\n(weather, alerts, history)" as cache
+}
+
+rectangle "Firebase project\nagrovision-dev / agrovision-prod" as fb {
+  component "Firebase Auth\n(email and password)" as auth
+  database "Cloud Firestore" as fs
+  database "Cloud Storage\n(leaf images)" as sto
+  component "Firebase Cloud\nMessaging (FCM)" as fcm
+  node "Cloud Functions\n(TypeScript, Node 20)" as cf {
+    component "getWeatherForecast\n(HTTPS callable)" as f1
+    component "refreshWeatherCache\n(scheduled hourly)" as f2
+    component "onDiagnosisCreated\n(Firestore trigger)" as f3
+    component "onOutbreakAlertCreated\n(Firestore trigger)" as f4
+  }
+}
+
+cloud "OpenWeatherMap API\n(external)" as owm
+
+app --> tfl : classify leaf image
+app --> cache : read / write
+cache <--> fs : sync when online
+app --> auth : sign in / register
+app --> sto : upload image
+app --> f1 : callable
+f1 --> owm : forecast request
+f2 --> owm : hourly refresh
+f1 --> fs : weatherCache
+f2 --> fs : weatherCache
+fs --> f3 : diagnoses created
+f3 --> fs : outbreakAlerts
+fs --> f4 : alert created
+f4 --> fs : notifications
+f4 --> fcm : send push
+fcm --> app : push notification
+
+note bottom of cf
+  Config in functions/.env (never committed):
+  OUTBREAK_RADIUS_KM, OUTBREAK_MIN_REPORTS,
+  OUTBREAK_WINDOW_HOURS, OPENWEATHER_API_KEY
+end note
+@enduml

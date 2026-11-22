@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -114,17 +114,27 @@ class _AddCropPlotSheetState extends ConsumerState<AddCropPlotSheet> {
     );
 
     try {
-      final dynamic repo = ref.read(cropPlotRepositoryProvider);
+      final repo = ref.read(cropPlotRepositoryProvider);
       widget.plot == null
           ? await repo.addPlot(plotData)
           : await repo.updatePlot(plotData);
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
     } catch (error, stackTrace) {
       debugPrint('Failed to save crop plot: $error\n$stackTrace');
-      rethrow;
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Could not save crop plot. Please check your connection and try again.',
+            ),
+          ),
+        );
+      }
     } finally {
       if (mounted) {
         setState(() => _saving = false);
-        Navigator.of(context).pop();
       }
     }
   }
@@ -180,7 +190,7 @@ class _AddCropPlotSheetState extends ConsumerState<AddCropPlotSheet> {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Maha Season 2024 Â· Kurunegala',
+                          'Maha Season 2024 · Kurunegala',
                           style: AppTextStyles.bodySmall.copyWith(
                             color: AppColors.textSecondary,
                           ),
@@ -462,7 +472,7 @@ class _AddCropPlotSheetState extends ConsumerState<AddCropPlotSheet> {
                     onPressed: _saving ? null : _save,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
+                      foregroundColor: AppColors.textOnPrimary,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppRadius.md),
@@ -474,7 +484,7 @@ class _AddCropPlotSheetState extends ConsumerState<AddCropPlotSheet> {
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Colors.white,
+                              color: AppColors.textOnPrimary,
                             ),
                           )
                         : Icon(
@@ -487,7 +497,7 @@ class _AddCropPlotSheetState extends ConsumerState<AddCropPlotSheet> {
                       isEdit ? 'Save changes' : 'Save plot',
                       style: AppTextStyles.labelLarge.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                        color: AppColors.textOnPrimary,
                       ),
                     ),
                   ),

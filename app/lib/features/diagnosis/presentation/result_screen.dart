@@ -88,7 +88,9 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Failed to save to history'),
+            content: Text(
+              'Could not save to history. Please check your connection and try again.',
+            ),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -109,7 +111,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
         !isHealthy && diagnosis.confidence < kConfidenceThreshold;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF0FDF4),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -125,22 +127,20 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
             }
           },
         ),
-        title: const Text(
+        title: Text(
           'Diagnosis Result',
-          style: TextStyle(
-            fontFamily: AppTextStyles.headingFontFamily,
-            fontSize: 20,
+          style: AppTextStyles.titleLarge.copyWith(
             fontWeight: FontWeight.w700,
             color: AppColors.textPrimary,
           ),
         ),
-        actions: [
+        actions: const [
           Padding(
-            padding: const EdgeInsets.only(right: AppSpacing.md),
+            padding: EdgeInsets.only(right: AppSpacing.md),
             child: CircleAvatar(
               radius: 18,
-              backgroundColor: const Color(0xFF2E7D32),
-              child: const Icon(Icons.person, color: Colors.white, size: 20),
+              backgroundColor: AppColors.primaryGreen,
+              child: Icon(Icons.person, color: AppColors.textOnPrimary, size: 20),
             ),
           ),
         ],
@@ -199,30 +199,33 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
   }
 
   Widget _buildSyncStatusBanner(Diagnosis diagnosis) {
+    final isSynced = diagnosis.syncStatus == SyncStatus.synced;
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.mdSm,
         vertical: AppSpacing.xs + 2,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFFE2F4E7),
+        color: AppColors.primaryContainer.withValues(alpha: 0.5),
         borderRadius: AppRadius.borderFull,
       ),
       child: Row(
         children: [
-          const Icon(
-            Icons.cloud_off_rounded,
+          Icon(
+            isSynced ? Icons.cloud_done_rounded : Icons.cloud_off_rounded,
             size: 16,
-            color: Color(0xFF2D6A4F),
+            color: AppColors.primaryGreen,
           ),
           const SizedBox(width: AppSpacing.xs + 2),
           Expanded(
             child: Text(
-              'Saved on this phone, will sync when online',
+              isSynced
+                  ? 'Diagnosis synchronized to cloud'
+                  : 'Saved on this phone, will sync when online',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: AppTextStyles.labelSmall.copyWith(
-                color: const Color(0xFF1E3A2B),
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -230,16 +233,17 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              color: const Color(0xFFD0EDD8),
+              color: isSynced
+                  ? AppColors.primaryGreen.withValues(alpha: 0.15)
+                  : AppColors.primaryContainer,
               borderRadius: AppRadius.borderFull,
             ),
-            child: const Text(
-              'Offline',
-              style: TextStyle(
-                fontFamily: AppTextStyles.bodyFontFamily,
+            child: Text(
+              isSynced ? 'Synced' : 'Offline',
+              style: AppTextStyles.labelSmall.copyWith(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF2D6A4F),
+                color: AppColors.primaryGreen,
               ),
             ),
           ),
@@ -521,17 +525,13 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
             // Primary: Retake photo
             ElevatedButton.icon(
               onPressed: _navigateToCapture,
-              icon: const Icon(Icons.camera_alt_outlined, color: Colors.white),
-              label: const Text(
+              icon: const Icon(Icons.camera_alt_outlined, color: AppColors.textOnPrimary),
+              label: Text(
                 'Retake photo',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
+                style: AppTextStyles.button,
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1E6F24),
+                backgroundColor: AppColors.primaryGreen,
                 minimumSize: const Size.fromHeight(48),
                 shape: RoundedRectangleBorder(
                   borderRadius: AppRadius.borderMd,
@@ -549,15 +549,17 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
               ),
               label: Text(
                 _isSaved ? 'Saved to history' : 'Save anyway',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
+                style: AppTextStyles.labelLarge.copyWith(
                   color: _isSaved ? AppColors.textSecondary : AppColors.primaryGreen,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size.fromHeight(48),
-                side: const BorderSide(color: Color(0xFFD0EDD8), width: 1.5),
+                side: BorderSide(
+                  color: AppColors.primaryGreen.withValues(alpha: 0.4),
+                  width: 1.5,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: AppRadius.borderMd,
                 ),
@@ -573,26 +575,22 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                       height: 18,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white,
+                        color: AppColors.textOnPrimary,
                       ),
                     )
                   : Icon(
                       _isSaved ? Icons.check_circle : Icons.bookmark_border_rounded,
-                      color: Colors.white,
+                      color: AppColors.textOnPrimary,
                     ),
               label: Text(
                 _isSaved ? 'Saved to history' : 'Save to history',
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
+                style: AppTextStyles.button,
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: _isSaved
                     ? AppColors.textSecondary
-                    : const Color(0xFF1E6F24),
-                disabledBackgroundColor: const Color(0xFF8E9B90),
+                    : AppColors.primaryGreen,
+                disabledBackgroundColor: AppColors.textSecondary.withValues(alpha: 0.6),
                 minimumSize: const Size.fromHeight(48),
                 shape: RoundedRectangleBorder(
                   borderRadius: AppRadius.borderMd,
@@ -608,17 +606,19 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                 Icons.camera_alt_outlined,
                 color: AppColors.primaryGreen,
               ),
-              label: const Text(
+              label: Text(
                 'Scan another leaf',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
+                style: AppTextStyles.labelLarge.copyWith(
                   color: AppColors.primaryGreen,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size.fromHeight(48),
-                side: const BorderSide(color: Color(0xFFD0EDD8), width: 1.5),
+                side: BorderSide(
+                  color: AppColors.primaryGreen.withValues(alpha: 0.4),
+                  width: 1.5,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: AppRadius.borderMd,
                 ),

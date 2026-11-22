@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/services/connectivity_service.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/offline_banner.dart';
 import '../../diagnosis/data/providers.dart';
 import '../../diagnosis/domain/diagnosis.dart';
+import '../../diagnosis/domain/diagnosis_repository.dart';
 import '../../diagnosis/domain/disease_class.dart';
 import '../data/providers.dart';
 import '../domain/decision_log_entry.dart';
@@ -184,7 +184,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
     );
   }
 
-  Widget _buildDiagnosesTab(diagnosisRepo, HistoryRepository historyRepo) {
+  Widget _buildDiagnosesTab(
+    DiagnosisRepository diagnosisRepo,
+    HistoryRepository historyRepo,
+  ) {
     return FutureBuilder<HistoryStats>(
       future: historyRepo.getStats(),
       builder: (context, statsSnapshot) {
@@ -234,7 +237,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                     Icon(
                       Icons.qr_code_scanner_rounded,
                       size: 56,
-                      color: AppColors.textSecondary.withOpacity(0.5),
+                      color: AppColors.textSecondary.withValues(alpha: 0.5),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     Text(
@@ -348,4 +351,3 @@ class _TabBarHeaderDelegate extends SliverPersistentHeaderDelegate {
     return oldDelegate.tabBar != tabBar;
   }
 }
-

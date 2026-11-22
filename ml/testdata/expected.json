@@ -1,0 +1,44 @@
+{
+  "test_samples": [
+    {
+      "file": "leaf_sample_01.png",
+      "crop": "Tomato",
+      "expected_class": "Tomato___Early_blight",
+      "expected_confidence": 0.885,
+      "top_3_predictions": [
+        { "label": "Tomato___Early_blight", "probability": 0.885 },
+        { "label": "Tomato___Late_blight", "probability": 0.065 },
+        { "label": "Tomato___healthy", "probability": 0.025 }
+      ]
+    },
+    {
+      "file": "leaf_sample_02.png",
+      "crop": "Tomato",
+      "expected_class": "Tomato___healthy",
+      "expected_confidence": 0.942,
+      "top_3_predictions": [
+        { "label": "Tomato___healthy", "probability": 0.942 },
+        { "label": "Potato___healthy", "probability": 0.031 },
+        { "label": "Pepper___healthy", "probability": 0.015 }
+      ]
+    },
+    {
+      "file": "leaf_sample_03.png",
+      "crop": "Potato",
+      "expected_class": "Potato___Late_blight",
+      "expected_confidence": 0.891,
+      "top_3_predictions": [
+        { "label": "Potato___Late_blight", "probability": 0.891 },
+        { "label": "Tomato___Late_blight", "probability": 0.072 },
+        { "label": "Potato___Early_blight", "probability": 0.021 }
+      ]
+    }
+  ],
+  "tolerance": 0.05,
+  "preprocessing_spec": {
+    "input_dimension": [224, 224, 3],
+    "color_order": "RGB",
+    "normalization": "(pixel - 127.5) / 127.5",
+    "exif_orientation_baked": true
+  }
+}

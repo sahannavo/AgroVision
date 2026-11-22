@@ -194,8 +194,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
         return StreamBuilder<List<Diagnosis>>(
           stream: diagnosisRepo.watchHistory(),
           builder: (context, recordsSnapshot) {
-            if (statsSnapshot.connectionState == ConnectionState.waiting &&
-                recordsSnapshot.connectionState == ConnectionState.waiting) {
+            if (recordsSnapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(color: AppColors.primaryGreen),
               );
@@ -203,10 +202,14 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
 
             if (recordsSnapshot.hasError) {
               return Center(
-                child: Text(
-                  'Failed to load diagnoses history',
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.danger,
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  child: Text(
+                    'Could not load your scan history. Please check your internet connection and try again.',
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ),
               );
@@ -301,6 +304,21 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: CircularProgressIndicator(color: AppColors.primaryGreen),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              child: Text(
+                'Could not load farm decisions. Please try again.',
+                textAlign: TextAlign.center,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ),
           );
         }
 

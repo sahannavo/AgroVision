@@ -232,7 +232,11 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
     } on CameraException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not take photo: ${e.description}')),
+        const SnackBar(
+          content: Text(
+            'Could not take photo. Please check camera permissions and try again.',
+          ),
+        ),
       );
     }
   }
@@ -285,8 +289,10 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
     if (error != null) {
       _returnToCamera();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Diagnosis failed: $error'),
+        const SnackBar(
+          content: Text(
+            'Could not analyse the leaf. Please ensure good lighting and try again.',
+          ),
           backgroundColor: AppColors.danger,
         ),
       );

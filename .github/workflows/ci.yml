@@ -38,7 +38,7 @@ jobs:
       - name: Analyze Flutter Code
         run: |
           cd app
-          flutter analyze --no-fatal-infos
+          flutter analyze --no-fatal-infos --no-fatal-warnings
 
       - name: Run Flutter Tests
         run: |

@@ -12,7 +12,11 @@ void main() async {
   // Run with --dart-define=USE_FAKES=false to enable Firebase.
   // Run with --dart-define=USE_EMULATORS=true to point at local emulators.
   if (!kUseFakes) {
-    await firebaseBootstrap();
+    try {
+      await firebaseBootstrap();
+    } catch (e, st) {
+      debugPrint('[Firebase] Bootstrap error: $e\n$st');
+    }
   }
 
   runApp(const ProviderScope(child: AgroVisionApp()));

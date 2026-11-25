@@ -55,7 +55,11 @@ class FakeHistoryRepository implements HistoryRepository {
   }
 
   @override
-  Future<HistoryStats> getStats({String? userId}) async {
+  Future<HistoryStats> getStats({
+    String? userId,
+    String? season,
+    String? cropType,
+  }) async {
     await Future<void>.delayed(delay);
 
     return const HistoryStats(

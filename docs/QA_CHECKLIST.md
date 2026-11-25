@@ -38,6 +38,7 @@ This checklist is used for manual Quality Assurance on physical Android devices 
 | :-: | :--- | :--- | :--- | :-: | :--- |
 | **3.1** | **Location Permission Denied** | 1. Deny fine location permission during Farm Setup or Diagnosis.<br>2. Proceed with flow. | App gracefully falls back to default Sri Lankan agricultural district coordinates (e.g. Kurunegala / Matale). | [ ] | |
 | **3.2** | **GPS Disabled (Location Off)** | 1. Turn off device Location toggle in Quick Settings.<br>2. Save new diagnosis. | App catches disabled provider, prompts user to enable GPS, or tags diagnosis with last known coordinates. | [ ] | |
+| **3.3** | **Notification Permission Denied** | 1. Deny push notification permission on Android 13+.<br>2. Open Alerts tab. | App continues operating without crash; in-app outbreak alerts list still loads normally. | [ ] | |
 
 ---
 
@@ -64,7 +65,9 @@ This checklist is used for manual Quality Assurance on physical Android devices 
 
 ---
 
-## 6. Sign-off & Release Recommendation
+## 6. Defect Reporting & Sign-off
+
+> **Bug Filing Rule:** Open a GitHub issue for every bug found with **steps to reproduce**, **expected result**, **actual result**, and a **screenshot**, and **tag the file/feature owner**.
 
 - [ ] **PASS:** Application satisfies all field resilience, offline sync, and accessibility criteria without critical defects.
 - [ ] **FAIL:** Application exhibits blockers/regressions requiring remediation before production release.

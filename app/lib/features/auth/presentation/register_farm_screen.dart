@@ -125,8 +125,12 @@ class _RegisterFarmScreenState extends ConsumerState<RegisterFarmScreen> {
       if (mounted) context.go('/home');
     } catch (e) {
       if (mounted) {
+        final errStr = e.toString().toLowerCase();
+        final message = errStr.contains('email-already-in-use')
+            ? 'This email address is already registered. Please log in.'
+            : 'Registration could not be completed. Please check your internet connection and try again.';
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registration failed: $e')),
+          SnackBar(content: Text(message)),
         );
       }
     } finally {
@@ -674,7 +678,7 @@ class _UnitBtn extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
+          horizontal: AppSpacing.sm + 2,
           vertical: AppSpacing.sm,
         ),
         decoration: BoxDecoration(

@@ -29,10 +29,12 @@ void main() {
       final fakeHistoryRepo = FakeHistoryRepository(delay: Duration.zero);
 
       // Step 1: Run on-device classifier (fake) as CaptureScreen does
-      final scannedDiagnosis = await fakeClassifier.classify(
-        'assets/images/placeholder_logo.png',
-        cropType: 'Tomato',
-      );
+      final scannedDiagnosis = (await tester.runAsync(
+        () => fakeClassifier.classify(
+          'assets/images/placeholder_logo.png',
+          cropType: 'Tomato',
+        ),
+      ))!;
 
       // Step 2: Render ResultScreen and tap "Save to history"
       await tester.pumpWidget(
@@ -61,7 +63,8 @@ void main() {
       await tester.pump(const Duration(milliseconds: 200));
 
       expect(find.text('Saved to history'), findsWidgets);
-      final savedList = await fakeDiagRepo.getHistory();
+      final savedList =
+          (await tester.runAsync(() => fakeDiagRepo.getHistory()))!;
       expect(savedList.any((d) => d.id == scannedDiagnosis.id), isTrue);
 
       // Step 3: Render HistoryScreen and verify RecordTile reflects the saved diagnosis

@@ -17,7 +17,8 @@ void main() {
         'Adding a crop plot from Planner empty state saves to repository and Planner renders schedule',
         (tester) async {
       final fakePlotRepo = FakeCropPlotRepository(delay: Duration.zero);
-      final initialCount = (await fakePlotRepo.getPlots()).length;
+      final initialCount =
+          (await tester.runAsync(() => fakePlotRepo.getPlots()))!.length;
 
       await tester.pumpWidget(
         ProviderScope(
@@ -49,7 +50,8 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
-      final updatedPlots = await fakePlotRepo.getPlots();
+      final updatedPlots =
+          (await tester.runAsync(() => fakePlotRepo.getPlots()))!;
       expect(updatedPlots.length, initialCount + 1);
 
       // Verify PlannerScreen renders schedule when plots exist
@@ -62,6 +64,7 @@ void main() {
           child: MaterialApp(
             theme: AppTheme.light,
             home: PlannerScreen(
+              key: const ValueKey('populated_planner'),
               initialPlots: [
                 CropPlotItem(
                   id: latestPlot.id,

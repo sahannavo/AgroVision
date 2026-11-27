@@ -3,7 +3,7 @@
 **Author:** KMCA Kumarasinghe (QA & Integration Lead)  
 **Project:** AgroVision — Smart Agricultural Management & Disease Diagnosis for Nightshade Crops  
 **Review Partner:** JKVC Kaveesha  
-**Repository Branch:** `feature/test/integration` / `Charuka-(frontend)`
+**Repository Branch:** `Charuka` (Task label: `feature/test/integration`)
 
 ---
 
@@ -33,8 +33,8 @@ The primary objective of this Test Plan is to validate functional correctness, o
 |                 Manual Field & UAT                   |  -> Real Android devices, field lighting,
 |                 (docs/QA_CHECKLIST.md)                |     airplane mode, accessibility (130% font)
 +-------------------------------------------------------+
-|               End-to-End Integration Tests            |  -> Flutter Driver / integration_test
-|             (app/integration_test/*_test.dart)        |     Deterministic user journeys with fakes
+|               End-to-End Integration Tests            |  -> flutter_test (fake repositories)
+|          (app/test/integration_test/*_test.dart)      |     Deterministic user journeys with fakes
 +-------------------------------------------------------+
 |                  Feature Widget Tests                 |  -> UI component verification, theme tokens,
 |             (app/test/**/presentation/*_test.dart)    |     responsive layout (360-430 dp)
@@ -87,18 +87,20 @@ The primary objective of this Test Plan is to validate functional correctness, o
 
 | Scenario ID | Functional Area | Test Scenario Description | Expected Outcome | Verification Level |
 | :--- | :--- | :--- | :--- | :--- |
-| **TC-AUTH-01** | Authentication | User registers with valid email, password, and farm metadata. | User record created, navigates to Farm Setup, then smoothly lands on `/home`. | Integration / Unit |
+| **TC-AUTH-01** | Authentication | User registers with valid email, password, and farm metadata, or logs in with existing credentials. | User record created/authenticated, navigates to Farm Setup (on register), then lands on `/home`. | Integration / Unit |
 | **TC-AUTH-02** | Authentication | User submits invalid email format or short password (< 6 chars). | Validator prevents submission; displays descriptive inline error text. | Widget / Unit |
 | **TC-DIAG-01** | Diagnosis | Farmer captures crop leaf image in Airplane Mode (Offline). | Local TFLite classifier outputs top disease match and advice; record marked as `Pending` sync. | Integration / Manual |
 | **TC-DIAG-02** | Diagnosis | Device restores network connectivity after offline diagnosis. | `PendingUploadQueue` syncs diagnosis to Firestore; status changes to `Synced`. | Integration / Unit |
 | **TC-DIAG-03** | Diagnosis | Leaf photo captured with healthy crop foliage. | Displays healthy banner, green indicator ring, and preventive maintenance tips. | Widget / Manual |
-| **TC-ADVI-01** | Crop Advisor | Farmer inputs Reddish Brown Earth soil type for Yala season. | Crop suitability engine recommends Chilli and Tomato with high suitability score. | Unit / Integration |
-| **TC-PLAN-01** | Smart Planner | Rain sensor / weather cache indicates heavy rainfall (> 20mm). | Smart irrigation engine adjusts daily plan to "Skip Watering" avoiding root rot. | Unit / Widget |
+| **TC-ADVI-01** | Crop Advisor | Farmer requests planting advice offline with Reddish Brown Earth soil for Yala season. | Advisor uses last cached weather and soil rules to recommend Chilli and Tomato with suitability score. | Unit / Manual |
+| **TC-PLAN-01** | Smart Planner | Farmer adds a crop plot and weather cache indicates heavy rainfall (> 20mm). | Plot saved to `CropPlotRepository`; smart irrigation engine adjusts daily plan to "Skip Watering" avoiding root rot. | Integration / Unit |
 | **TC-HIST-01** | History & Analytics | History screen opened with 24 past scan records. | Diagnoses bar chart visualizes 8 weeks; donut chart displays disease distribution summing to 100%. | Widget / Integration |
 | **TC-HIST-02** | History & Analytics | Farmer switches to Decisions tab in History. | Chronological timeline displays past spray, watering, and mulching actions with sync status. | Widget / Unit |
-| **TC-ALRT-01** | Outbreak Alert | 3+ diagnoses of Late Blight registered within 5km radius within 48h. | Outbreak alert document generated in Firestore; banner appears on farmer's Home screen. | Integration / Unit |
+| **TC-ALRT-01** | Outbreak Alert | 3+ diagnoses of Late Blight registered within cluster radius and time window. | Outbreak alert created in `outbreakAlerts` (no user IDs); alert card opens preventive steps and marks read. | Integration / Unit |
+| **TC-OFFL-01** | Offline States | Device loses internet connectivity across Home, Planner, History, and Alerts. | Clear offline banner/pill shown; cached weather and local diagnosis work while cloud-only actions show offline notice. | Manual / Widget |
 | **TC-EDGE-01** | Edge / Hardware | Farmer denies Camera permission when tapping "Scan Leaf". | Friendly permission prompt appears explaining rationale with link to App Settings. | Manual / Widget |
 | **TC-EDGE-02** | Edge / UI | System font scale set to 130% on low-resolution screen (360 dp). | Text scales legibly without layout overflows, text clipping, or broken cards. | Manual / Widget |
+| **TC-EDGE-03** | Edge / Hardware | Farmer denies Location permission during Farm Setup or Diagnosis. | App gracefully falls back to default district coordinates without crashing. | Manual / Widget |
 
 ---
 

@@ -33,7 +33,7 @@ dependencies:
   uuid: ^4.4.0
 
   # Machine Learning & Image Processing
-  tflite_flutter: ^0.10.4
+  tflite_flutter: 0.12.1
   image: ^4.2.0
 
   # Firebase Services (Uninitialized)
@@ -57,25 +57,25 @@ flutter:
     - assets/model/
     - assets/data/
 
-  # Bundled fonts configuration.
-  fonts:
-    - family: Outfit
-      fonts:
-        - asset: assets/fonts/Outfit-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/Outfit-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/Outfit-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/Outfit-Bold.ttf
-          weight: 700
-    - family: Figtree
-      fonts:
-        - asset: assets/fonts/Figtree-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/Figtree-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/Figtree-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/Figtree-Bold.ttf
-          weight: 700
+  # Bundled fonts configuration (uncomment when .ttf files are provided).
+  # fonts:
+  #   - family: Outfit
+  #     fonts:
+  #       - asset: assets/fonts/Outfit-Regular.ttf
+  #         weight: 400
+  #       - asset: assets/fonts/Outfit-Medium.ttf
+  #         weight: 500
+  #       - asset: assets/fonts/Outfit-SemiBold.ttf
+  #         weight: 600
+  #       - asset: assets/fonts/Outfit-Bold.ttf
+  #         weight: 700
+  #   - family: Figtree
+  #     fonts:
+  #       - asset: assets/fonts/Figtree-Regular.ttf
+  #         weight: 400
+  #       - asset: assets/fonts/Figtree-Medium.ttf
+  #         weight: 500
+  #       - asset: assets/fonts/Figtree-SemiBold.ttf
+  #         weight: 600
+  #       - asset: assets/fonts/Figtree-Bold.ttf
+  #         weight: 700

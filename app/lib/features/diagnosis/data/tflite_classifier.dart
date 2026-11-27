@@ -135,14 +135,10 @@ class TfliteClassifier implements DiagnosisClassifier {
     if (_isInitialized) return;
 
     // 1. Load labels.txt
-    if (_labels == null) {
-      _labels = await _loadLabels();
-    }
+    _labels ??= await _loadLabels();
 
     // 2. Load DiseaseCatalog
-    if (_catalog == null) {
-      _catalog = await DiseaseCatalog.loadFromAsset(assetPath: catalogAssetPath);
-    }
+    _catalog ??= await DiseaseCatalog.loadFromAsset(assetPath: catalogAssetPath);
 
     // 3. Load TFLite model
     if (_interpreter == null) {

@@ -93,5 +93,96 @@ void main() {
         expect(entry.toDiseaseInfo(), isNotNull);
       }
     });
+
+    test('labels.txt matches ml/labels_schema.md in exact 0-indexed order', () {
+      final labelsFile = _resolveFile('assets/model/labels.txt');
+      expect(labelsFile.existsSync(), isTrue, reason: 'assets/model/labels.txt must exist');
+
+      final labels = labelsFile
+          .readAsStringSync()
+          .split(RegExp(r'\r?\n'))
+          .map((line) => line.trim())
+          .where((line) => line.isNotEmpty)
+          .toList();
+
+      final schemaFile = _resolveFile('ml/labels_schema.md');
+      expect(schemaFile.existsSync(), isTrue, reason: 'ml/labels_schema.md must exist');
+
+      final rowRegex = RegExp(r'^\|\s*(\d+)\s*\|\s*`([^`]+)`\s*\|');
+      final schemaEntries = <({int index, String label})>[];
+      for (final line in schemaFile.readAsLinesSync()) {
+        final match = rowRegex.firstMatch(line.trim());
+        if (match != null) {
+          schemaEntries.add((
+            index: int.parse(match.group(1)!),
+            label: match.group(2)!.trim(),
+          ));
+        }
+      }
+
+      expect(schemaEntries.length, equals(18));
+      expect(labels.length, equals(schemaEntries.length));
+
+      for (var i = 0; i < schemaEntries.length; i++) {
+        expect(schemaEntries[i].index, equals(i));
+        expect(
+          labels[i],
+          equals(schemaEntries[i].label),
+          reason: 'Label at index $i in labels.txt must match ml/labels_schema.md',
+        );
+      }
+    });
+
+    test('every label in labels.txt has a complete entry in disease_catalog.json', () {
+      final labelsFile = _resolveFile('assets/model/labels.txt');
+      final labels = labelsFile
+          .readAsStringSync()
+          .split(RegExp(r'\r?\n'))
+          .map((line) => line.trim())
+          .where((line) => line.isNotEmpty)
+          .toList();
+
+      expect(labels.length, equals(18));
+      for (final label in labels) {
+        expect(
+          catalog.containsLabel(label),
+          isTrue,
+          reason: 'Label "$label" from labels.txt is missing in disease_catalog.json',
+        );
+        final entry = catalog.lookup(label);
+        expect(entry.crop.isNotEmpty, isTrue);
+        expect(entry.displayName.isNotEmpty, isTrue);
+        expect(entry.scientificName.isNotEmpty, isTrue);
+        expect(entry.description.isNotEmpty, isTrue);
+        expect(['low', 'moderate', 'high'], contains(entry.severityHint));
+        expect(entry.actionSteps.length, equals(3));
+        expect(entry.prevention.length, equals(3));
+      }
+
+      // Verify the 3 extended Model v2 labels map to expected domain classes
+      final chilliCurl = catalog.lookup('Chilli___Leaf_curl');
+      expect(chilliCurl.isHealthy, isFalse);
+      expect(chilliCurl.diseaseClass, equals(DiseaseClass.leafCurl));
+
+      final eggplantHealthy = catalog.lookup('Eggplant___healthy');
+      expect(eggplantHealthy.isHealthy, isTrue);
+      expect(eggplantHealthy.diseaseClass, equals(DiseaseClass.healthy));
+
+      final nitrogenDef = catalog.lookup('General___Nitrogen_deficiency');
+      expect(nitrogenDef.isHealthy, isFalse);
+      expect(nitrogenDef.diseaseClass, equals(DiseaseClass.nitrogenDeficiency));
+    });
+
+    test('model.tflite asset exists, is non-empty, and is within size budget', () {
+      final modelFile = _resolveFile('assets/model/model.tflite');
+      expect(modelFile.existsSync(), isTrue, reason: 'assets/model/model.tflite must exist');
+      final sizeBytes = modelFile.lengthSync();
+      expect(sizeBytes, greaterThan(0), reason: 'model.tflite must not be empty');
+      expect(
+        sizeBytes,
+        lessThan(10 * 1024 * 1024),
+        reason: 'model.tflite should be under the 10 MB target (25 MB hard limit)',
+      );
+    });
   });
 }

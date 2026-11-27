@@ -15,6 +15,10 @@ class AgroVisionApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       routerConfig: appRouter,
+      scrollBehavior: const MaterialScrollBehavior().copyWith(
+        physics: const ClampingScrollPhysics(),
+        overscroll: false,
+      ),
     );
   }
 }

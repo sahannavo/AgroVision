@@ -2,19 +2,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/weather_forecast.dart';
 import '../domain/weather_repository.dart';
 import 'fake_weather_repository.dart';
-import 'firebase_weather_repository.dart';
+import 'open_meteo_weather_repository.dart';
 
 const bool kUseFakes = bool.fromEnvironment('USE_FAKES', defaultValue: false);
 
 /// Provider exposing the [WeatherRepository] instance.
 ///
 /// Uses [FakeWeatherRepository] by default when developing locally or running UI tests.
-/// Switches to [FirebaseWeatherRepository] when built with `--dart-define=USE_FAKES=false`.
+/// Uses [OpenMeteoWeatherRepository] for live weather data.
 final weatherRepositoryProvider = Provider<WeatherRepository>((ref) {
   if (kUseFakes) {
     return FakeWeatherRepository();
   }
-  return FirebaseWeatherRepository();
+  return OpenMeteoWeatherRepository();
 });
 
 /// Async provider that fetches the latest [WeatherForecast] once on first read.

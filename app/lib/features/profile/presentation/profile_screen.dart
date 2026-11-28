@@ -83,6 +83,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final dynamic providerData = ref.watch(cropPlotRepositoryProvider);
+    final user = ref.watch(authStateProvider).valueOrNull;
+
+    final displayName = user?.fullName.isNotEmpty == true ? user!.fullName : 'Farmer';
+    final displayEmail = user?.email.isNotEmpty == true ? user!.email : 'farmer@agrovision.lk';
+    final regionParts = (user?.region ?? 'Kurunegala District').split('·');
+    final district = regionParts.first.trim();
+    final soil = user?.soilType.isNotEmpty == true ? user!.soilType : 'Loam (Reddish Brown)';
+    final landSizeStr = (user?.landSize != null && user!.landSize > 0)
+        ? '${user.landSize.toStringAsFixed(1)} acres'
+        : '2.5 acres';
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -98,8 +108,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               _buildTopBar(context),
               const SizedBox(height: AppSpacing.md),
               ProfileHeader(
-                name: 'Nimal Perera',
-                email: 'nimal.kurunegala@agrovision.lk',
+                name: displayName,
+                email: displayEmail,
                 role: 'Nightshade Specialist',
                 season: "Maha '24",
                 onEdit: () => ScaffoldMessenger.of(context).showSnackBar(
@@ -107,12 +117,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
-              const FarmInfoCard(
-                district: 'Kurunegala District',
-                location: 'Kurunegala',
+              FarmInfoCard(
+                district: district.contains('District') ? district : '$district District',
+                location: district.replaceAll('District', '').trim(),
                 province: 'NW Province',
-                soilType: 'Loam (Reddish Brown)',
-                landSize: '2.5 acres',
+                soilType: soil,
+                landSize: landSizeStr,
               ),
               const SizedBox(height: AppSpacing.md),
               _buildCropPlotsSection(providerData),

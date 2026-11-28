@@ -9,6 +9,8 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../alerts/data/providers.dart';
 import '../../alerts/domain/outbreak_alert.dart';
+import '../../auth/data/providers.dart';
+import '../../auth/domain/app_user.dart';
 import '../../crop_plots/data/providers.dart';
 import '../../crop_plots/domain/crop_plot.dart';
 import '../../diagnosis/data/providers.dart';
@@ -49,6 +51,7 @@ class HomeScreen extends ConsumerWidget {
     final plots = ref.watch(_homePlotsProvider);
     final alerts = ref.watch(_homeAlertsProvider);
     final diagnoses = ref.watch(_homeDiagnosesProvider);
+    final user = ref.watch(authStateProvider).valueOrNull;
     final isOnline = ref.watch(connectivityProvider);
     final isOffline = !isOnline || weather.valueOrNull?.isCached == true;
 
@@ -66,7 +69,10 @@ class HomeScreen extends ConsumerWidget {
               ),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
-                  _GreetingRow(onAvatarTap: () => _go(context, '/profile')),
+                  _GreetingRow(
+                    user: user,
+                    onAvatarTap: () => _go(context, '/profile'),
+                  ),
                   if (isOffline) ...[
                     const SizedBox(height: AppSpacing.sm),
                     const HomeOfflineNotice(),
@@ -155,19 +161,30 @@ class HomeScreen extends ConsumerWidget {
 }
 
 class _GreetingRow extends StatelessWidget {
-  const _GreetingRow({required this.onAvatarTap});
+  const _GreetingRow({
+    this.user,
+    required this.onAvatarTap,
+  });
 
+  final AppUser? user;
   final VoidCallback onAvatarTap;
 
   @override
   Widget build(BuildContext context) {
+    final name = (user?.fullName.isNotEmpty == true)
+        ? user!.fullName.split(' ').first
+        : 'Farmer';
+    final district = (user?.region.isNotEmpty == true)
+        ? user!.region.split('·').first.trim()
+        : 'Kurunegala';
+
     return Row(
       children: [
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Good morning, Nimal', style: AppTextStyles.headingSmall),
+              Text('Good morning, $name', style: AppTextStyles.headingSmall),
               const SizedBox(height: AppSpacing.xxs),
               Row(
                 children: [
@@ -177,13 +194,13 @@ class _GreetingRow extends StatelessWidget {
                     color: AppColors.healthy,
                   ),
                   const SizedBox(width: AppSpacing.xs),
-                  Text('Kurunegala', style: AppTextStyles.bodySmall),
+                  Text(district, style: AppTextStyles.bodySmall),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
                     child: Text('•'),
                   ),
                   Text(
-                    'NORTH WESTERN',
+                    'SRI LANKA',
                     style: AppTextStyles.labelSmall.copyWith(
                       color: AppColors.healthy,
                       fontWeight: FontWeight.w700,

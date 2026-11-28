@@ -32,6 +32,8 @@ class FirebaseHistoryRepository implements HistoryRepository {
 
   /// Computes [HistoryStats] from diagnoses retrieved via [DiagnosisRepository].
   ///
+  /// Can be filtered optionally by [season] ('Yala' or 'Maha') and [cropType] (e.g. 'Tomato').
+  ///
   /// Calculates:
   /// - totalScans
   /// - healthyPercent
@@ -39,17 +41,53 @@ class FirebaseHistoryRepository implements HistoryRepository {
   /// - 8-week chronological bucket count (handling month boundaries)
   /// - diseaseBreakdown (counts per disease class)
   @override
-  Future<HistoryStats> getStats({String? userId}) async {
+  Future<HistoryStats> getStats({
+    String? userId,
+    String? season,
+    String? cropType,
+  }) async {
     final diagnoses = await _diagnosisRepository.getHistory(userId: userId);
-    return computeStatsFromDiagnoses(diagnoses);
+    return computeStatsFromDiagnoses(
+      diagnoses,
+      season: season,
+      cropType: cropType,
+    );
   }
 
   /// Pure computation function that derives [HistoryStats] from a list of diagnoses.
+  ///
+  /// Supports optional filtering:
+  /// - [season]: 'Yala' (May to August) or 'Maha' (September to March)
+  /// - [cropType]: Filter by matching crop type (case-insensitive substring or match)
   static HistoryStats computeStatsFromDiagnoses(
     List<Diagnosis> diagnoses, {
     DateTime? referenceDate,
+    String? season,
+    String? cropType,
   }) {
-    if (diagnoses.isEmpty) {
+    // Apply filters if provided
+    var filtered = diagnoses;
+    if (cropType != null && cropType.isNotEmpty) {
+      filtered = filtered
+          .where((d) => d.cropType.toLowerCase() == cropType.toLowerCase())
+          .toList();
+    }
+    if (season != null && season.isNotEmpty) {
+      final s = season.toLowerCase();
+      filtered = filtered.where((d) {
+        final month = d.diagnosedAt.month;
+        if (s == 'yala') {
+          // Yala season: typically May to August (months 5 to 8)
+          return month >= 5 && month <= 8;
+        } else if (s == 'maha') {
+          // Maha season: typically September to March (months 9, 10, 11, 12, 1, 2, 3)
+          return month >= 9 || month <= 3;
+        }
+        return true;
+      }).toList();
+    }
+
+    if (filtered.isEmpty) {
       final emptyWeekly = _buildEmptyWeeklyBuckets(referenceDate ?? DateTime.now());
       return HistoryStats(
         totalScans: 0,
@@ -60,15 +98,15 @@ class FirebaseHistoryRepository implements HistoryRepository {
       );
     }
 
-    final totalScans = diagnoses.length;
-    final healthyCount = diagnoses.where((d) => d.predictedClass == DiseaseClass.healthy).length;
+    final totalScans = filtered.length;
+    final healthyCount = filtered.where((d) => d.predictedClass == DiseaseClass.healthy).length;
     final healthyPercent = ((healthyCount / totalScans) * 100).round();
 
     // Disease breakdown and top issue calculation
     final diseaseBreakdown = <String, int>{};
     final issueCounts = <String, int>{};
 
-    for (final diagnosis in diagnoses) {
+    for (final diagnosis in filtered) {
       final name = diagnosis.predictedClass.displayName;
       diseaseBreakdown[name] = (diseaseBreakdown[name] ?? 0) + 1;
 
@@ -85,7 +123,7 @@ class FirebaseHistoryRepository implements HistoryRepository {
     }
 
     // 8-week scan count calculation across month boundaries
-    final weeklyScans = _calculateWeeklyBuckets(diagnoses, referenceDate ?? DateTime.now());
+    final weeklyScans = _calculateWeeklyBuckets(filtered, referenceDate ?? DateTime.now());
 
     return HistoryStats(
       totalScans: totalScans,

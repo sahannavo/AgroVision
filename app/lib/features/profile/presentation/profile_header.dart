@@ -9,8 +9,8 @@ import '../../../../core/theme/app_text_styles.dart';
 class ProfileHeader extends StatelessWidget {
   const ProfileHeader({
     super.key,
-    this.name = 'Nimal Perera',
-    this.email = 'nimal.kurunegala@agrovision.lk',
+    this.name = 'Farmer',
+    this.email,
     this.role = 'Nightshade Specialist',
     this.season = "Maha '24",
     this.avatarUrl,
@@ -18,7 +18,7 @@ class ProfileHeader extends StatelessWidget {
   });
 
   final String name;
-  final String email;
+  final String? email;
   final String role;
   final String season;
   final String? avatarUrl;
@@ -153,15 +153,17 @@ class ProfileHeader extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  email,
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
+                if (email != null && email!.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    email!,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                ],
                 const SizedBox(height: AppSpacing.sm),
                 Wrap(
                   crossAxisAlignment: WrapCrossAlignment.center,

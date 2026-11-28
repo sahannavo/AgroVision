@@ -12,8 +12,8 @@ Status key: `[ ]` to write, `[~]` drafted, `[x]` done and reviewed.
 | # | Diagram | Source | PNG | Used in section |
 |---|---------|--------|-----|-----------------|
 | 1 | Use case (farmer, gardener; cooperative outside the boundary as future work) | `01_use_case.puml` | `01_use_case.png` | 2.1 |
-| 2 | Data model (Firestore collections and references) | `02_data_model.mmd` | `02_data_model.png` | 3.3 |
-| 3 | Class diagram (repository pattern, providers, fakes) | `03_class_diagram.mmd` | `03_class_diagram.png` | 3.2 |
+| 2 | Data model (Firestore collections and references, including decisionLogs) | `02_data_model.mmd` | `02_data_model.png` | 3.3 |
+| 3 | Class diagram (all 9 repositories with real method signatures, fakes behind interfaces) | `03_class_diagram.mmd` | `03_class_diagram.png` | 3.2 |
 | 4 | Deployment and system architecture | `04_deployment_architecture.puml` | `04_deployment_architecture.png` | 3.1 |
 | 5 | Sequence: scan, diagnose, save, outbreak alert | `05_sequence_scan_to_alert.mmd` | `05_sequence_scan_to_alert.png` | 3.6 |
 
@@ -36,7 +36,9 @@ Re-render after any change: `bash docs/report/tools/render_diagrams.sh`, then co
 
 ## 2. Requirements and analysis
 - [ ] 2.1 Users and use cases (Diagram 1). Explain Farmer, Gardener and the Cooperative as future work.
-- [ ] 2.2 Functional requirements: auth, crop plots, scan and diagnose, history and decisions, planner, advisor, alerts, profile.
+- [ ] 2.2 Functional requirements: auth, crop plots, scan and diagnose (6 disease classes: earlyBlight, lateBlight, leafCurl,
+  bacterialSpot, nitrogenDeficiency, healthy), history and decisions, planner (IrrigationEngine with weather-driven rules),
+  advisor (CropSuitabilityEngine), alerts, profile.
 - [ ] 2.3 Non-functional requirements: works offline for diagnosis, privacy of alerts, 360-430 dp layouts, text scale 130 percent,
   48 dp tap targets, Semantics labels.
 - [ ] 2.4 Constraints: Firebase free tier, emulator-only development, light theme only, on-device model size.
@@ -47,25 +49,40 @@ Re-render after any change: `bash docs/report/tools/render_diagrams.sh`, then co
   Two Firebase projects: agrovision-dev for everyone, agrovision-prod deployed only by PDS.
 - [ ] 3.2 Patterns (Diagram 3). For each: what it is, where it lives in the code (file path), what it bought us.
   - **Feature-first layering**: `lib/core` (theme, router, constants, services, utils, shared widgets) and
-    `lib/features/<feature>/{data,domain,presentation}`. Eight people worked in parallel with almost no file conflicts.
-  - **Repository pattern**: entities and interfaces in `domain/`, implementations in `data/`. Screens never import Firebase.
+    `lib/features/<feature>/{data,domain,presentation}`. Eleven features: advisor, alerts, auth, crop_plots, diagnosis,
+    history, home, planner, profile, splash, weather. Eight people worked in parallel with almost no file conflicts.
+  - **Repository pattern**: entities and interfaces in `domain/`, implementations in `data/`. Nine repository interfaces:
+    `AuthRepository`, `AlertsRepository`, `CropPlotRepository`, `DiagnosisRepository`, `DiagnosisClassifier`,
+    `WeatherRepository`, `AdvisorRepository`, `PlannerRepository`, `HistoryRepository`. Screens never import Firebase.
   - **Dependency injection with Riverpod**: one provider per repository (`authRepositoryProvider`, `cropPlotRepositoryProvider`,
-    `alertsRepositoryProvider`, ...) plus `diagnosisClassifierProvider`. Overriding providers is how tests inject fakes.
+    `alertsRepositoryProvider`, `diagnosisRepositoryProvider`, `diagnosisClassifierProvider`, `weatherRepositoryProvider`,
+    `advisorRepositoryProvider`, `plannerRepositoryProvider`, `historyRepositoryProvider`). Overriding providers is how
+    tests inject fakes.
   - **Fakes behind interfaces**: `Fake*Repository` returning realistic sample data; `--dart-define=USE_FAKES=true|false` chooses
     the implementation in each feature's `providers.dart`. The front-end phase ran without Firebase.
-  - **Offline-first**: Firestore offline persistence, on-device classifier, last cached weather for planner and advisor,
-    explicit offline states for login, alerts and sync.
-  - **Declarative routing** with go_router and fixed route names; **design tokens** (`AppColors`, `AppTextStyles`,
+  - **Offline-first**: Firestore offline persistence, on-device TFLite classifier (no network needed), `PendingUploadQueue`
+    for image uploads, last cached weather for planner and advisor (`isCached` flag in `WeatherForecast`),
+    explicit offline states for login, alerts and sync (`SyncStatus` enum on `Diagnosis` and `DecisionLogEntry`).
+  - **Pure domain engines**: `IrrigationEngine` (weather-driven irrigation with skip-on-rain, hot-day multiplier, fertilizer
+    scheduling) and `CropSuitabilityEngine` (soil/season/location crop matching). Both are pure functions with no Firebase
+    dependency.
+  - **Declarative routing** with go_router and fixed route names (`RouteNames`); **design tokens** (`AppColors`, `AppTextStyles`,
     `AppSpacing`, `AppRadius`) as the single source of styling.
 - [ ] 3.3 Data model (Diagram 2): the nine collections, reference fields, and the `decisionLogs` collection, which is an
   **addition to the specification** made for the History "Decisions" tab.
 - [ ] 3.4 Back end: Cloud Functions responsibilities, thresholds in `functions/.env`
   (`OUTBREAK_RADIUS_KM`, `OUTBREAK_MIN_REPORTS`, `OUTBREAK_WINDOW_HOURS`), weather cache with `expiresAt`.
-- [ ] 3.5 Machine-learning component: dataset, model, TFLite conversion, accuracy, confidence threshold, model file location.
+  Privacy: `onDiagnosisCreated` rounds coordinates to 0.01 degree (~1.1 km) before writing `outbreakAlerts`.
+  `onOutbreakAlertCreated` uses Haversine distance to find users inside radius, sends FCM, writes `notifications`,
+  cleans invalid tokens.
+- [ ] 3.5 Machine-learning component: dataset, model, TFLite conversion, accuracy, confidence threshold (≥ 0.70 in
+  `onDiagnosisCreated`), model file location (`app/assets/model/model.tflite`, `labels.txt`).
+  Six classes: `earlyBlight`, `lateBlight`, `leafCurl`, `bacterialSpot`, `nitrogenDeficiency`, `healthy`.
   (Author: ML owner.)
 - [ ] 3.6 Key flow (Diagram 5): scan, diagnose, save, outbreak alert, with the online and offline paths.
 - [ ] 3.7 Privacy by design: `outbreakAlerts` and notifications hold only disease, approximate area (rounded centre) and counts;
-  the map shows zones, never one pin per report.
+  the map shows zones, never one pin per report. `onDiagnosisCreated` comment: "No userId and no exact position stored in
+  the alert".
 
 ## 4. Architectural decisions and reasons  *(criterion: decisions and their reasons)*
 One short record per decision: context, options considered, decision, consequences. Reasons marked *(draft)* are
@@ -77,17 +94,20 @@ inferred from the specification and must be confirmed or replaced by the person 
 | D2 | Firestore with offline persistence | Offline reads and queued writes without custom sync code *(draft)* | Query limits, per-document cost |
 | D3 | Riverpod for state and DI | Compile-safe providers, easy overrides in tests *(draft)* | Learning curve for the team |
 | D4 | Repository interfaces plus fakes | UI team could build all screens before the back end existed | Two implementations per feature to keep aligned |
-| D5 | Feature-first folders | Parallel work by eight people with clear ownership (CODEOWNERS) | Shared code must go through `core/` |
+| D5 | Feature-first folders (11 features) | Parallel work by eight people with clear ownership (CODEOWNERS) | Shared code must go through `core/` |
 | D6 | OpenWeatherMap behind a Cloud Function | API key never ships in the app; hourly cache cuts calls and enables offline weather | Extra function to deploy and test |
-| D7 | Outbreak detection in `onDiagnosisCreated` using a geohash | Server-side, cheap proximity grouping, identity never leaves the diagnosis | Geohash cell edges give approximate radii |
-| D8 | Rounded centre point and no userId in alerts | Farmer privacy | Less precise advice |
+| D7 | Outbreak detection in `onDiagnosisCreated` using geofire-common | Server-side, cheap proximity grouping using geohash, identity never leaves the diagnosis | Geohash cell edges give approximate radii |
+| D8 | Rounded centre point (0.01°) and no userId in alerts | Farmer privacy: ~1.1 km precision | Less precise advice |
 | D9 | Top-level collections with reference fields | Simple queries and security rules per collection *(draft)* | Joins done in the client or functions |
 | D10 | Thresholds in `functions/.env` | Tune without code change; different values for dev and prod | Config must be managed per project |
 | D11 | Emulator Suite for all development | Nobody touches production; tests are repeatable | Setup effort for each developer |
 | D12 | `USE_FAKES` dart-define | Front-end work continues without Firebase | Fakes can drift from real behaviour |
 | D13 | Merge commit or rebase-and-merge, never squash | Lecturer reviews history; every commit stays visible | Noisier history |
-| D14 | Added `decisionLogs` | History Decisions tab needs its own record | Deviation from the specification, documented here |
+| D14 | Added `decisionLogs` collection | History Decisions tab needs its own record | Deviation from the specification, documented here |
 | D15 | Flutter with flutter_map and OpenStreetMap tiles | Free map layer with a circle layer; offline fallback to pale background | Tiles need internet |
+| D16 | Pure domain engines (IrrigationEngine, CropSuitabilityEngine) | Testable without Firebase, weather-driven agronomic rules | Must sync with backend weather cache |
+| D17 | Confidence threshold ≥ 0.70 for outbreak trigger | Filter out low-confidence and healthy scans before clustering | May miss borderline detections |
+| D18 | PendingUploadQueue for offline image sync | Diagnosis images upload when connectivity returns | Queue management complexity |
 
 - [ ] Add decisions made during integration (Phase 4) and any that were reversed, with the reason.
 
@@ -108,6 +128,7 @@ inferred from the specification and must be confirmed or replaced by the person 
   just below and at `OUTBREAK_MIN_REPORTS`, outside radius, outside time window).
 - [ ] 6.4 Static analysis and CI: `flutter analyze`, `flutter test`, `npm run lint`, `npm test` on every pull request to dev and main.
 - [ ] 6.5 Model evaluation: confusion matrix, per-class precision and recall, on-device versus training accuracy.
+  Six classes: earlyBlight, lateBlight, leafCurl, bacterialSpot, nitrogenDeficiency, healthy.
 - [ ] 6.6 UAT (Phase 5, 18-22 Nov): script, testers, results, bugs found and fixed.
 - [ ] 6.7 Accessibility and regression results after the freeze.
 - [ ] 6.8 Results table: tests per area, pass rate, coverage if measured.
@@ -131,17 +152,17 @@ One subsection per member, written in the first person, 400-600 words. The struc
 7. What you reviewed for your partner and what you changed after their review.
 
 The working notes for each member are in `CONTRIBUTIONS.md`; the final text is copied into this section.
-- [ ] 9.1 PDS (lead)  [ ] 9.2 SDL  [ ] 9.3 UGDS  [ ] 9.4 MASN  [ ] 9.5 RMO  [ ] 9.6 AHMS  [ ] 9.7 KMCA  [ ] 9.8 JKVC
+- [ ] 9.1 PDS (lead)  [ ] 9.2 SDL  [ ] 9.3 UGDS  [ ] 9.4 MASN  [ ] 9.5 RMOP  [ ] 9.6 AHMS  [ ] 9.7 KMCA  [ ] 9.8 JKVC
 
 ## References and appendices
-- [ ] References (Flutter, Riverpod, Firebase, TensorFlow Lite, OpenWeatherMap, dataset source, OpenStreetMap attribution).
+- [ ] References (Flutter, Riverpod, Firebase, TensorFlow Lite, OpenWeatherMap, geofire-common, dataset source, OpenStreetMap attribution).
 - [ ] Appendix A: Firestore collection field tables (copy from Diagram 2).
 - [ ] Appendix B: Cloud Function list with trigger and purpose.
-- [ ] Appendix C: Full class diagram for the six repositories not shown in Diagram 3 (Auth, Weather, Advisor, Planner, History, Diagnosis).
+- [ ] Appendix C: Full class diagram showing all nine repository interfaces and their methods (Diagram 3).
 - [ ] Appendix D: Git history summary (output of `tools/list_contributions.sh`) and the sprint calendar.
 - [ ] Appendix E: User guide link (`docs/USER_GUIDE.md`).
 
 ## Diagram maintenance rules
-- Edit the source file, never the PNG. Run `tools/render_diagrams.sh`, and commit source and PNG in the same commit with an `[Docs]` message.
+- Edit the source file, never the PNG. Run `tools/render_diagrams.sh`, and commit source and PNG together.
 - Update the diagrams when a collection, a Cloud Function, a repository interface or a provider changes.
-- Checkpoints: after v0.2-backend (Tue 10 Nov), after v0.3-integration (Tue 17 Nov), and before the freeze (Mon 23 Nov).
+- Checkpoints: after v0.2-backend (Thu 19 Nov), after integration, and before the freeze (Mon 23 Nov).

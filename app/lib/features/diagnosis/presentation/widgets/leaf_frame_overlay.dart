@@ -85,38 +85,43 @@ class CameraTopBar extends StatelessWidget {
             ),
 
             // AI Status Pill
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.sm + 4,
-                vertical: AppSpacing.xs + 2,
-              ),
-              decoration: BoxDecoration(
-                color: const Color(0x80000000),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  width: 1,
+            Flexible(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: AppSpacing.xs + 2,
                 ),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.cloud_off_rounded,
-                    color: AppColors.lime,
-                    size: 15,
+                decoration: BoxDecoration(
+                  color: const Color(0x80000000),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    width: 1,
                   ),
-                  SizedBox(width: AppSpacing.xs + 2),
-                  Text(
-                    'AI runs on your phone',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.2,
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.cloud_off_rounded,
+                      color: AppColors.lime,
+                      size: 15,
                     ),
-                  ),
-                ],
+                    SizedBox(width: AppSpacing.xs),
+                    Flexible(
+                      child: Text(
+                        'AI runs on your phone',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.2,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
 

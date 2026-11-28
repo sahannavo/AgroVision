@@ -2,8 +2,9 @@ import {
   assertFails,
   assertSucceeds,
   initializeTestEnvironment,
-  RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
+// RulesTestEnvironment is a type-only export; import as type to satisfy Node 24 ESM/CJS boundary
+import type { RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import * as fs from 'fs';
 import * as path from 'path';
 

@@ -1,4 +1,5 @@
-import { expect } from 'chai';
+import { describe, it } from 'node:test';
+import assert from 'node:assert';
 import { calculateDistanceKm } from '../src/onOutbreakAlertCreated';
 
 describe('onOutbreakAlertCreated Trigger Logic Unit Tests', () => {
@@ -6,8 +7,8 @@ describe('onOutbreakAlertCreated Trigger Logic Unit Tests', () => {
     // Kurunegala (7.4818, 80.3609) to Dambulla (7.8742, 80.6511) is approx 54-58 km
     const distanceKm = calculateDistanceKm(7.4818, 80.3609, 7.8742, 80.6511);
 
-    expect(distanceKm).to.be.greaterThan(50);
-    expect(distanceKm).to.be.lessThan(65);
+    assert.ok(distanceKm > 50, `Expected distance ${distanceKm} to be > 50`);
+    assert.ok(distanceKm < 65, `Expected distance ${distanceKm} to be < 65`);
   });
 
   it('determines user within radius should be notified', () => {
@@ -20,7 +21,7 @@ describe('onOutbreakAlertCreated Trigger Logic Unit Tests', () => {
     const userLon = 80.3709;
     const distance = calculateDistanceKm(centerLat, centerLon, userLat, userLon);
 
-    expect(distance).to.be.lessThanOrEqual(radiusKm);
+    assert.ok(distance <= radiusKm, `Expected distance ${distance} to be <= ${radiusKm}`);
   });
 
   it('determines user outside radius should not be notified', () => {
@@ -33,6 +34,6 @@ describe('onOutbreakAlertCreated Trigger Logic Unit Tests', () => {
     const userLon = 80.0255;
     const distance = calculateDistanceKm(centerLat, centerLon, userLat, userLon);
 
-    expect(distance).to.be.greaterThan(radiusKm);
+    assert.ok(distance > radiusKm, `Expected distance ${distance} to be > ${radiusKm}`);
   });
 });

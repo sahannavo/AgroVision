@@ -42,3 +42,31 @@ This document records the references, Department of Agriculture (DOA) Sri Lanka 
 - **Safety First:** Chemical recommendations are deliberately kept generic by active compound category (e.g. *protective copper fungicide*, *mancozeb*) rather than brand names or hazardous dosage estimates.
 - **Regulatory Compliance:** Every intervention explicitly reinforces: *"follow the product label and local extension advice"*.
 - **Completeness:** 100% parity maintained between labels defined in `app/assets/model/labels.txt` and entries in `disease_catalog.json`.
+
+
+---
+
+## 4. Class-by-Class Source Mapping Table
+
+Every canonical label in `app/assets/model/labels.txt` and `app/assets/data/disease_catalog.json` is mapped to its authoritative primary and extension literature sources:
+
+| # | Canonical Label | Pathogen / Condition | Primary Sourced Reference | Local Extension Citation (Sri Lanka DOA) |
+| :-: | :--- | :--- | :--- | :--- |
+| 1 | `Tomato___Early_blight` | *Alternaria solani* | CABI CPC Datasheet 4136; UC IPM Tomato Guidelines | HORDI Gannoruwa Solanaceae Bulletin, pp. 14–16 |
+| 2 | `Tomato___Late_blight` | *Phytophthora infestans* | CABI CPC Datasheet 40970; Fry et al. (2015) | RARDC Bandarawela Pathology Circular 2021/04 |
+| 3 | `Tomato___Bacterial_spot` | *Xanthomonas spp.* | Jones et al. (2004) Systematic Bacteriology | HORDI Bacterial Disease Control Advisory No. 12 |
+| 4 | `Tomato___Leaf_Mold` | *Passalora fulva* | CABI CPC Datasheet 24659 | DOA Protected Agriculture Guide (Tunnel Tomato) |
+| 5 | `Tomato___Septoria_leaf_spot` | *Septoria lycopersici* | UC IPM Tomato Pest Management Circular | HORDI Solanaceae Bulletin, Section 3.2 |
+| 6 | `Tomato___Spider_mites_Two-spotted_spider_mite` | *Tetranychus urticae* | UC IPM Spider Mites in Solanaceous Crops | HORDI IPM Division Leaflet No. 8 (Protected Cropping) |
+| 7 | `Tomato___Target_Spot` | *Corynespora cassiicola* | CABI CPC Datasheet 15410; Pernezny et al. (2002) | DOA Up-Country Research Bulletin No. 19 |
+| 8 | `Tomato___Tomato_Yellow_Leaf_Curl_Virus` | TYLCV (Begomovirus) | Czosnek & Laterrot (1997) Arch. Virol. | HORDI Vector & Whitefly IPM Package 2020 |
+| 9 | `Tomato___Tomato_mosaic_virus` | ToMV (Tobamovirus) | Broadbent (1976) Ann. Rev. Phytopathol. | DOA Seed Certification Division Field Manual |
+| 10 | `Tomato___healthy` | N/A (Normal foliage) | PlantVillage Agro-Taxonomy Standard Baseline | HORDI Good Agronomic Practices (GAP) for Tomato |
+| 11 | `Potato___Early_blight` | *Alternaria solani* | CABI CPC Datasheet 4136 | RARDC Bandarawela & Nuwara Eliya Potato Guide |
+| 12 | `Potato___Late_blight` | *Phytophthora infestans* | Forbes et al. (2014) Potato Blight Compendium | RARDC Nuwara Eliya Late Blight Warning System |
+| 13 | `Potato___healthy` | N/A (Normal foliage) | PlantVillage Agro-Taxonomy Standard Baseline | DOA Seed Potato Certification Protocol |
+| 14 | `Pepper___Bacterial_spot` | *Xanthomonas campestris* | Stall et al. (2009) Phytopathology | HORDI & CRS Mahailluppallama Pepper Sheet |
+| 15 | `Pepper___healthy` | N/A (Normal foliage) | PlantVillage Agro-Taxonomy Standard Baseline | DOA GAP Guideline for Solanaceous Peppers |
+| 16 | `Chilli___Leaf_curl` | Chilli Leaf Curl Complex | CRS Mahailluppallama Research Series 2019/02 | CRS Mahailluppallama Nursery Netting Package |
+| 17 | `Eggplant___healthy` | N/A (Normal foliage) | HORDI Brinjal Agronomy & GAP Handbook | HORDI Gannoruwa Brinjal Production Circular |
+| 18 | `General___Nitrogen_deficiency` | Nutrient Chlorosis (N) | Barker & Pilbeam (2015) Plant Nutrition | DOA Fertilizer Advisory Division (Circular 2022/N) |

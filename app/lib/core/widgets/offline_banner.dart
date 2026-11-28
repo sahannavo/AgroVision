@@ -36,6 +36,7 @@ class OfflinePill extends StatelessWidget {
     return Semantics(
       label: 'Network status: $label',
       container: true,
+      excludeSemantics: true,
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.sm,
@@ -133,6 +134,7 @@ class OfflineBanner extends StatelessWidget {
     return Semantics(
       label: 'Offline banner: $message',
       container: true,
+      excludeSemantics: true,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(

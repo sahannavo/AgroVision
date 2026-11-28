@@ -175,10 +175,14 @@ class _PlannerScreenState extends State<PlannerScreen> {
         color: const Color(0xFFE4F0E5),
         borderRadius: BorderRadius.circular(AppRadius.full),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: AppSpacing.xs,
+        runSpacing: AppSpacing.xs,
         children: [
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(
                 Icons.cloud_off_outlined,
@@ -186,16 +190,20 @@ class _PlannerScreenState extends State<PlannerScreen> {
                 color: AppColors.textSecondary,
               ),
               const SizedBox(width: AppSpacing.xs),
-              Text(
-                'Using weather saved 3 hours ago',
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: AppColors.textSecondary,
-                  fontSize: 12,
+              Flexible(
+                child: Text(
+                  'Using weather saved 3 hours ago',
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                    fontSize: 12,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                 width: 6,
@@ -299,9 +307,11 @@ class _PlannerScreenState extends State<PlannerScreen> {
 
   /// Crop Header with region and dropdown selector
   Widget _buildCropHeader(CropPlotItem currentPlot) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
+    return Wrap(
+      alignment: WrapAlignment.spaceBetween,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.xs,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,

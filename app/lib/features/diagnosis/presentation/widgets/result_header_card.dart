@@ -312,17 +312,25 @@ class ResultHeaderCard extends StatelessWidget {
                       color: const Color(0xFFF1F8F1),
                       borderRadius: AppRadius.borderMd,
                     ),
-                    child: Row(
+                    child: Wrap(
+                      spacing: AppSpacing.xs,
+                      runSpacing: AppSpacing.xs,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      alignment: WrapAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Severity: ',
-                          style: AppTextStyles.labelSmall.copyWith(
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w500,
-                          ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Severity: ',
+                              style: AppTextStyles.labelSmall.copyWith(
+                                color: AppColors.textSecondary,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            StatusChip.moderate(label: 'Moderate'),
+                          ],
                         ),
-                        StatusChip.moderate(label: 'Moderate'),
-                        const Spacer(),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: const [

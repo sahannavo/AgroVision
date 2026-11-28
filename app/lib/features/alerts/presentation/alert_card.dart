@@ -257,10 +257,13 @@ class _AlertMeta extends StatelessWidget {
               color: alert.severity.color,
             ),
             const SizedBox(width: 2),
-            Text(
-              parts.join(' · '),
-              style: AppTextStyles.labelSmall.copyWith(
-                color: AppColors.textSecondary,
+            Flexible(
+              child: Text(
+                parts.join(' · '),
+                style: AppTextStyles.labelSmall.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

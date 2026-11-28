@@ -59,7 +59,7 @@ class HomeQuickActionGrid extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: AppSpacing.sm,
         mainAxisSpacing: AppSpacing.sm,
-        childAspectRatio: 1.45,
+        childAspectRatio: 1.25,
       ),
       itemBuilder: (_, index) {
         final action = actions[index];

@@ -56,6 +56,7 @@ void main() {
     });
 
     testWidgets('has accessible semantics', (tester) async {
+      final handle = tester.ensureSemantics();
       await tester.pumpWidget(
         buildThemedWidget(
           child: const OfflinePill(),
@@ -66,6 +67,7 @@ void main() {
         find.bySemanticsLabel('Network status: Offline'),
         findsOneWidget,
       );
+      handle.dispose();
     });
 
     testWidgets('supports disabled state', (tester) async {
@@ -106,6 +108,7 @@ void main() {
     });
 
     testWidgets('has accessible semantics', (tester) async {
+      final handle = tester.ensureSemantics();
       const message = 'Custom offline text';
       await tester.pumpWidget(
         buildThemedWidget(
@@ -117,6 +120,7 @@ void main() {
         find.bySemanticsLabel('Offline banner: $message'),
         findsOneWidget,
       );
+      handle.dispose();
     });
   });
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/services/ai_assistant_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -53,6 +54,8 @@ class _AdvisorScreenState extends ConsumerState<AdvisorScreen> {
   bool _hasSearched = false;
   bool _isLoading = false;
   String? _errorMessage;
+  String? _aiExpertInsight;
+  bool _isLoadingAi = false;
   List<PlantingRecommendation> _results = [];
 
   @override
@@ -93,12 +96,41 @@ class _AdvisorScreenState extends ConsumerState<AdvisorScreen> {
           _hasSearched = true;
           _isLoading = false;
         });
+
+        // Trigger AI Assistant in the background
+        _fetchAiInsights(seasonKey);
       }
     } catch (e) {
       if (mounted) {
         setState(() {
           _errorMessage = 'Unable to generate crop recommendations. Please check connection and retry.';
           _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _fetchAiInsights(String seasonKey) async {
+    setState(() {
+      _isLoadingAi = true;
+      _aiExpertInsight = null;
+    });
+
+    try {
+      final aiService = ref.read(aiAssistantServiceProvider);
+      final prompt =
+          'Provide concise, high-value agronomic advice (3-4 bullet points) for a Sri Lankan farmer in $_location planting nightshade crops during $seasonKey season on $_selectedSoil soil. Recommend ideal cultivation timing, disease watch-outs, and fertilization.';
+      final reply = await aiService.askAssistant(prompt: prompt);
+      if (mounted) {
+        setState(() {
+          _aiExpertInsight = reply;
+          _isLoadingAi = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoadingAi = false;
         });
       }
     }
@@ -363,6 +395,96 @@ class _AdvisorScreenState extends ConsumerState<AdvisorScreen> {
         ),
 
         const SizedBox(height: AppSpacing.md),
+
+        // AI Agronomist Live Advice Card
+        if (_isLoadingAi)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppSpacing.md),
+            margin: const EdgeInsets.only(bottom: AppSpacing.md),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+              border: Border.all(color: AppColors.primaryGreen.withValues(alpha: 0.2)),
+            ),
+            child: Row(
+              children: [
+                const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryGreen),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Text(
+                    'Consulting AgroVision AI Assistant (Gemma 4)...',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.primaryGreen,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        else if (_aiExpertInsight != null)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppSpacing.md),
+            margin: const EdgeInsets.only(bottom: AppSpacing.md),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+              border: Border.all(color: AppColors.primaryGreen.withValues(alpha: 0.4)),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primaryGreen.withValues(alpha: 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryGreen.withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.psychology_rounded,
+                        size: 20,
+                        color: AppColors.primaryGreen,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Text(
+                      'AI Agronomist Insights (Gemma 4)',
+                      style: AppTextStyles.labelLarge.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.primaryGreen,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  _aiExpertInsight!,
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.textPrimary,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
 
         // Ranked Recommendation Cards
         ...List.generate(_results.length, (index) {

@@ -95,5 +95,11 @@ service cloud.firestore {
       allow read: if isSignedIn() && (!('userId' in resource.data));
       allow write: if false;
     }
+
+    // 10. config: readable by all signed-in users (contains remote configuration like AI model config)
+    match /config/{configId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
   }
 }

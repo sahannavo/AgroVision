@@ -192,7 +192,11 @@ class _AdvisorScreenState extends ConsumerState<AdvisorScreen> {
               color: AppColors.textPrimary,
             ),
             onPressed: () {
-              Navigator.of(context).maybePop();
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go('/home');
+              }
             },
           ),
         ),

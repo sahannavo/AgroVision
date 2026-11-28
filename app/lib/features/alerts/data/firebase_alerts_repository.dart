@@ -107,7 +107,7 @@ abstract class AlertsRepository {
 /// 4. Stores read alert IDs.
 /// 5. Switches between real and mock mode using `--dart-define=USE_FAKES`.
 class FirebaseAlertsRepository implements AlertsRepository {
-  static const bool useFakes = bool.fromEnvironment('USE_FAKES', defaultValue: true);
+  static const bool useFakes = bool.fromEnvironment('USE_FAKES', defaultValue: false);
 
   final Set<String> _readAlertIds = {};
   final List<OutbreakAlert> _offlineCachedAlerts = [];

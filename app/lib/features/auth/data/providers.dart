@@ -8,7 +8,7 @@ import 'firebase_auth_repository.dart';
 /// Set to false with `--dart-define=USE_FAKES=false` to use real Firebase.
 /// Defaults to true so the front-end team can work without Firebase.
 const bool kUseFakes =
-    bool.fromEnvironment('USE_FAKES', defaultValue: true);
+    bool.fromEnvironment('USE_FAKES', defaultValue: false);
 
 /// Provides the correct [AuthRepository] implementation based on [kUseFakes].
 ///

@@ -97,3 +97,11 @@ ml/datasets/
 ml/datasets/**
 ml/raw_data/
 ml/raw_data/**
+
+# Firebase secrets & credentials
+google-services.json
+GoogleService-Info.plist
+**/google-services.json
+**/GoogleService-Info.plist
+serviceAccountKey.json
+functions/.env

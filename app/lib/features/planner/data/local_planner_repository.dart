@@ -30,7 +30,7 @@ class LocalPlannerRepository implements PlannerRepository {
   final Map<String, FullIrrigationPlan> _scheduleCache = {};
 
   /// Whether to use mock / fake data fallback.
-  static const bool useFakes = bool.fromEnvironment('USE_FAKES', defaultValue: true);
+  static const bool useFakes = bool.fromEnvironment('USE_FAKES', defaultValue: false);
 
   @override
   Future<FullIrrigationPlan> planFor(

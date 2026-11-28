@@ -4,7 +4,7 @@ import '../domain/weather_repository.dart';
 import 'fake_weather_repository.dart';
 import 'firebase_weather_repository.dart';
 
-const bool kUseFakes = bool.fromEnvironment('USE_FAKES', defaultValue: true);
+const bool kUseFakes = bool.fromEnvironment('USE_FAKES', defaultValue: false);
 
 /// Provider exposing the [WeatherRepository] instance.
 ///

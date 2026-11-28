@@ -31,11 +31,11 @@ class DefaultFirebaseOptions {
 
   // Replace these placeholder values with the output of `flutterfire configure`
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'REPLACE_WITH_ANDROID_API_KEY',
-    appId: '1:000000000000:android:0000000000000000000000',
-    messagingSenderId: '000000000000',
-    projectId: 'agrovision-dev',
-    storageBucket: 'agrovision-dev.appspot.com',
+    apiKey: 'AIzaSyDn5UjGx_2rPm3lGWdgA15CIH-oA9_Yxws',
+    appId: '1:483338217057:android:6420a89776e869f241ec20',
+    messagingSenderId: '483338217057',
+    projectId: 'agrovision-730c8',
+    storageBucket: 'agrovision-730c8.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(

@@ -4,7 +4,7 @@ import '../domain/alerts_repository.dart';
 import 'fake_alerts_repository.dart';
 import '../domain/outbreak_alert.dart';
 
-const bool kUseFakes = bool.fromEnvironment('USE_FAKES', defaultValue: true);
+const bool kUseFakes = bool.fromEnvironment('USE_FAKES', defaultValue: false);
 
 /// Provider exposing the [AlertsRepository] instance.
 final alertsRepositoryProvider = Provider<AlertsRepository>((ref) {

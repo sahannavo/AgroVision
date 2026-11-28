@@ -8,7 +8,7 @@ import 'firebase_diagnosis_repository.dart';
 import 'pending_upload_queue.dart';
 import 'tflite_classifier.dart';
 
-const bool kUseFakes = bool.fromEnvironment('USE_FAKES', defaultValue: true);
+const bool kUseFakes = bool.fromEnvironment('USE_FAKES', defaultValue: false);
 
 /// Provider exposing the [DiagnosisRepository] instance.
 ///

@@ -12,7 +12,7 @@ import 'firebase_history_repository.dart';
 /// Configuration flag to switch between fake and real Firebase history implementations.
 /// Defaults to true so the front-end team can continue working without Firebase.
 /// Switch to false by compiling with `--dart-define=USE_FAKES=false`.
-const bool kUseFakes = bool.fromEnvironment('USE_FAKES', defaultValue: true);
+const bool kUseFakes = bool.fromEnvironment('USE_FAKES', defaultValue: false);
 
 /// Provider exposing the [HistoryRepository] instance.
 ///

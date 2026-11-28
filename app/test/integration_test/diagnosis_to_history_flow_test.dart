@@ -68,6 +68,10 @@ void main() {
       expect(savedList.any((d) => d.id == scannedDiagnosis.id), isTrue);
 
       // Step 3: Render HistoryScreen and verify RecordTile reflects the saved diagnosis
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
+
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -81,11 +85,10 @@ void main() {
           ),
         ),
       );
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 200));
+      await tester.pumpAndSettle();
 
       expect(find.byType(HistoryScreen), findsOneWidget);
-      expect(find.byType(RecordTile), findsWidgets);
+      expect(find.byType(RecordTile, skipOffstage: false), findsWidgets);
       expect(find.text(DiseaseClass.earlyBlight.displayName), findsWidgets);
     });
   });

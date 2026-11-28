@@ -107,8 +107,7 @@ void main() {
       final finishBtn = find.text('Finish Setup');
       await tester.ensureVisible(finishBtn);
       await tester.tap(finishBtn);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pumpAndSettle();
 
       expect(fakeAuthRepo.currentUser, isNotNull);
       expect(fakeAuthRepo.currentUser!.fullName, 'Saman Silva');

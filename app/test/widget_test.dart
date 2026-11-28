@@ -77,11 +77,14 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(HomeScreen), findsOneWidget);
 
-    // Open /diagnose/capture
-    appRouter.go(AppRoutes.diagnoseCapture);
+    // Tap Scan button to open /diagnose/capture
+    await tester.tap(find.bySemanticsLabel('Scan crop disease'));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 600));
     expect(find.byType(CaptureScreen), findsOneWidget);
+
+    // Verify /diagnose/capture is displayed outside the bottom navigation shell
+    expect(find.byType(AppBottomNav), findsNothing);
 
     // Verify /diagnose/capture is displayed outside the bottom navigation shell
     expect(find.byType(AppBottomNav), findsNothing);
@@ -125,24 +128,27 @@ void main() {
     addTearDown(() => tester.view.resetPhysicalSize());
 
     await tester.pumpWidget(const ProviderScope(child: AgroVisionApp()));
-    await tester.pump(const Duration(milliseconds: 2500));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     // Navigate to Advisor
     appRouter.go(AppRoutes.advisor);
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
     expect(find.byType(AdvisorScreen), findsOneWidget);
     expect(find.byType(AppBottomNav), findsNothing);
 
     // Navigate to Profile
     appRouter.go(AppRoutes.profile);
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
     expect(find.byType(ProfileScreen), findsOneWidget);
     expect(find.byType(AppBottomNav), findsNothing);
 
     // Navigate to Result
     appRouter.go(AppRoutes.diagnoseResult);
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
     expect(find.byType(ResultScreen), findsOneWidget);
     expect(find.byType(AppBottomNav), findsNothing);
   });

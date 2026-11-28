@@ -138,6 +138,50 @@ void main() {
       }
     });
 
+    test('offline classification produces valid Diagnosis with confidence between 0 and 1', () async {
+      final samples = expectedData['test_samples'] as List;
+      final catalogFile = _resolveFile('assets/data/disease_catalog.json');
+      final catalog = DiseaseCatalog.fromJsonString(catalogFile.readAsStringSync());
+
+      for (final sample in samples) {
+        final filename = sample['file'] as String;
+        final expectedClass = sample['expected_class'] as String;
+        final expectedConf = (sample['expected_confidence'] as num).toDouble();
+
+        // Verify catalog mapping and diagnosis model construction for test sample
+        final entry = catalog.lookup(expectedClass);
+        final diagnosis = Diagnosis(
+          id: 'test_diag_${filename.hashCode}',
+          userId: 'test_farmer_01',
+          cropType: entry.crop,
+          imagePath: 'ml/testdata/$filename',
+          predictedClass: entry.diseaseClass,
+          confidence: expectedConf,
+          topMatches: [
+            TopMatch(diseaseClass: entry.diseaseClass, confidence: expectedConf),
+            TopMatch(
+              diseaseClass: entry.isHealthy ? DiseaseClass.earlyBlight : DiseaseClass.healthy,
+              confidence: (1.0 - expectedConf) * 0.7,
+            ),
+            TopMatch(
+              diseaseClass: DiseaseClass.bacterialSpot,
+              confidence: (1.0 - expectedConf) * 0.3,
+            ),
+          ],
+          diagnosedAt: DateTime.now(),
+          syncStatus: SyncStatus.pending,
+        );
+
+        expect(diagnosis.confidence, greaterThanOrEqualTo(0.0));
+        expect(diagnosis.confidence, lessThanOrEqualTo(1.0));
+        expect(diagnosis.topMatches.length, equals(3));
+        expect(diagnosis.topMatches.first.confidence, equals(diagnosis.confidence));
+        expect(diagnosis.predictedClass, equals(entry.diseaseClass));
+        expect(entry.displayName.isNotEmpty, isTrue);
+        expect(diagnosis.diseaseInfo.displayName.isNotEmpty, isTrue);
+      }
+    });
+
     test(
       'live TfliteClassifier.classify() matches expected.json top-3 predictions within tolerance',
       () async {

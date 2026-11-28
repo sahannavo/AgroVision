@@ -229,7 +229,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
     try {
       final file = await controller.takePicture();
       _startAnalysis(file.path);
-    } on CameraException catch (e) {
+    } on CameraException {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.app"
+    namespace = "com.agrovision.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

@@ -47,7 +47,9 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.registerFarm,
-      builder: (context, state) => const RegisterFarmScreen(),
+      builder: (context, state) => RegisterFarmScreen(
+        args: state.extra as AccountRegistrationArgs?,
+      ),
     ),
     GoRoute(
       path: AppRoutes.diagnoseCapture,

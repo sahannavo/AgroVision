@@ -21,18 +21,22 @@ const bool kUseEmulators =
 /// await firebaseBootstrap();
 /// ```
 Future<void> firebaseBootstrap() async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
 
-  // ── Offline persistence for Firestore ────────────────────────────────────
-  FirebaseFirestore.instance.settings = const Settings(
-    persistenceEnabled: true,
-    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
-  );
+    // ── Offline persistence for Firestore ────────────────────────────────────
+    FirebaseFirestore.instance.settings = const Settings(
+      persistenceEnabled: true,
+      cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+    );
 
-  if (kUseEmulators) {
-    _connectToEmulators();
+    if (kUseEmulators) {
+      _connectToEmulators();
+    }
+  } catch (e, st) {
+    debugPrint('[Firebase] Bootstrap initialization failed: $e\n$st');
   }
 }
 

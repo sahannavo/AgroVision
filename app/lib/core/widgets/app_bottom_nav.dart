@@ -105,7 +105,7 @@ class AppBottomNav extends StatelessWidget {
       button: true,
       label: 'Scan crop disease',
       child: GestureDetector(
-        onTap: () => context.push('/diagnose/capture'),
+        onTap: () => context.go('/diagnose/capture'),
         child: Container(
           width: 52,
           height: 52,

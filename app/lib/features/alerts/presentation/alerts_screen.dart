@@ -113,7 +113,6 @@ class _AlertsScreenState extends ConsumerState<AlertsScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: AlertsBottomNavBar(),
     );
   }
 

@@ -7,6 +7,7 @@ import 'package:app/features/diagnosis/data/disease_catalog.dart';
 import 'package:app/features/diagnosis/data/fake_diagnosis_classifier.dart';
 import 'package:app/features/diagnosis/data/providers.dart';
 import 'package:app/features/diagnosis/data/tflite_classifier.dart';
+import 'package:app/features/diagnosis/data/tflite_pipeline_helpers.dart';
 import 'package:app/features/diagnosis/domain/diagnosis.dart';
 import 'package:app/features/diagnosis/domain/disease_class.dart';
 
@@ -79,6 +80,13 @@ void main() {
 
       tempDir.deleteSync(recursive: true);
     });
+
+    test('validateModelLabelCount rejects output/label count mismatch', () {
+      expect(
+        () => validateModelLabelCount(outputClassCount: 15, labelsCount: 18),
+        throwsA(isA<ClassifierException>()),
+      );
+    });
   });
 
   group('TfliteClassifier Provider Integration Tests', () {
@@ -103,45 +111,30 @@ void main() {
     });
   });
 
-  group('TfliteClassifier Parity & Offline Image Contract Tests', () {
+  group('TfliteClassifier Sample Preprocessing & Real TFLite Parity Tests', () {
     late Map<String, dynamic> expectedData;
 
     setUpAll(() {
       final expectedFile = _resolveFile('ml/testdata/expected.json');
-      if (expectedFile.existsSync()) {
-        final expectedJsonStr = expectedFile.readAsStringSync();
-        expectedData = json.decode(expectedJsonStr) as Map<String, dynamic>;
-      } else {
-        expectedData = {
-          'test_samples': [
-            {
-              'file': 'leaf_sample_01.png',
-              'expected_class': 'Tomato___Early_blight',
-              'expected_confidence': 0.885,
-            },
-            {
-              'file': 'leaf_sample_02.png',
-              'expected_class': 'Tomato___healthy',
-              'expected_confidence': 0.942,
-            },
-            {
-              'file': 'leaf_sample_03.png',
-              'expected_class': 'Potato___Late_blight',
-              'expected_confidence': 0.891,
-            }
-          ],
-          'tolerance': 0.05
-        };
-      }
+      expect(expectedFile.existsSync(), isTrue, reason: 'ml/testdata/expected.json must exist');
+      expectedData = json.decode(expectedFile.readAsStringSync()) as Map<String, dynamic>;
     });
 
-    test('sample leaf images exist in ml/testdata/', () {
+    test('sample leaf images exist in ml/testdata/ and preprocess to [-1.0, 1.0] RGB tensor', () {
       final samples = expectedData['test_samples'] as List;
       for (final sample in samples) {
-        final filename = sample['file'] as String;
+        final filename = (sample as Map<String, dynamic>)['file'] as String;
         final file = _resolveFile('ml/testdata/$filename');
         expect(file.existsSync(), isTrue, reason: 'Test image ml/testdata/$filename must exist');
         expect(file.lengthSync(), greaterThan(100), reason: 'Test image must not be empty');
+
+        final tensor = preprocessImageBytes(
+          PreprocessParams(file.readAsBytesSync(), 224, 224),
+        );
+        expect(tensor.length, equals(1));
+        expect(tensor[0].length, equals(224));
+        expect(tensor[0][0].length, equals(224));
+        expect(tensor[0][0][0].length, equals(3));
       }
     });
 
@@ -188,6 +181,34 @@ void main() {
         expect(diagnosis.diseaseInfo.displayName.isNotEmpty, isTrue);
       }
     });
+
+    test(
+      'live TfliteClassifier.classify() matches expected.json top-3 predictions within tolerance',
+      () async {
+        final classifier = TfliteClassifier();
+        addTearDown(classifier.dispose);
+
+        final catalogFile = _resolveFile('assets/data/disease_catalog.json');
+        final catalog = DiseaseCatalog.fromJsonString(catalogFile.readAsStringSync());
+        final tolerance = (expectedData['tolerance'] as num).toDouble();
+        final samples = expectedData['test_samples'] as List;
+
+        for (final rawSample in samples) {
+          final sample = rawSample as Map<String, dynamic>;
+          final imageFile = _resolveFile('ml/testdata/${sample['file']}');
+          final diagnosis = await classifier.classify(imageFile.path);
+          final expectedEntry = catalog.lookup(sample['expected_class'] as String);
+
+          expect(diagnosis.predictedClass, equals(expectedEntry.diseaseClass));
+          expect(
+            diagnosis.confidence,
+            closeTo((sample['expected_confidence'] as num).toDouble(), tolerance),
+          );
+          expect(diagnosis.topMatches.length, equals(3));
+        }
+      },
+      skip: 'Real TFLite inference requires native tflite_flutter runtime (and Dart 3.13+ compatible tflite_flutter in pubspec.yaml)',
+    );
 
     test('missing catalog entry does not crash and returns safe generic fallback in diagnosis', () {
       final catalogFile = _resolveFile('assets/data/disease_catalog.json');

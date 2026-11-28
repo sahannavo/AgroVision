@@ -14,9 +14,9 @@
 This report documents the User Acceptance Testing (UAT) and regression cycle conducted across target physical Android hardware and virtual test environments for the AgroVision mobile application. Testing validated core agricultural workflows: on-device disease diagnosis, offline resilience in remote farmland conditions, weather-based irrigation planning, history analytics, and community outbreak notifications.
 
 ### Summary Metrics
-| Total Scenarios Tested | Passed | Failed (Remediated) | Open Critical/Blocker | Overall Pass Rate |
-| :---: | :---: | :---: | :---: | :---: |
-| **28** | **28** | **0** | **0** | **100%** |
+| Total Scenarios Listed | Passed (UAT Matrix) | Regression Automated (`integration_test/`) | Open Build Blockers | Notes |
+| :---: | :---: | :---: | :---: | :--- |
+| **24** | **24** | **2 / 4** (`alerts`, `planner`) | **2** (`pubspec.yaml` fonts, `tflite_flutter` 0.10.4) | Attach 2-phone screenshots after `BackEnd` build fix |
 
 ---
 
@@ -85,24 +85,28 @@ This report documents the User Acceptance Testing (UAT) and regression cycle con
 
 ## 4. Regression Analysis & Defect Summary
 
-During the initial testing passes, any discovered edge-case items were cataloged and resolved:
+During the initial testing passes and Task 3 regression run, the following items were cataloged:
 - **Issue #1 (Closed):** Record tile text clipping on 320 dp widths -> Addressed with flexible expanded layout.
 - **Issue #2 (Closed):** Month boundary week bucketing in 8-week history chart -> Addressed in `FirebaseHistoryRepository` calendar math.
+- **Test Fix (`43fa2a3`):** Fixed `FakeAsync` timer deadlocks (`tester.runAsync`), hit-test visibility (`ensureVisible`), and `PlannerScreen` state key in `app/test/integration_test/`. `alerts_flow_test.dart` and `crop_plot_to_planner_flow_test.dart` pass (`2/2`).
 
-**Current Open Bugs by Severity:**
-- **P0 (Blocker):** 0
+**Current Open Blockers / Bugs by Severity (for Lead):**
+- **P0 (Blocker — Build/CI):** `app/pubspec.yaml` declares missing font files (`assets/fonts/Outfit-Regular.ttf`, `Figtree-*.ttf`), blocking `flutter test` and `flutter build apk --release --dart-define=USE_FAKES=false`.
+- **P0 (Blocker — Dart 3.13 Compile):** `tflite_flutter 0.10.4` fails to compile (`UnmodifiableUint8ListView` undefined in `tensor.dart:58`), blocking `diagnosis_to_history_flow_test.dart` and `register_to_home_flow_test.dart`.
 - **P1 (High):** 0
 - **P2 (Medium):** 0
 - **P3 (Low):** 0
+
+> **Screenshot Evidence Note:** Physical device screenshots for the 2-phone `USE_FAKES=false` (`agrovision-dev`) run must be linked in `docs/screenshots/` once the two P0 build blockers above are resolved on `BackEnd`.
 
 ---
 
 ## 5. Formal UAT Sign-Off Recommendation
 
-All 28 critical user acceptance criteria have been verified and passed on real hardware across low, mid, and high-end Android devices under field-simulated conditions.
+All 24 UAT scenarios are documented, and automated regression passes for the non-TFLite flows (`alerts_flow_test.dart`, `crop_plot_to_planner_flow_test.dart`). Final `v1.0-rc` sign-off is **pending** resolution of the two P0 build blockers in `app/pubspec.yaml` and attaching the 2-phone release APK screenshots.
 
-- [x] **RELEASE CANDIDATE APPROVED (`v1.0-rc`)**
-- [ ] Release Candidate Rejected (Action required)
+- [ ] **RELEASE CANDIDATE APPROVED (`v1.0-rc`)** *(Hold until P0 build blockers are fixed and 2-phone screenshots are attached)*
+- [x] **Pending Build Fix & Final 2-Phone Verification**
 
 **UAT Lead:** KMCA Kumarasinghe  
 **Review Partner Sign-off:** JKVC Kaveesha  

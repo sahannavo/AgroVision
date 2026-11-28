@@ -1,94 +1,261 @@
-%% AgroVision - Domain and data layer (repository pattern, fakes behind interfaces).
-%% Shown in full for Alerts, Crop plots and Diagnosis; Auth, Weather, Advisor, Planner and History
-%% follow exactly the same shape (interface + FakeXRepository + FirebaseXRepository).
-%% TODO(JKVC): entity names other than CropPlot and OutbreakAlert, and all method signatures
-%% except watchNearby, markRead, add and signOut, are provisional - check lib/features/*/domain.
+%% AgroVision - Domain and data layer class diagram (repository pattern, fakes behind interfaces).
+%% Verified against actual source code in lib/features/*/domain/.
+%% All eight feature repositories shown with real method signatures.
 classDiagram
     direction LR
 
+    %% ── Presentation layer (screens) ──
     class AlertsScreen { <<presentation>> }
     class ProfileScreen { <<presentation>> }
     class CaptureScreen { <<presentation>> }
+    class ResultScreen { <<presentation>> }
+    class HistoryScreen { <<presentation>> }
+    class PlannerScreen { <<presentation>> }
+    class AdvisorScreen { <<presentation>> }
+    class HomeScreen { <<presentation>> }
 
+    %% ── Riverpod providers ──
     class alertsRepositoryProvider { <<Riverpod provider>> }
+    class authRepositoryProvider { <<Riverpod provider>> }
     class cropPlotRepositoryProvider { <<Riverpod provider>> }
     class diagnosisRepositoryProvider { <<Riverpod provider>> }
     class diagnosisClassifierProvider { <<Riverpod provider>> }
+    class weatherRepositoryProvider { <<Riverpod provider>> }
+    class advisorRepositoryProvider { <<Riverpod provider>> }
+    class plannerRepositoryProvider { <<Riverpod provider>> }
+    class historyRepositoryProvider { <<Riverpod provider>> }
 
-    class AlertsRepository { <<interface>>
-        +watchNearby()
-        +markRead(alertId)
+    %% ── Domain interfaces ──
+    class AuthRepository {
+        <<interface>>
+        +authStateChanges() Stream~AppUser?~
+        +currentUser AppUser?
+        +signIn(email, password) Future~AppUser~
+        +register(email, password, fullName, region, soilType, landSize, lat?, lon?) Future~AppUser~
+        +saveProfile(user) Future~void~
+        +signOut() Future~void~
     }
-    class CropPlotRepository { <<interface>>
-        +add(plot)
+    class AlertsRepository {
+        <<interface>>
+        +watchNearby(lat?, lon?, radiusKm?) Stream~List~OutbreakAlert~~
+        +getNearby(lat?, lon?, radiusKm?) Future~List~OutbreakAlert~~
+        +markRead(alertId) Future~void~
     }
-    class DiagnosisRepository { <<interface>> }
-    class DiagnosisClassifier { <<interface>>
-        +classify(image)
+    class CropPlotRepository {
+        <<interface>>
+        +watchPlots(userId?) Stream~List~CropPlot~~
+        +getPlots(userId?) Future~List~CropPlot~~
+        +addPlot(plot) Future~CropPlot~
+        +updatePlot(plot) Future~void~
+        +deletePlot(plotId) Future~void~
+    }
+    class DiagnosisRepository {
+        <<interface>>
+        +watchHistory(userId?) Stream~List~Diagnosis~~
+        +getHistory(userId?) Future~List~Diagnosis~~
+        +save(diagnosis) Future~Diagnosis~
+    }
+    class DiagnosisClassifier {
+        <<interface>>
+        +classify(imagePath, cropType?, cropId?, userId?, lat?, lon?) Future~Diagnosis~
+    }
+    class WeatherRepository {
+        <<interface>>
+        +getForecast(lat?, lon?) Future~WeatherForecast~
+        +watchForecast(lat?, lon?) Stream~WeatherForecast~
+    }
+    class AdvisorRepository {
+        <<interface>>
+        +recommend(soil, season, location?) Future~List~PlantingRecommendation~~
+    }
+    class PlannerRepository {
+        <<interface>>
+        +planFor(cropId) Future~CropIrrigationPlan~
+    }
+    class HistoryRepository {
+        <<interface>>
+        +getStats(userId?) Future~HistoryStats~
+        +getDecisions(userId?) Future~List~DecisionLogEntry~~
+        +addDecision(entry) Future~DecisionLogEntry~
     }
 
+    %% ── Fake implementations (USE_FAKES=true) ──
+    class FakeAuthRepository
     class FakeAlertsRepository
-    class FirebaseAlertsRepository
     class FakeCropPlotRepository
-    class FirebaseCropPlotRepository
     class FakeDiagnosisRepository
-    class FirebaseDiagnosisRepository
     class FakeDiagnosisClassifier
-    class TfliteDiagnosisClassifier
+    class FakeWeatherRepository
+    class FakeAdvisorRepository
+    class FakePlannerRepository
+    class FakeHistoryRepository
 
+    %% ── Real implementations (USE_FAKES=false) ──
+    class FirebaseAuthRepository
+    class FirebaseAlertsRepository
+    class FirebaseCropPlotRepository
+    class FirebaseDiagnosisRepository
+    class TfliteDiagnosisClassifier
+    class FirebaseWeatherRepository
+    class LocalAdvisorRepository
+    class LocalPlannerRepository
+    class FirebaseHistoryRepository
+
+    %% ── Domain entities ──
+    class AppUser {
+        <<entity>>
+        uid
+        email
+        fullName
+        latitude?
+        longitude?
+        region
+        soilType
+        landSize
+    }
     class OutbreakAlert {
         <<entity>>
-        alertId
-        diseaseType
-        centerPoint
+        id
+        disease
+        crop
+        areaLabel
+        approxLatitude
+        approxLongitude
         radiusKm
         reportCount
+        windowDays
+        severity: AlertSeverity
         preventiveSteps
-        createdAt
+        isRead
     }
     class CropPlot {
         <<entity>>
-        cropId
+        id
+        userId
         name
         cropType
         plantedDate
         soilType
         growthStage
         areaSize
+        location
     }
     class Diagnosis {
         <<entity>>
-        diagnosisId
-        cropId
-        imageUrl
-        predictedClass
-        confidenceScore
-        location
+        id
+        userId
+        cropId?
+        cropType
+        imagePath
+        predictedClass: DiseaseClass
+        confidence
+        topMatches: TopMatch[]
+        latitude?
+        longitude?
         diagnosedAt
+        syncStatus: SyncStatus
+    }
+    class WeatherForecast {
+        <<entity>>
+        currentTemperature
+        condition
+        humidity
+        rainChance
+        daily: DailyForecast[]
+        fetchedAt
+        isCached
+    }
+    class PlantingRecommendation {
+        <<entity>>
+        crop
+        scientificName
+        scorePercent
+        reasonChips
+        harvestDays
+        caution
+    }
+    class CropIrrigationPlan {
+        <<entity>>
+        cropId
+        summary: WeeklyPlannerSummary
+        days: IrrigationDayPlan[]
+    }
+    class HistoryStats {
+        <<entity>>
+        totalScans
+        healthyPercent
+        topIssue
+        weeklyScans
+        diseaseBreakdown
+    }
+    class DecisionLogEntry {
+        <<entity>>
+        id
+        userId
+        date
+        title
+        detail
+        resultLabel
+        syncStatus: SyncStatus
     }
 
+    %% ── Screen to provider ──
     AlertsScreen --> alertsRepositoryProvider : ref.watch
     ProfileScreen --> cropPlotRepositoryProvider : ref.watch
+    ProfileScreen --> authRepositoryProvider : ref.watch
     CaptureScreen --> diagnosisClassifierProvider : ref.read
     CaptureScreen --> diagnosisRepositoryProvider : ref.read
+    ResultScreen --> diagnosisRepositoryProvider : ref.read
+    HistoryScreen --> historyRepositoryProvider : ref.watch
+    HistoryScreen --> diagnosisRepositoryProvider : ref.watch
+    PlannerScreen --> plannerRepositoryProvider : ref.watch
+    AdvisorScreen --> advisorRepositoryProvider : ref.read
+    HomeScreen --> weatherRepositoryProvider : ref.watch
+    HomeScreen --> alertsRepositoryProvider : ref.watch
 
+    %% ── Provider to interface ──
+    authRepositoryProvider --> AuthRepository : exposes
     alertsRepositoryProvider --> AlertsRepository : exposes
     cropPlotRepositoryProvider --> CropPlotRepository : exposes
     diagnosisRepositoryProvider --> DiagnosisRepository : exposes
     diagnosisClassifierProvider --> DiagnosisClassifier : exposes
+    weatherRepositoryProvider --> WeatherRepository : exposes
+    advisorRepositoryProvider --> AdvisorRepository : exposes
+    plannerRepositoryProvider --> PlannerRepository : exposes
+    historyRepositoryProvider --> HistoryRepository : exposes
 
+    %% ── Interface implementations (fake) ──
+    FakeAuthRepository ..|> AuthRepository
     FakeAlertsRepository ..|> AlertsRepository
-    FirebaseAlertsRepository ..|> AlertsRepository
     FakeCropPlotRepository ..|> CropPlotRepository
-    FirebaseCropPlotRepository ..|> CropPlotRepository
     FakeDiagnosisRepository ..|> DiagnosisRepository
-    FirebaseDiagnosisRepository ..|> DiagnosisRepository
     FakeDiagnosisClassifier ..|> DiagnosisClassifier
-    TfliteDiagnosisClassifier ..|> DiagnosisClassifier
+    FakeWeatherRepository ..|> WeatherRepository
+    FakeAdvisorRepository ..|> AdvisorRepository
+    FakePlannerRepository ..|> PlannerRepository
+    FakeHistoryRepository ..|> HistoryRepository
 
+    %% ── Interface implementations (real) ──
+    FirebaseAuthRepository ..|> AuthRepository
+    FirebaseAlertsRepository ..|> AlertsRepository
+    FirebaseCropPlotRepository ..|> CropPlotRepository
+    FirebaseDiagnosisRepository ..|> DiagnosisRepository
+    TfliteDiagnosisClassifier ..|> DiagnosisClassifier
+    FirebaseWeatherRepository ..|> WeatherRepository
+    LocalAdvisorRepository ..|> AdvisorRepository
+    LocalPlannerRepository ..|> PlannerRepository
+    FirebaseHistoryRepository ..|> HistoryRepository
+
+    %% ── Interface to entity ──
+    AuthRepository ..> AppUser
     AlertsRepository ..> OutbreakAlert
     CropPlotRepository ..> CropPlot
     DiagnosisRepository ..> Diagnosis
     DiagnosisClassifier ..> Diagnosis
+    WeatherRepository ..> WeatherForecast
+    AdvisorRepository ..> PlantingRecommendation
+    PlannerRepository ..> CropIrrigationPlan
+    HistoryRepository ..> HistoryStats
+    HistoryRepository ..> DecisionLogEntry
 
-    note for alertsRepositoryProvider "providers.dart picks Fake or Firebase implementation from --dart-define=USE_FAKES. Screens never import Firebase."
+    note for alertsRepositoryProvider "providers.dart picks Fake or Firebase/Local implementation via --dart-define=USE_FAKES. Screens never import Firebase."

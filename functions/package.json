@@ -12,7 +12,6 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "test": "node --test dist/tests/*.test.js"
     "test": "node --test lib/tests/*.test.js"
   },
   "engines": {

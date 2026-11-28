@@ -53,7 +53,7 @@ class HomeScreen extends ConsumerWidget {
     final diagnoses = ref.watch(_homeDiagnosesProvider);
     final user = ref.watch(authStateProvider).valueOrNull;
     final isOnline = ref.watch(connectivityProvider);
-    final isOffline = !isOnline || weather.valueOrNull?.isCached == true;
+    final isOffline = !isOnline;
 
     return Scaffold(
       backgroundColor: AppColors.background,

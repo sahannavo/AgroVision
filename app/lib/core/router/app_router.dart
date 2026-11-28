@@ -29,7 +29,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 /// Application router defining all route configurations and the stateful shell.
 final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
-  initialLocation: AppRoutes.splash,
+  initialLocation: AppRoutes.home,
   redirect: authGuardRedirect,
   routes: [
     // Standalone routes without bottom navigation bar
